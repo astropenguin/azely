@@ -22,7 +22,7 @@ URL_TIMEZONE = URL_API + '/timezone/json?location={0},{1}&timestamp={2}'
 
 
 # functions
-def request_location_info(location, date, timeout=5, encoding='utf-8'):
+def request_location_info(location, date, encoding='utf-8', timeout=5):
     # get geocode info from google maps
     url = URL_GEOCODE.format(location)
     with urlopen(url, timeout=timeout) as f:
