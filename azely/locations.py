@@ -3,6 +3,7 @@
 # imported items
 __all__ = [
     'request_location_info',
+    'get_location_info',
 ]
 
 # standard library
@@ -46,3 +47,25 @@ def request_location_info(location, date, timeout=5, encoding='utf-8'):
     return info
 
 
+def get_location_info(location, date):
+    try:
+        info = request_location_info(location, date)
+        with open(azely.KNOWN_LOCS, 'r') as f:
+            dinfo = yaml.load(f)
+            dinfo.update({location: info})
+
+        with open(azely.KNOWN_LOCS, 'w') as f:
+            f.write(yaml.dump(dinfo, default_flow_style=False))
+
+    except URLError:
+        with open(azely.KNOWN_LOCS, 'r') as f:
+            dinfo = yaml.load(f)
+
+        if location in dinfo:
+            info = dinfo[location]
+            if info['timezone_day'] != date.strftime('%Y-%m-%d'):
+                print('AzelyWarning: timezone hour might be different')
+        else:
+            raise azely.AzelyError('error!')
+
+    return info
