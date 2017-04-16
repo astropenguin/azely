@@ -48,6 +48,21 @@ def request_location_info(location, date, encoding='utf-8', timeout=5):
     return info
 
 
+def update_known_locations(location, info):
+    with open(azely.KNOWN_LOCS, 'r') as f:
+        dinfo = yaml.load(f)
+
+    if location in dinfo:
+        dinfo[location]['timezone_name'] = info['timezone_name']
+        dinfo[location]['timezone_hour'] = info['timezone_hour']
+        dinfo[location]['timezone_date'] = info['timezone_date']
+    else:
+        dinfo[location] = info
+
+    with open(azely.KNOWN_LOCS, 'w') as f:
+        f.write(yaml.dump(dinfo, default_flow_style=False))
+
+
 def get_location_info(location, date):
     with open(azely.KNOWN_LOCS, 'r') as f:
         dinfo = yaml.load(f)
