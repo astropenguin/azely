@@ -31,9 +31,9 @@ def request_location_info(location, date, encoding='utf-8', timeout=5):
     info = {}
     info['name']      = geocode['address_components'][0]['long_name']
     info['address']   = geocode['formatted_address']
-    info['place_id']  = geocode['place_id']
     info['latitude']  = geocode['geometry']['location']['lat']
     info['longitude'] = geocode['geometry']['location']['lng']
+    info['query']     = location
 
     # get timezone info from google maps
     t = (date-datetime(1970, 1, 1)).total_seconds() # UNIX time
@@ -43,7 +43,8 @@ def request_location_info(location, date, encoding='utf-8', timeout=5):
 
     info['timezone_name'] = timezone['timeZoneName']
     info['timezone_hour'] = (timezone['rawOffset']+timezone['dstOffset']) / 3600
-    info['timezone_day']  = date.strftime('%Y-%m-%d')
+    info['timezone_date'] = date.strftime('%Y-%m-%d')
+
     return info
 
 
