@@ -48,24 +48,25 @@ def request_location_info(location, date, encoding='utf-8', timeout=5):
 
 
 def get_location_info(location, date):
-    try:
-        info = request_location_info(location, date)
-        with open(azely.KNOWN_LOCS, 'r') as f:
-            dinfo = yaml.load(f)
-            dinfo.update({location: info})
+    with open(azely.KNOWN_LOCS, 'r') as f:
+        dinfo = yaml.load(f)
 
-        with open(azely.KNOWN_LOCS, 'w') as f:
-            f.write(yaml.dump(dinfo, default_flow_style=False))
-
-    except URLError:
-        with open(azely.KNOWN_LOCS, 'r') as f:
-            dinfo = yaml.load(f)
-
-        if location in dinfo:
-            info = dinfo[location]
-            if info['timezone_day'] != date.strftime('%Y-%m-%d'):
-                print('AzelyWarning: timezone hour might be different')
+    if location in dinfo:
+        info = dinfo[location]
+        if 'query' in info:
+            try:
+                info = request_location_info(info['query'], date)
+                update_known_locations(location, info)
+            except URLError:
+                if not info['timezone_day'] == date.strftime('%Y-%m-%d'):
+                    print('AzelyWarning: timezone hour might be different')
         else:
+            print('AzelyWarning: location is not updated (no place_id)')
+    else:
+        try:
+            info = request_location_info(location, date)
+            update_known_locations(location, info)
+        except URLError:
             raise azely.AzelyError('error!')
 
     return info
