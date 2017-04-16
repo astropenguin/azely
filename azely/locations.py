@@ -2,8 +2,8 @@
 
 # imported items
 __all__ = [
-    'request_location_info',
     'get_location_info',
+    'request_location',
 ]
 
 # standard library
@@ -22,7 +22,7 @@ URL_TIMEZONE = URL_API + '/timezone/json?location={0},{1}&timestamp={2}'
 
 
 # functions
-def request_location_info(location, date, encoding='utf-8', timeout=5):
+def request_location(location, date, encoding='utf-8', timeout=5):
     # get geocode info from google maps
     url = URL_GEOCODE.format(location)
     with urlopen(url, timeout=timeout) as f:
@@ -71,7 +71,7 @@ def get_location_info(location, date):
         info = dinfo[location]
         if 'query' in info:
             try:
-                info = request_location_info(info['query'], date)
+                info = request_location(info['query'], date)
                 update_known_locations(location, info)
             except URLError:
                 if not info['timezone_day'] == date.strftime('%Y-%m-%d'):
@@ -80,7 +80,7 @@ def get_location_info(location, date):
             print('AzelyWarning: location is not updated (no place_id)')
     else:
         try:
-            info = request_location_info(location, date)
+            info = request_location(location, date)
             update_known_locations(location, info)
         except URLError:
             raise azely.AzelyError('error!')
