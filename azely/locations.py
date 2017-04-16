@@ -2,8 +2,8 @@
 
 # imported items
 __all__ = [
-    'get_location_info',
     'request_location',
+    'get_location',
 ]
 
 # standard library
@@ -63,7 +63,7 @@ def update_known_locations(location, info):
         f.write(yaml.dump(dinfo, default_flow_style=False))
 
 
-def get_location_info(location, date):
+def get_location(location, date):
     with open(azely.KNOWN_LOCS, 'r') as f:
         dinfo = yaml.load(f)
 
