@@ -4,11 +4,13 @@
 import os
 
 # dependent packages
+import azely
 import yaml
 
 # submodules
 from .utils import *
 from .locations import *
+from .objects import *
 
 # information
 __version__ = '0.1'
