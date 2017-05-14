@@ -4,6 +4,7 @@
 __all__ = ['Locations']
 
 # standard library
+import webbrowser
 from pprint import pformat
 from urllib.error import URLError
 from urllib.request import urlopen
@@ -16,9 +17,19 @@ import yaml
 URL_API = 'https://maps.googleapis.com/maps/api'
 URL_GEOCODE = URL_API + '/geocode/json?address={0}'
 URL_TIMEZONE = URL_API + '/timezone/json?location={0},{1}&timestamp={2}'
+URL_MAPS = 'https://www.google.com/maps?q={0},{1}'
 
 
 # classes
+class Location(dict):
+    def __init__(self, dict_like):
+        super().__init__(dict_like)
+
+    def googlemaps(self):
+        url = URL_MAPS.format(self['latitude'], self['longitude'])
+        webbrowser.open(url)
+
+
 class Locations(dict):
     def __init__(self, date=None, encoding='utf-8', timeout=5):
         with open(azely.KNOWN_LOCS, 'r') as f:
