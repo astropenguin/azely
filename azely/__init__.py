@@ -1,5 +1,10 @@
 # coding: utf-8
 
+# information
+__version__ = '0.1'
+__author__  = 'Akio Taniguchi'
+__license__ = 'MIT'
+
 # standard library
 import os
 
@@ -9,24 +14,25 @@ import yaml
 
 # submodules
 from .utils import *
+from .azel import *
+from .constants import *
 from .locations import *
 from .objects import *
 
-# information
-__version__ = '0.1'
-__author__  = 'Akio Taniguchi'
-__license__ = 'MIT'
+# create directory and file (if not existing)
+if not os.path.exists(azely.AZELY_DIR):
+    os.makedirs(azely.AZELY_DIR)
 
-# constants
-HOME_DIR = os.environ['HOME']
-AZELY_DIR = os.path.join(HOME_DIR, '.azely')
-KNOWN_LOCS = os.path.join(AZELY_DIR, 'known_locations.yaml')
-DATA_DIR = os.path.join(azely.__path__[0], 'data')
-
-# create directory and files (if not exist)
-if not os.path.exists(AZELY_DIR):
-    os.makedirs(AZELY_DIR)
-
-if not os.path.exists(KNOWN_LOCS):
-    with open(KNOWN_LOCS, 'w') as f:
+if not os.path.exists(azely.KNOWN_LOCS):
+    with open(azely.KNOWN_LOCS, 'w') as f:
         f.write(yaml.dump({}, default_flow_style=False))
+
+# delete items
+del os
+del azely
+del yaml
+del utils
+del azel
+del constants
+del locations
+del objects
