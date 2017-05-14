@@ -6,15 +6,12 @@ __all__ = ['ObjectLists']
 # standard library
 import os
 from collections import OrderedDict
-from copy import deepcopy
 from glob import glob
 from pprint import pformat
 
 # dependent packages
 import azely
-import ephem
 import yaml
-import numpy as np
 
 yaml.add_constructor(
     yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
