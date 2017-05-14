@@ -65,7 +65,7 @@ class Locations(dict):
             except URLError:
                 raise azely.AzelyError('error!')
 
-        return item
+        return Location(item)
 
     def request_item(self, query):
         # get geocode from google maps api
