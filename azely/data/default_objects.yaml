@@ -1,4 +1,4 @@
-default: &default
+solar: &solar
   Sun: Sun
   Mercury: Mercury
   Venus: Venus
@@ -8,4 +8,4 @@ default: &default
   Uranus: Uranus
   Neptune: Neptune
 
-solar: *default
+default: *solar
