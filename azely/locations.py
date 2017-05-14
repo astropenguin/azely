@@ -43,31 +43,36 @@ class Locations(dict):
         }
 
     def __getitem__(self, name):
+        self._update_item(name)
+        self._update_known_locations()
+        item = dict.__getitem__(self, name)
+
+        return Location(item)
+
+    def _update_item(self, name):
         if name in self:
-            item = dict.__getitem__(self, name)
-            if 'query' in item:
-                try:
-                    query = item['query']
-                    item = self.request_item(query) # updated
-                    dict.__setitem__(self, name, item)
-                    self.update_known_locations(name, item)
-                except URLError:
-                    if not self.info['date'] == item['timezone_date']:
-                        print('warning!')
-            else:
+            try:
+                query = dict.__getitem__(self, name)['query']
+                item = self._request_item(query) # updated
+                timezone = {key: item[key] for key in item if 'timezone' in key}
+                dict.__getitem__(self, name).update(timezone)
+            except KeyError:
+                print('warning!')
+            except URLError:
                 print('warning!')
         else:
             try:
                 query = azely.parse_location(name)
-                item = self.request_item(query) # created
+                item = self._request_item(query) # created
                 dict.__setitem__(self, name, item)
-                self.update_known_locations(name, item)
             except URLError:
                 raise azely.AzelyError('error!')
 
-        return Location(item)
+    def _update_known_locations(self):
+        with open(azely.KNOWN_LOCS, 'w') as f:
+            f.write(yaml.dump(dict(self), default_flow_style=False))
 
-    def request_item(self, query):
+    def _request_item(self, query):
         # get geocode from google maps api
         url = URL_GEOCODE.format(query)
         with urlopen(url, timeout=self.info['timeout']) as f:
@@ -94,19 +99,6 @@ class Locations(dict):
         item['timezone_hour'] += timezone['dstOffset'] / 3600
 
         return item
-
-    def update_known_locations(self, name, item):
-        with open(azely.KNOWN_LOCS, 'r') as f:
-            known_locs = yaml.load(f, yaml.loader.SafeLoader)
-
-        if name in known_locs:
-            timezone = {key: item[key] for key in item if 'timezone' in key}
-            known_locs[name].update(timezone)
-        else:
-            known_locs.update({name: item})
-
-        with open(azely.KNOWN_LOCS, 'w') as f:
-            f.write(yaml.dump(known_locs, default_flow_style=False))
 
     def __repr__(self):
         return pformat(dict(self))
