@@ -38,13 +38,15 @@ class AzEl(object):
         else:
             observer.date = ephem.Date(self.info['date'])
 
-            if self.info['timezone'] == 'LST':
+            if type(self.info['timezone']) in (int, float):
+                offset_hr = self.info['timezone']
+            elif issubclass(type(self.info['timezone']), dict):
+                offset_hr = self.info['timezone']['timezone_hour']
+            elif self.info['timezone'] == 'LST':
                 st = observer.sidereal_time()
                 offset_hr = st / (2*np.pi) * 24 / UT_TO_LST
-            elif type(self.info['timezone']) in (int, float):
-                offset_hr = self.info['timezone']
             else:
-                offset_hr = self.info['timezone']['timezone_hour']
+                raise ValueError(self.info['timezone'])
 
             observer.date -= offset_hr * ephem.hour
 
