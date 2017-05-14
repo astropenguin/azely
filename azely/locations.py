@@ -1,13 +1,10 @@
 # coding: utf-8
 
 # imported items
-__all__ = [
-    'get_location',
-    'request_location',
-]
+__all__ = ['Locations']
 
 # standard library
-from datetime import datetime
+from pprint import pformat
 from urllib.error import URLError
 from urllib.request import urlopen
 
@@ -21,68 +18,84 @@ URL_GEOCODE = URL_API + '/geocode/json?address={0}'
 URL_TIMEZONE = URL_API + '/timezone/json?location={0},{1}&timestamp={2}'
 
 
-# functions
-def get_location(name, date):
-    with open(azely.KNOWN_LOCS, 'r') as f:
-        locations = yaml.load(f)
+# classes
+class Locations(dict):
+    def __init__(self, date=None, encoding='utf-8', timeout=5):
+        with open(azely.KNOWN_LOCS, 'r') as f:
+            known_locs = yaml.load(f, yaml.loader.SafeLoader)
+            super().__init__(known_locs)
 
-    if name in locations:
-        loc = locations[name]
-        if 'query' in loc:
-            try:
-                loc = request_location(loc['query'], date)
-                update_known_locations(name, loc)
-            except URLError:
-                if not loc['timezone_day'] == date.strftime('%Y-%m-%d'):
-                    print('AzelyWarning: timezone hour might be different')
+        self.info = {
+            'date': azely.parse_date(date),
+            'encoding': encoding,
+            'timeout': timeout,
+        }
+
+    def __getitem__(self, name):
+        if name in self:
+            item = dict.__getitem__(self, name)
+            if 'query' in item:
+                try:
+                    query = item['query']
+                    item = self.request_item(query) # updated
+                    dict.__setitem__(self, name, item)
+                    self.update_known_locations(name, item)
+                except URLError:
+                    if not self.info['date'] == item['timezone_date']:
+                        print('warning!')
+            else:
+                print('warning!')
         else:
-            print('AzelyWarning: location is not updated (no place_id)')
-    else:
-        try:
-            loc = request_location(name, date)
-            update_known_locations(name, loc)
-        except URLError:
-            raise azely.AzelyError('error!')
+            try:
+                query = azely.parse_location(name)
+                item = self.request_item(query) # created
+                dict.__setitem__(self, name, item)
+                self.update_known_locations(name, item)
+            except URLError:
+                raise azely.AzelyError('error!')
 
-    return loc
+        return item
 
+    def request_item(self, query):
+        # get geocode from google maps api
+        url = URL_GEOCODE.format(query)
+        with urlopen(url, timeout=self.info['timeout']) as f:
+            string = f.read().decode(self.info['encoding'])
+            geocode = yaml.load(string)['results'][0]
 
-def request_location(name, date, encoding='utf-8', timeout=5):
-    # get geocode from google maps api
-    url = URL_GEOCODE.format(name)
-    with urlopen(url, timeout=timeout) as f:
-        geocode = yaml.load(f.read().decode(encoding))['results'][0]
+        item = {}
+        item['name']      = geocode['address_components'][0]['long_name']
+        item['address']   = geocode['formatted_address']
+        item['latitude']  = geocode['geometry']['location']['lat']
+        item['longitude'] = geocode['geometry']['location']['lng']
+        item['query']     = query
 
-    loc = {}
-    loc['name']      = geocode['address_components'][0]['long_name']
-    loc['address']   = geocode['formatted_address']
-    loc['latitude']  = geocode['geometry']['location']['lat']
-    loc['longitude'] = geocode['geometry']['location']['lng']
-    loc['query']     = name
+        # get timezone from google maps api
+        t = azely.get_unixtime(self.info['date'])
+        url = URL_TIMEZONE.format(item['latitude'], item['longitude'], t)
+        with urlopen(url, timeout=self.info['timeout']) as f:
+            string = f.read().decode(self.info['encoding'])
+            timezone = yaml.load(string)
 
-    # get timezone from google maps api
-    t = (date-datetime(1970, 1, 1)).total_seconds() # UNIX time
-    url = URL_TIMEZONE.format(loc['latitude'], loc['longitude'], t)
-    with urlopen(url, timeout=timeout) as f:
-        timezone = yaml.load(f.read().decode(encoding))
+        item['timezone_name'] = timezone['timeZoneName']
+        item['timezone_date'] = self.info['date']
+        item['timezone_hour'] = timezone['rawOffset'] / 3600
+        item['timezone_hour'] += timezone['dstOffset'] / 3600
 
-    loc['timezone_name'] = timezone['timeZoneName']
-    loc['timezone_hour'] = (timezone['rawOffset']+timezone['dstOffset']) / 3600
-    loc['timezone_date'] = date.strftime('%Y-%m-%d')
+        return item
 
-    return loc
+    def update_known_locations(self, name, item):
+        with open(azely.KNOWN_LOCS, 'r') as f:
+            known_locs = yaml.load(f, yaml.loader.SafeLoader)
 
+        if name in known_locs:
+            timezone = {key: item[key] for key in item if 'timezone' in key}
+            known_locs[name].update(timezone)
+        else:
+            known_locs.update({name: item})
 
-def update_known_locations(name, loc):
-    with open(azely.KNOWN_LOCS, 'r') as f:
-        locations = yaml.load(f)
+        with open(azely.KNOWN_LOCS, 'w') as f:
+            f.write(yaml.dump(known_locs, default_flow_style=False))
 
-    if name in locations:
-        locations[name]['timezone_name'] = loc['timezone_name']
-        locations[name]['timezone_hour'] = loc['timezone_hour']
-        locations[name]['timezone_date'] = loc['timezone_date']
-    else:
-        locations[name] = loc
-
-    with open(azely.KNOWN_LOCS, 'w') as f:
-        f.write(yaml.dump(locations, default_flow_style=False))
+    def __repr__(self):
+        return pformat(dict(self))
