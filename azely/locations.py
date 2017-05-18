@@ -45,17 +45,17 @@ class Locations(dict):
     def __getitem__(self, name):
         self._update_item(name)
         self._update_known_locations()
-        item = dict.__getitem__(self, name)
+        item = super().__getitem__(self, name)
 
         return Location(item)
 
     def _update_item(self, name):
         if name in self:
             try:
-                query = dict.__getitem__(self, name)['query']
+                query = super().__getitem__(self, name)['query']
                 item = self._request_item(query) # updated
                 timezone = {key: item[key] for key in item if 'timezone' in key}
-                dict.__getitem__(self, name).update(timezone)
+                super().__getitem__(self, name).update(timezone)
             except KeyError:
                 print('warning!')
             except URLError:
@@ -64,7 +64,7 @@ class Locations(dict):
             try:
                 query = azely.parse_location(name)
                 item = self._request_item(query) # created
-                dict.__setitem__(self, name, item)
+                super().__setitem__(self, name, item)
             except URLError:
                 raise azely.AzelyError('error!')
 
