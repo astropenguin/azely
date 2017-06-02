@@ -3,8 +3,6 @@
 # imported items
 __all__ = ['AzEl']
 
-# standard library
-
 # dependent packages
 import azely
 import ephem
@@ -20,7 +18,7 @@ class AzEl(object):
     def __init__(self, observer, timezone=None, date=None):
         self.info = {
             'observer': observer,
-            'timezone': timezone or observer,
+            'timezone': timezone,
             'date': azely.parse_date(date),
         }
 
@@ -38,10 +36,12 @@ class AzEl(object):
         else:
             observer.date = ephem.Date(self.info['date'])
 
-            if type(self.info['timezone']) in (int, float):
-                offset_hr = self.info['timezone']
+            if self.info['timezone'] is None:
+                offset_hr = self.info['observer']['timezone_hour'] % 24
             elif issubclass(type(self.info['timezone']), dict):
-                offset_hr = self.info['timezone']['timezone_hour']
+                offset_hr = self.info['timezone']['timezone_hour'] % 24
+            elif type(self.info['timezone']) in (int, float):
+                offset_hr = self.info['timezone'] % 24
             elif self.info['timezone'] == 'LST':
                 st = observer.sidereal_time()
                 offset_hr = st / (2*np.pi) * 24 / UT_TO_LST
