@@ -7,7 +7,6 @@ __all__ = ['AzEl']
 import azely
 import ephem
 import numpy as np
-from numpy import rec
 
 # constants
 UT_TO_LST = 1.0027379
@@ -57,7 +56,7 @@ class AzEl(object):
         for hr in hrs:
             coords.append(self._compute(body, observer, hr))
 
-        return rec.fromarrays(np.array(coords).T, names=names)
+        return np.rec.fromarrays(np.array(coords).T, names=names)
 
     def _compute(self, body, observer, hr=None):
         observer = observer.copy()
