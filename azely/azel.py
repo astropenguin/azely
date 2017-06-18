@@ -92,3 +92,13 @@ class AzEl(object):
         ra, dec = np.rad2deg([body.ra, body.dec])
         lst = observer.sidereal_time() / (2*np.pi) * 24
         return az, el, ra, dec, lst
+
+    def __repr__(self):
+        string = str.format(
+            'AzEl(location={0}, timezone={1}, date={2})',
+            self.info['location']['name'],
+            self.info['timezone']['name'],
+            self.info['date'],
+        )
+
+        return string
