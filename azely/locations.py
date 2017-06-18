@@ -81,5 +81,10 @@ class Locations(dict):
         item['timezone_hour'] += timezone['dstOffset'] / 3600
         return item
 
+    def __getitem__(self, name):
+        self._update_item(name)
+        self._update_known_locations()
+        return super().__getitem__(name)
+
     def __repr__(self):
         return pformat(dict(self))
