@@ -5,8 +5,8 @@ __all__ = [
     'AzelyError',
     'AzelyWarning',
     'get_body',
+    'get_googlemaps',
     'get_unixtime',
-    'googlemaps',
     'parse_date',
     'parse_location',
     'parse_objects',
@@ -64,17 +64,17 @@ def get_body(object_like):
         raise ValueError(object_like)
 
 
-def get_unixtime(date_like=None):
-    date = datetime.strptime(parse_date(date_like), DATE_FORMAT)
-    return time.mktime(date.utctimetuple())
-
-
-def googlemaps(name):
+def get_googlemaps(name):
     locs = azely.Locations()
     query = azely.parse_location(name)
     item = locs._request_item(query)
     url = URL_MAPS.format(item['latitude'], item['longitude'])
     webbrowser.open(url)
+
+
+def get_unixtime(date_like=None):
+    date = datetime.strptime(parse_date(date_like), DATE_FORMAT)
+    return time.mktime(date.utctimetuple())
 
 
 def parse_date(date_like=None):
