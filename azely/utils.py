@@ -4,7 +4,7 @@
 __all__ = [
     'AzelyError',
     'AzelyWarning',
-    'create_body',
+    'get_body',
     'get_unixtime',
     'googlemaps',
     'parse_date',
@@ -47,7 +47,7 @@ class AzelyWarning(Warning):
 
 
 # functions
-def create_body(object_like):
+def get_body(object_like):
     if isinstance(object_like, str):
         return getattr(ephem, str(object_like))()
     elif issubclass(type(object_like), dict):

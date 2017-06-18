@@ -49,7 +49,7 @@ class AzEl(object):
 
     def __call__(self, obj, hr=None):
         # body
-        body = azely.create_body(obj)
+        body = azely.get_body(obj)
 
         # observer
         observer = ephem.Observer()
