@@ -12,6 +12,7 @@ __all__ = [
 ]
 
 # standard library
+import re
 import time
 import webbrowser
 from datetime import datetime
@@ -22,16 +23,6 @@ import ephem
 
 # constants
 DATE_FORMAT = '%Y-%m-%d'
-DATE_PATTERNS = [
-    '%y-%m-%d',
-    '%y/%m/%d',
-    '%y.%m.%d',
-    '%y%m%d',
-    '%Y-%m-%d',
-    '%Y/%m/%d',
-    '%Y.%m.%d',
-    '%Y%m%d',
-]
 URL_MAPS = 'https://www.google.com/maps?q={0},{1}'
 
 
@@ -90,14 +81,17 @@ def parse_date(date_like=None):
         return datetime.now().strftime(DATE_FORMAT)
     elif isinstance(date_like, datetime):
         return date_like.strftime(DATE_FORMAT)
-    else:
-        for pattern in DATE_PATTERNS:
+    elif type(date_like) == str:
+        date_like = re.sub('[+\-_&,./|:; ]+', '', date_like)
+        for fmt in ('%y%m%d', '%Y%m%d'):
             try:
-                dt = datetime.strptime(date_like, pattern)
+                dt = datetime.strptime(date_like, fmt)
                 return dt.strftime(DATE_FORMAT)
             except ValueError:
                 continue
 
+        raise ValueError(date_like)
+    else:
         raise ValueError(date_like)
 
 
@@ -105,12 +99,7 @@ def parse_location(location_like):
     if type(location_like) in (list, tuple):
         return '+'.join(location_like)
     elif type(location_like) == str:
-        if '+' in location_like:
-            return '+'.join(location_like.split('+'))
-        elif ' ' in location_like:
-            return '+'.join(location_like.split())
-        else:
-            return location_like
+        return re.sub('[+\-_&,./|:; ]+', '+', location_like)
     else:
         raise ValueError(location_like)
 
