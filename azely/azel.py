@@ -14,38 +14,58 @@ UT_TO_LST = 1.0027379
 
 # classes
 class AzEl(object):
-    def __init__(self, observer, timezone=None, date=None):
+    def __init__(self, location, timezone=None, date=None):
+        # location
+        locs = azely.Locations(date)
+        location = locs[location]
+
+        # timezone
+        if timezone is None:
+            timezone = location
+        elif type(timezone) in (int, float):
+            timezone = {
+                'name': 'UTC{0:+.1f}'.format(timezone),
+                'timezone_hour': float(timezone),
+                'timezone_name': 'UTC{0:+.1f}'.format(timezone),
+            }
+        elif type(timezone) == str:
+            if timezone.upper() == 'LST':
+                timezone = {
+                    'name': 'LST',
+                    'timezone_hour': None,
+                    'timezone_name': 'Local Sidereal Time',
+                }
+            else:
+                timezone = locs[timezone]
+        else:
+            raise ValueError(timezone)
+
+        # store info
         self.info = {
-            'observer': observer,
-            'timezone': timezone,
             'date': azely.parse_date(date),
+            'location': location,
+            'timezone': timezone,
         }
 
     def __call__(self, obj, hr=None):
         # body
-        body = azely.parse_object(obj)
+        body = azely.create_body(obj)
 
         # observer
         observer = ephem.Observer()
-        observer.lat = str(self.info['observer']['latitude'])
-        observer.lon = str(self.info['observer']['longitude'])
+        observer.lat = str(self.info['location']['latitude'])
+        observer.lon = str(self.info['location']['longitude'])
 
         if hr is None:
             observer.date = ephem.now()
         else:
             observer.date = ephem.Date(self.info['date'])
 
-            if self.info['timezone'] is None:
-                offset_hr = self.info['observer']['timezone_hour'] % 24
-            elif issubclass(type(self.info['timezone']), dict):
-                offset_hr = self.info['timezone']['timezone_hour'] % 24
-            elif type(self.info['timezone']) in (int, float):
-                offset_hr = self.info['timezone'] % 24
-            elif self.info['timezone'] == 'LST':
+            if self.info['timezone']['name'] == 'LST':
                 st = observer.sidereal_time()
                 offset_hr = st / (2*np.pi) * 24 / UT_TO_LST
             else:
-                raise ValueError(self.info['timezone'])
+                offset_hr = self.info['timezone']['timezone_hour'] % 24
 
             observer.date -= offset_hr * ephem.hour
 
@@ -62,7 +82,7 @@ class AzEl(object):
         observer = observer.copy()
 
         if hr is not None:
-            if self.info['timezone'] == 'LST':
+            if self.info['timezone']['name'] == 'LST':
                 observer.date += hr * ephem.hour / UT_TO_LST
             else:
                 observer.date += hr * ephem.hour
