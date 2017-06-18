@@ -6,28 +6,27 @@ import azely
 import numpy as np
 import matplotlib.pyplot as plt
 
-date = '2017.05.15' # optional: None
 
-# locations
-locs = azely.Locations(date)
-observer = locs['alma observatory']
-timezone = locs['japan'] # optional: None, 'LST'
+# date and locations
+date = '2017.05.15' # optional: None
+location = 'alma observatory'
+timezone = 'japan' # optional: None, 9.0, 'LST'
 
 # objects
-objs = azely.ObjectLists()['solar']
+objs = azely.Objects()['solar']
 
 # calculating and plotting
-calc = azely.AzEl(observer, timezone, date)
+azel = azely.AzEl(location, timezone, date)
 t = np.arange(0, 24, 0.01)
 
 for name, obj in objs.items():
-    el = calc(obj, t).El
+    el = azel(obj, t).el
     plt.plot(t, el, label=name)
 
 plt.xlim([0, 24])
 plt.ylim([0, 90])
-plt.title(observer['name'])
-plt.xlabel(timezone['timezone_name'])
+plt.title(azel['location']['name'])
+plt.xlabel(azel['timezone']['timezone_name'])
 plt.ylabel('Elevation')
 plt.legend()
 plt.show()
