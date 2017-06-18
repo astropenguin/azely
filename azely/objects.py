@@ -1,7 +1,7 @@
 # coding: utf-8
 
 # imported items
-__all__ = ['ObjectLists']
+__all__ = ['Objects']
 
 # standard library
 import os
@@ -20,7 +20,7 @@ yaml.add_constructor(
 
 
 # classes
-class ObjectLists(dict):
+class Objects(dict):
     def __init__(self):
         super().__init__()
 
