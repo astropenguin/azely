@@ -9,6 +9,7 @@ __all__ = [
     'googlemaps',
     'parse_date',
     'parse_location',
+    'parse_objects',
 ]
 
 # standard library
@@ -104,3 +105,8 @@ def parse_location(location_like):
         raise ValueError(location_like)
 
 
+def parse_objects(objects_like):
+    if type(objects_like) in (list, tuple):
+        return objects_like
+    elif type(objects_like) == str:
+        return re.sub('[+\-_&,./|:; ]+', ' ', objects_like).split()
