@@ -4,11 +4,11 @@
 __all__ = [
     'AzelyError',
     'AzelyWarning',
+    'create_body',
     'get_unixtime',
     'googlemaps',
     'parse_date',
     'parse_location',
-    'parse_object',
 ]
 
 # standard library
@@ -55,6 +55,23 @@ class AzelyWarning(Warning):
 
 
 # functions
+def create_body(object_like):
+    if isinstance(object_like, str):
+        return getattr(ephem, str(object_like))()
+    elif issubclass(type(object_like), dict):
+        body = ephem.FixedBody()
+        body._ra = ephem.hours(str(object_like['ra']))
+        body._dec = ephem.degrees(str(object_like['dec']))
+        if 'epoch' in object_like:
+            body._epoch = getattr(ephem, object_like['epoch'])
+        else:
+            body._epoch = ephem.J2000
+
+        return body
+    else:
+        raise ValueError(object_like)
+
+
 def get_unixtime(date_like=None):
     date = datetime.strptime(parse_date(date_like), DATE_FORMAT)
     return time.mktime(date.utctimetuple())
@@ -98,18 +115,3 @@ def parse_location(location_like):
         raise ValueError(location_like)
 
 
-def parse_object(object_like):
-    if isinstance(object_like, str):
-        return getattr(ephem, str(object_like))()
-    elif issubclass(type(object_like), dict):
-        body = ephem.FixedBody()
-        body._ra = ephem.hours(str(object_like['ra']))
-        body._dec = ephem.degrees(str(object_like['dec']))
-        if 'epoch' in object_like:
-            body._epoch = getattr(ephem, object_like['epoch'])
-        else:
-            body._epoch = ephem.J2000
-
-        return body
-    else:
-        raise ValueError(object_like)
