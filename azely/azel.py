@@ -71,7 +71,7 @@ class AzEl(object):
 
         # compute
         coords = []
-        names = ['Az', 'El', 'RA', 'Dec', 'LST']
+        names = ['az', 'el', 'ra', 'dec', 'lst']
         hrs = [hr] if not hasattr(hr, '__iter__') else hr
         for hr in hrs:
             coords.append(self._compute(body, observer, hr))
@@ -92,6 +92,9 @@ class AzEl(object):
         ra, dec = np.rad2deg([body.ra, body.dec])
         lst = observer.sidereal_time() / (2*np.pi) * 24
         return az, el, ra, dec, lst
+
+    def __getitem__(self, name):
+        return self.info[name]
 
     def __repr__(self):
         string = str.format(
