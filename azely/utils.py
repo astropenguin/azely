@@ -2,8 +2,6 @@
 
 # public items
 __all__ = [
-    'AzelyError',
-    'AzelyWarning',
     'get_body',
     'get_googlemaps',
     'get_unixtime',
@@ -24,26 +22,6 @@ import ephem
 
 # local constants
 DATE_FORMAT = '%Y-%m-%d'
-URL_MAPS = 'https://www.google.com/maps?q={0},{1}'
-
-
-# classes
-class AzelyError(Exception):
-    """Error class of Azely."""
-    def __init__(self, message):
-        self.message = message
-
-    def __str__(self):
-        return repr(self.message)
-
-
-class AzelyWarning(Warning):
-    """Warning class of Azely."""
-    def __init__(self, message):
-        self.message = message
-
-    def __str__(self):
-        return repr(self.message)
 SEPARATORS = '[+\-_&,./|:; ]+'
 URL_GOOGLEMAPS = 'https://www.google.com/maps?q={0},{1}'
 
