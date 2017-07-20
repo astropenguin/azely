@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# imported items
+# public items
 __all__ = ['AzEl']
 
 # dependent packages
@@ -8,7 +8,7 @@ import azely
 import ephem
 import numpy as np
 
-# constants
+# local constants
 UT_TO_LST = 1.0027379
 
 
@@ -40,8 +40,8 @@ class AzEl(object):
         else:
             raise ValueError(timezone)
 
-        # store info
-        self.info = {
+        # store params
+        self.params = {
             'date': azely.parse_date(date),
             'location': location,
             'timezone': timezone,
@@ -53,19 +53,19 @@ class AzEl(object):
 
         # observer
         observer = ephem.Observer()
-        observer.lat = str(self.info['location']['latitude'])
-        observer.lon = str(self.info['location']['longitude'])
+        observer.lat = str(self.location['latitude'])
+        observer.lon = str(self.location['longitude'])
 
         if hr is None:
             observer.date = ephem.now()
         else:
-            observer.date = ephem.Date(self.info['date'])
+            observer.date = ephem.Date(self.date)
 
-            if self.info['timezone']['name'] == 'LST':
+            if self.timezone['name'] == 'LST':
                 st = observer.sidereal_time()
                 offset_hr = st / (2*np.pi) * 24 / UT_TO_LST
             else:
-                offset_hr = self.info['timezone']['timezone_hour'] % 24
+                offset_hr = self.timezone['timezone_hour'] % 24
 
             observer.date -= offset_hr * ephem.hour
 
@@ -82,7 +82,7 @@ class AzEl(object):
         observer = observer.copy()
 
         if hr is not None:
-            if self.info['timezone']['name'] == 'LST':
+            if self.timezone['name'] == 'LST':
                 observer.date += hr * ephem.hour / UT_TO_LST
             else:
                 observer.date += hr * ephem.hour
@@ -93,15 +93,11 @@ class AzEl(object):
         lst = observer.sidereal_time() / (2*np.pi) * 24
         return az, el, ra, dec, lst
 
-    def __getitem__(self, name):
-        return self.info[name]
+    def __getattr__(self, name):
+        return self.params[name]
 
     def __repr__(self):
-        string = str.format(
+        return str.format(
             'AzEl(location={0}, timezone={1}, date={2})',
-            self.info['location']['name'],
-            self.info['timezone']['name'],
-            self.info['date'],
+            self.location['name'], self.timezone['name'], self.date,
         )
-
-        return string
