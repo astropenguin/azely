@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# imported items
+# public items
 __all__ = [
     'AzelyError',
     'AzelyWarning',
@@ -22,7 +22,7 @@ from datetime import datetime
 import azely
 import ephem
 
-# constants
+# local constants
 DATE_FORMAT = '%Y-%m-%d'
 URL_MAPS = 'https://www.google.com/maps?q={0},{1}'
 
@@ -44,6 +44,8 @@ class AzelyWarning(Warning):
 
     def __str__(self):
         return repr(self.message)
+SEPARATORS = '[+\-_&,./|:; ]+'
+URL_GOOGLEMAPS = 'https://www.google.com/maps?q={0},{1}'
 
 
 # functions
@@ -56,10 +58,10 @@ def get_body(object_like):
         body._dec = ephem.degrees(str(object_like['dec']))
         if 'epoch' in object_like:
             body._epoch = getattr(ephem, object_like['epoch'])
+            return body
         else:
             body._epoch = ephem.J2000
-
-        return body
+            return body
     else:
         raise ValueError(object_like)
 
@@ -68,7 +70,7 @@ def get_googlemaps(name):
     locs = azely.Locations()
     query = azely.parse_location(name)
     item = locs._request_item(query)
-    url = URL_MAPS.format(item['latitude'], item['longitude'])
+    url = URL_GOOGLEMAPS.format(item['latitude'], item['longitude'])
     webbrowser.open(url)
 
 
@@ -83,15 +85,13 @@ def parse_date(date_like=None):
     elif isinstance(date_like, datetime):
         return date_like.strftime(DATE_FORMAT)
     elif type(date_like) == str:
-        date_like = re.sub('[+\-_&,./|:; ]+', '', date_like)
-        for fmt in ('%y%m%d', '%Y%m%d'):
-            try:
-                dt = datetime.strptime(date_like, fmt)
-                return dt.strftime(DATE_FORMAT)
-            except ValueError:
-                continue
-
-        raise ValueError(date_like)
+        date_like = re.sub(SEPARATORS, '', date_like)
+        try:
+            dt = datetime.strptime(date_like, '%y%m%d')
+            return dt.strftime(DATE_FORMAT)
+        except ValueError:
+            dt = datetime.strptime(date_like, '%Y%m%d')
+            return dt.strftime(DATE_FORMAT)
     else:
         raise ValueError(date_like)
 
@@ -100,7 +100,7 @@ def parse_location(location_like):
     if type(location_like) in (list, tuple):
         return '+'.join(location_like)
     elif type(location_like) == str:
-        return re.sub('[+\-_&,./|:; ]+', '+', location_like)
+        return re.sub(SEPARATORS, '+', location_like)
     else:
         raise ValueError(location_like)
 
@@ -109,4 +109,4 @@ def parse_objects(objects_like):
     if type(objects_like) in (list, tuple):
         return objects_like
     elif type(objects_like) == str:
-        return re.sub('[+\-_&,./|:; ]+', ' ', objects_like).split()
+        return re.sub(SEPARATORS, ' ', objects_like).split()
