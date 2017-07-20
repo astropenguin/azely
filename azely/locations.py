@@ -1,6 +1,6 @@
 # coding: utf-8
 
-# imported items
+# public items
 __all__ = ['Locations']
 
 # standard library
@@ -12,7 +12,7 @@ from urllib.request import urlopen
 import azely
 import yaml
 
-# constants
+# local constants
 URL_API = 'https://maps.googleapis.com/maps/api'
 URL_GEOCODE = URL_API + '/geocode/json?address={0}'
 URL_TIMEZONE = URL_API + '/timezone/json?location={0},{1}&timestamp={2}'
@@ -25,7 +25,7 @@ class Locations(dict):
             known_locs = yaml.load(f, yaml.loader.SafeLoader)
             super().__init__(known_locs)
 
-        self.info = {
+        self.params = {
             'date': azely.parse_date(date),
             'encoding': encoding,
             'timeout': timeout,
@@ -52,13 +52,13 @@ class Locations(dict):
                 item = self._request_item(query) # created
                 super().__setitem__(name, item)
             except URLError:
-                raise azely.AzelyError('error!')
+                raise ConnectionError('error!')
 
     def _request_item(self, query):
         # get geocode from google maps api
         url = URL_GEOCODE.format(query)
-        with urlopen(url, timeout=self.info['timeout']) as f:
-            string = f.read().decode(self.info['encoding'])
+        with urlopen(url, timeout=self.timeout) as f:
+            string = f.read().decode(self.encoding)
             geocode = yaml.load(string)['results'][0]
 
         item = {}
@@ -69,14 +69,14 @@ class Locations(dict):
         item['query']     = query
 
         # get timezone from google maps api
-        ut = azely.get_unixtime(self.info['date'])
+        ut = azely.get_unixtime(self.date)
         url = URL_TIMEZONE.format(item['latitude'], item['longitude'], ut)
-        with urlopen(url, timeout=self.info['timeout']) as f:
-            string = f.read().decode(self.info['encoding'])
+        with urlopen(url, timeout=self.timeout) as f:
+            string = f.read().decode(self.encoding)
             timezone = yaml.load(string)
 
         item['timezone_name'] = timezone['timeZoneName']
-        item['timezone_date'] = self.info['date']
+        item['timezone_date'] = self.date
         item['timezone_hour'] = timezone['rawOffset'] / 3600
         item['timezone_hour'] += timezone['dstOffset'] / 3600
         return item
@@ -85,6 +85,9 @@ class Locations(dict):
         self._update_item(name)
         self._update_known_locations()
         return super().__getitem__(name)
+
+    def __getattr__(self, name):
+        return self.params[name]
 
     def __repr__(self):
         return pformat(dict(self))
