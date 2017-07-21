@@ -38,7 +38,7 @@ class Objects(dict):
                 self.update(yaml.load(f))
 
         # current directory
-        for fname in glob(join('**', '*.yaml'), recursive=True):
+        for fname in glob('*.yaml'):
             with open(fname, 'r') as f:
                 self.update(yaml.load(f))
 
