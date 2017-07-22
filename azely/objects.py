@@ -8,7 +8,7 @@ __all__ = [
 # standard library
 from collections import OrderedDict
 from glob import glob
-from os.path import join
+from os.path import basename, join
 from pprint import pformat
 
 # dependent packages
@@ -41,6 +41,9 @@ class Objects(dict):
 
         # current directory
         for fname in glob('*.yaml'):
+            if fname == basename(azely.KNOWN_LOCS):
+                continue
+
             with open(fname, 'r') as f:
                 self.update(yaml.load(f))
 
