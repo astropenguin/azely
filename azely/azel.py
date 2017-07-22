@@ -20,13 +20,13 @@ class AzEl(object):
         location = locs[location]
 
         # timezone
-        if timezone is None:
+        if timezone is None or timezone == '':
             timezone = location
-        elif type(timezone) in (int, float):
+        elif azely.isnum(timezone):
             timezone = {
-                'name': 'UTC{0:+.1f}'.format(timezone),
+                'name': 'UTC{0:+.1f}'.format(float(timezone)),
                 'timezone_hour': float(timezone),
-                'timezone_name': 'UTC{0:+.1f}'.format(timezone),
+                'timezone_name': 'UTC{0:+.1f}'.format(float(timezone)),
             }
         elif type(timezone) == str:
             if timezone.upper() == 'LST':
