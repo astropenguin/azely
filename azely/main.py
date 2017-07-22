@@ -31,7 +31,7 @@ from docopt import docopt
 DEFAULTS = {
     'date': azely.parse_date(),
     'location': 'Mitaka',
-    'objects': 'Solar',
+    'objects': 'Default',
     'timezone': '',
     'extension': 'pdf',
 }
