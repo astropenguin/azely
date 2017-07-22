@@ -14,6 +14,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.widgets import CheckButtons
 plt.style.use('seaborn-darkgrid')
+plt.rcParams['figure.figsize'] = (12,6)
 
 
 # functions
@@ -23,7 +24,7 @@ def plot_azel(**kwargs):
     azel = azely.AzEl(kwargs['location'], kwargs['timezone'], kwargs['date'])
 
     # figure settings
-    figure, axes = plt.subplots(2, 1, figsize=(12, 6), sharex=True)
+    figure, axes = plt.subplots(2, 1, sharex=True)
     figure.subplots_adjust(0.1, 0.1, 0.8, 0.9, 0.1, 0.2)
 
     # el-axis settings
