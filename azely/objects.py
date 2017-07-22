@@ -1,7 +1,9 @@
 # coding: utf-8
 
 # public items
-__all__ = ['Objects']
+__all__ = [
+    'Objects'
+]
 
 # standard library
 import os
