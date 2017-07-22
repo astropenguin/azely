@@ -30,7 +30,10 @@ URL_GOOGLEMAPS = 'https://www.google.com/maps?q={0},{1}'
 # functions
 def get_body(object_like):
     if isinstance(object_like, str):
-        return getattr(ephem, str(object_like))()
+        try:
+            return getattr(ephem, object_like)()
+        except AttributeError:
+            return ephem.star(object_like)
     elif issubclass(type(object_like), dict):
         body = ephem.FixedBody()
         body._ra = ephem.hours(str(object_like['ra']))
