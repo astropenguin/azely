@@ -17,10 +17,6 @@ Options:
     -t --timezone <keyword>   Keyword of timezone [default: {timezone}].
     -e --extension <keyword>  Keyword of file extension [default: {extension}].
 
-Details:
-    Lorem ipsum dolor sit amet, consectetur adipisicing elit,
-    sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-
 """
 
 # dependent packages
