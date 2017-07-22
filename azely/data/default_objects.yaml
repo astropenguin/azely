@@ -1,4 +1,4 @@
-Solar: &Solar
+Default:
   Sun: Sun
   Mercury: Mercury
   Venus: Venus
@@ -7,5 +7,3 @@ Solar: &Solar
   Saturn: Saturn
   Uranus: Uranus
   Neptune: Neptune
-
-Default: *Solar
