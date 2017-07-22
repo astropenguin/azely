@@ -3,7 +3,6 @@
 # information
 __version__ = '0.1'
 __author__  = 'Akio Taniguchi'
-__license__ = 'MIT'
 
 # standard library
 import os
@@ -18,6 +17,7 @@ from .azel import *
 from .constants import *
 from .locations import *
 from .objects import *
+from .plotting import *
 
 # create directory and file (if not existing)
 if not os.path.exists(azely.AZELY_DIR):
@@ -36,3 +36,4 @@ del azel
 del constants
 del locations
 del objects
+del plotting
