@@ -5,6 +5,7 @@ __all__ = [
     'get_body',
     'get_googlemaps',
     'get_unixtime',
+    'isnum',
     'parse_date',
     'parse_location',
     'parse_objects',
@@ -55,6 +56,14 @@ def get_googlemaps(name):
 def get_unixtime(date_like=None):
     date = datetime.strptime(parse_date(date_like), DATE_FORMAT)
     return time.mktime(date.utctimetuple())
+
+
+def isnum(string):
+    try:
+        float(string)
+        return True
+    except ValueError:
+        return False
 
 
 def parse_date(date_like=None):
