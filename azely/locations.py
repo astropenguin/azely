@@ -1,7 +1,9 @@
 # coding: utf-8
 
 # public items
-__all__ = ['Locations']
+__all__ = [
+    'Locations'
+]
 
 # standard library
 from pprint import pformat
