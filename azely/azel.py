@@ -1,7 +1,9 @@
 # coding: utf-8
 
 # public items
-__all__ = ['AzEl']
+__all__ = [
+    'AzEl'
+]
 
 # dependent packages
 import azely
