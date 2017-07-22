@@ -6,9 +6,9 @@ __all__ = [
 ]
 
 # standard library
-import os
 from collections import OrderedDict
 from glob import glob
+from os.path import join
 from pprint import pformat
 
 # dependent packages
@@ -26,13 +26,13 @@ class Objects(dict):
     def __init__(self):
         super().__init__()
 
-        # azely data directorVy
-        for fname in glob(os.path.join(azely.DATA_DIR, '*.yaml')):
+        # azely data directory
+        for fname in glob(join(azely.DATA_DIR, '**', '*.yaml'), recursive=True):
             with open(fname, 'r') as f:
                 self.update(yaml.load(f))
 
         # ~/.azely directory
-        for fname in glob(os.path.join(azely.AZELY_DIR, '*.yaml')):
+        for fname in glob(join(azely.AZELY_DIR, '**', '*.yaml'), recursive=True):
             if fname == azely.KNOWN_LOCS:
                 continue
 
