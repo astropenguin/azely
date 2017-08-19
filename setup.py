@@ -21,6 +21,6 @@ setup(
     keywords = 'astronomy visualization python',
     packages = ['azely'],
     package_data = {'azely': ['data/*.yaml']},
-    entry_points = {'console_scripts': ['azely=azely.main:main']},
+    entry_points = {'console_scripts': ['azely=azely.cli:main']},
     install_requires = ['docopt', 'pyephem', 'pyyaml'],
 )
