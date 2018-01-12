@@ -2,20 +2,45 @@
 
 # public items
 __all__ = [
-    'AZELY_DIR',
     'DATA_DIR',
+    'USER_DIR',
+    'AZELY_CONF',
     'KNOWN_LOCS',
-    'SAMPLE_OBJS',
 ]
 
 # standard library
-import os
+from shutil import copy
+from pathlib import Path
+from pkgutil import get_data
 
 # dependent packages
 import azely
+import yaml
 
-# local constants
-AZELY_DIR   = os.path.join(os.environ['HOME'], '.azely')
-DATA_DIR    = os.path.join(azely.__path__[0], 'data')
-KNOWN_LOCS  = os.path.join(AZELY_DIR, 'known_locations.yaml')
-SAMPLE_OBJS = os.path.join(DATA_DIR, 'sample_objects.yaml')
+# module constants
+HOME = Path('~').expanduser()
+CONF = 'azely_config.yaml'
+OBJS = 'sample_objects.yaml'
+LOCS = 'known_locations.yaml'
+
+
+# package constants
+DATA_DIR = Path(azely.__path__[0]) / 'data'
+USER_DIR = HOME / '.azely'
+AZELY_CONF = USER_DIR / CONF
+KNOWN_LOCS = USER_DIR / LOCS
+
+
+# create directory and file (if not existing)
+if not USER_DIR.exists():
+    USER_DIR.mkdir()
+
+if not AZELY_CONF.exists():
+    copy(DATA_DIR / CONF, USER_DIR)
+
+if not (USER_DIR / OBJS).exists():
+    copy(DATA_DIR / OBJS, USER_DIR)
+
+if not KNOWN_LOCS.exists():
+    with KNOWN_LOCS.open('w') as f:
+        f.write(yaml.dump({}, default_flow_style=False))
