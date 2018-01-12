@@ -45,10 +45,11 @@ class Locations(dict):
             try:
                 query = super().__getitem__(name)['query']
                 item = self._request_item(query)
-                tz_info = {key: item[key] for key in item if 'timezone' in key}
+                tz_info = {k: v for k, v in item.items() if 'timezone' in k}
                 super().__getitem__(name).update(tz_info)
             except KeyError:
                 # manually defined location
+                # not necessary to be updated
                 pass
             except URLError:
                 # no internet connection
@@ -99,7 +100,8 @@ class Locations(dict):
         if status == 'OK':
             return result
         else:
-            raise ValueError
+            message = result['error_message']
+            raise ValueError(message)
 
     def __getattr__(self, name):
         return self.params[name]
