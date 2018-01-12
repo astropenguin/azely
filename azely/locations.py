@@ -16,14 +16,15 @@ import yaml
 
 # local constants
 URL_API = 'https://maps.googleapis.com/maps/api'
-URL_GEOCODE = URL_API + '/geocode/json?address={0}'
-URL_TIMEZONE = URL_API + '/timezone/json?location={0},{1}&timestamp={2}'
+URL_GEOCODE   = URL_API + '/geocode/json?address={0}'
+URL_ELEVATION = URL_API + '/elevation/json?locations={0},{1}'
+URL_TIMEZONE  = URL_API + '/timezone/json?location={0},{1}&timestamp={2}'
 
 
 # classes
 class Locations(dict):
     def __init__(self, date=None, encoding='utf-8', timeout=5):
-        with open(azely.KNOWN_LOCS, 'r') as f:
+        with azely.KNOWN_LOCS.open() as f:
             known_locs = yaml.load(f, yaml.loader.SafeLoader)
             super().__init__(known_locs)
 
@@ -34,7 +35,7 @@ class Locations(dict):
         }
 
     def _update_known_locations(self):
-        with open(azely.KNOWN_LOCS, 'w') as f:
+        with azely.KNOWN_LOCS.open('w') as f:
             f.write(yaml.dump(dict(self), default_flow_style=False))
 
     def _update_item(self, name):
@@ -61,26 +62,35 @@ class Locations(dict):
         url = URL_GEOCODE.format(query)
         with urlopen(url, timeout=self.timeout) as f:
             string = f.read().decode(self.encoding)
-            geocode = yaml.load(string)['results'][0]
+            result = yaml.load(string)['results'][0]
 
         item = {}
-        item['name']      = geocode['address_components'][0]['long_name']
-        item['address']   = geocode['formatted_address']
-        item['latitude']  = geocode['geometry']['location']['lat']
-        item['longitude'] = geocode['geometry']['location']['lng']
+        item['name']      = result['address_components'][0]['long_name']
+        item['address']   = result['formatted_address']
+        item['latitude']  = result['geometry']['location']['lat']
+        item['longitude'] = result['geometry']['location']['lng']
         item['query']     = query
+
+        # get elevation from google maps api
+        url = URL_ELEVATION.format(item['latitude'], item['longitude'])
+        with urlopen(url, timeout=self.timeout) as f:
+            string = f.read().decode(self.encoding)
+            result = yaml.load(string)['results'][0]
+
+        item['elevation'] = result['elevation']
 
         # get timezone from google maps api
         ut = azely.get_unixtime(self.date)
         url = URL_TIMEZONE.format(item['latitude'], item['longitude'], ut)
         with urlopen(url, timeout=self.timeout) as f:
             string = f.read().decode(self.encoding)
-            timezone = yaml.load(string)
+            result = yaml.load(string)
 
-        item['timezone_name'] = timezone['timeZoneName']
+        item['timezone_name'] = result['timeZoneName']
         item['timezone_date'] = self.date
-        item['timezone_hour'] = timezone['rawOffset'] / 3600
-        item['timezone_hour'] += timezone['dstOffset'] / 3600
+        item['timezone_hour'] = result['rawOffset'] / 3600
+        item['timezone_hour'] += result['dstOffset'] / 3600
+
         return item
 
     def __getitem__(self, name):
