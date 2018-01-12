@@ -5,17 +5,13 @@
 # standard library
 from setuptools import setup
 
-# dependent packages
-import azely
-
 
 # functions
 setup(
     name = 'azely',
     description = __doc__,
-    version = azely.__version__,
-    author = azely.__author__,
-    license = azely.__license__,
+    version = '0.2',
+    author = 'snoopython',
     author_email = 'taniguchi@ioa.s.u-tokyo.ac.jp',
     url = 'https://github.com/snoopython/azely',
     keywords = 'astronomy visualization python',
