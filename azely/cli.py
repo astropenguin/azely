@@ -23,7 +23,7 @@ Options:
 import azely
 from docopt import docopt
 
-# local constants
+# module constants
 DEFAULTS = {
     'date': azely.parse_date(),
     'location': 'Mitaka',

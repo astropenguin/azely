@@ -22,7 +22,7 @@ from urllib.parse import urlencode
 import azely
 import ephem
 
-# local constants
+# module constants
 DATE_FORMAT = '%Y-%m-%d'
 SEPARATORS = '[+\-_&,./|:; ]+'
 URL_GOOGLEMAPS = 'https://www.google.com/maps'

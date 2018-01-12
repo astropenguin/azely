@@ -10,7 +10,7 @@ import azely
 import ephem
 import numpy as np
 
-# local constants
+# module constants
 UT_TO_LST = 1.0027379
 
 

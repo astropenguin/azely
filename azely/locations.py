@@ -15,7 +15,7 @@ from urllib.request import urlopen
 import azely
 import yaml
 
-# local constants
+# module constants
 URL_API = 'https://maps.googleapis.com/maps/api'
 URL_GEOCODE  = f'{URL_API}/geocode/json'
 URL_TIMEZONE = f'{URL_API}/timezone/json'
