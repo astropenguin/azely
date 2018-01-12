@@ -1,9 +1,7 @@
 # coding: utf-8
 
 # public items
-__all__ = [
-    'plot_azel',
-]
+__all__ = ['plot_azel']
 
 # standard library
 from collections import OrderedDict
