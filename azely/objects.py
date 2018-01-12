@@ -18,8 +18,6 @@ yaml.add_constructor(
     lambda loader, node: OrderedDict(loader.construct_pairs(node))
 )
 
-# module constants
-SEP = '+'
 
 # classes
 class Objects(dict):
@@ -74,7 +72,8 @@ class Objects(dict):
         if isinstance(names_like, (list, tuple)):
             return names_like
         elif isinstance(names_like, str):
-            return re.sub(azely.SEPARATORS, SEP, names_like).split(SEP)
+            pattern = f'[{azely.SEPARATORS}]+'
+            return re.sub(pattern, ' ', names_like).split()
 
     def __repr__(self):
         return pformat(dict(self))
