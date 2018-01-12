@@ -13,8 +13,6 @@ import azely
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.widgets import CheckButtons
-plt.style.use('seaborn-darkgrid')
-plt.rcParams['figure.figsize'] = (12,6)
 
 
 # functions
