@@ -7,8 +7,7 @@ __all__ = [
 
 # standard library
 from collections import OrderedDict
-from glob import glob
-from os.path import basename, join
+from pathlib import Path
 from pprint import pformat
 
 # dependent packages
@@ -27,24 +26,24 @@ class Objects(dict):
         super().__init__()
 
         # azely data directory
-        for fname in glob(join(azely.DATA_DIR, '**', '*.yaml'), recursive=True):
-            with open(fname, 'r') as f:
+        for filepath in azely.DATA_DIR.glob('**/*.yaml'):
+            with filepath.open() as f:
                 self.update(yaml.load(f))
 
         # ~/.azely directory
-        for fname in glob(join(azely.AZELY_DIR, '**', '*.yaml'), recursive=True):
-            if fname == azely.KNOWN_LOCS:
+        for filepath in azely.USER_DIR.glob('**/*.yaml'):
+            if filepath.name == azely.KNOWN_LOCS.name:
                 continue
 
-            with open(fname, 'r') as f:
+            with filepath.open() as f:
                 self.update(yaml.load(f))
 
         # current directory
-        for fname in glob('*.yaml'):
-            if fname == basename(azely.KNOWN_LOCS):
+        for filepath in Path('.').glob('*.yaml'):
+            if filepath.name == azely.KNOWN_LOCS.name:
                 continue
 
-            with open(fname, 'r') as f:
+            with filepath.open() as f:
                 self.update(yaml.load(f))
 
     def __getitem__(self, name):
@@ -52,17 +51,20 @@ class Objects(dict):
         for obj in azely.parse_objects(name):
             if obj in self:
                 value = super().__getitem__(obj)
-                if issubclass(type(value), dict):
-                    if not any(['ra' in value, 'dec' in value]):
-                        item.update(value)
-                        continue
-
-                item.update({obj: value})
+                if (isinstance(value, dict)
+                    and not set(value) & {'ra', 'dec'}):
+                    # name of group such as "Default"
+                    item.update(value)
+                else:
+                    # name of an object defined as (RA, Dec)
+                    item.update({obj: value})
             else:
+                # name of preset such as Sun, M82,
+                # or name of an object in a group
                 item.update({obj: obj})
                 for value in self.values():
-                    if issubclass(type(value), dict):
-                        item.update({obj: value.get(obj, obj)})
+                    if isinstance(value, dict) and obj in value:
+                        item.update({obj: value[obj]})
 
         return item
 
