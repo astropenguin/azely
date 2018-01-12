@@ -11,7 +11,6 @@ __all__ = [
 # standard library
 from shutil import copy
 from pathlib import Path
-from pkgutil import get_data
 
 # dependent packages
 import azely
