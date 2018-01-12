@@ -1,11 +1,10 @@
 # coding: utf-8
 
 # public items
-__all__ = [
-    'Objects'
-]
+__all__ = ['Objects']
 
 # standard library
+import re
 from collections import OrderedDict
 from pathlib import Path
 from pprint import pformat
@@ -19,6 +18,8 @@ yaml.add_constructor(
     lambda loader, node: OrderedDict(loader.construct_pairs(node))
 )
 
+# module constants
+SEP = '+'
 
 # classes
 class Objects(dict):
@@ -46,27 +47,34 @@ class Objects(dict):
             with filepath.open() as f:
                 self.update(yaml.load(f))
 
-    def __getitem__(self, name):
-        item = OrderedDict()
-        for obj in azely.parse_objects(name):
-            if obj in self:
-                value = super().__getitem__(obj)
-                if (isinstance(value, dict)
-                    and not set(value) & {'ra', 'dec'}):
+    def __getitem__(self, names_like):
+        objects = OrderedDict()
+        for name in self._parse_object_names(names_like):
+            if name in self:
+                value = super().__getitem__(name)
+                if azely.isobject(value):
+                    # name of an object
+                    objects.update({name: value})
+                elif isinstance(value, dict):
                     # name of group such as "Default"
-                    item.update(value)
+                    objects.update(value)
                 else:
-                    # name of an object defined as (RA, Dec)
-                    item.update({obj: value})
+                    continue
             else:
                 # name of preset such as Sun, M82,
                 # or name of an object in a group
-                item.update({obj: obj})
+                objects.update({name: name})
                 for value in self.values():
-                    if isinstance(value, dict) and obj in value:
-                        item.update({obj: value[obj]})
+                    if isinstance(value, dict) and name in value:
+                        objects.update({name: value[name]})
 
-        return item
+        return objects
+
+    def _parse_object_names(self, names_like):
+        if isinstance(names_like, (list, tuple)):
+            return names_like
+        elif isinstance(names_like, str):
+            return re.sub(azely.SEPARATORS, SEP, names_like).split(SEP)
 
     def __repr__(self):
         return pformat(dict(self))
