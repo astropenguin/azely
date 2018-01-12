@@ -83,7 +83,8 @@ def parse_date(date_like=None):
     elif isinstance(date_like, datetime):
         return date_like.strftime(azely.DATE_FORMAT)
     elif isinstance(date_like, str):
-        date_like = re.sub(azely.SEPARATORS, '', date_like)
+        pattern = f'[{azely.SEPARATORS}]+'
+        date_like = re.sub(pattern, '', date_like)
         try:
             dt = datetime.strptime(date_like, '%y%m%d')
             return dt.strftime(azely.DATE_FORMAT)
