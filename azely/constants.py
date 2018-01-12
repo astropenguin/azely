@@ -1,12 +1,12 @@
 # coding: utf-8
 
 # public items
-__all__ = [
-    'DATA_DIR',
-    'USER_DIR',
-    'AZELY_CONF',
-    'KNOWN_LOCS',
-]
+__all__ = ['DATA_DIR',
+           'USER_DIR',
+           'AZELY_CONF',
+           'KNOWN_LOCS',
+           'SEPARATORS',
+           'DATE_FORMAT']
 
 # standard library
 from shutil import copy
@@ -28,6 +28,8 @@ DATA_DIR = Path(azely.__path__[0]) / 'data'
 USER_DIR = HOME / '.azely'
 AZELY_CONF = USER_DIR / CONF
 KNOWN_LOCS = USER_DIR / LOCS
+SEPARATORS = '[+\-_&,./|:; ]+'
+DATE_FORMAT = '%Y-%m-%d'
 
 
 # create directory and file (if not existing)
