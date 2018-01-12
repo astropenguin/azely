@@ -17,7 +17,6 @@ import azely
 import yaml
 
 # module constants
-SEP = '+'
 URL_API = 'https://maps.googleapis.com/maps/api'
 URL_GEOCODE  = f'{URL_API}/geocode/json'
 URL_TIMEZONE = f'{URL_API}/timezone/json'
@@ -110,7 +109,8 @@ class Locations(dict):
         if isinstance(name_like, (list, tuple)):
             return SEP.join(name_like)
         elif isinstance(name_like, str):
-            return re.sub(azely.SEPARATORS, SEP, name_like)
+            pattern = f'[{azely.SEPARATORS}]+'
+            return re.sub(pattern, '+', name_like)
         else:
             raise ValueError(name_like)
 
