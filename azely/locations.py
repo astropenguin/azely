@@ -8,6 +8,7 @@ __all__ = [
 # standard library
 from pprint import pformat
 from urllib.error import URLError
+from urllib.parse import urlencode
 from urllib.request import urlopen
 
 # dependent packages
@@ -16,9 +17,8 @@ import yaml
 
 # local constants
 URL_API = 'https://maps.googleapis.com/maps/api'
-URL_GEOCODE   = URL_API + '/geocode/json?address={0}'
-URL_ELEVATION = URL_API + '/elevation/json?locations={0},{1}'
-URL_TIMEZONE  = URL_API + '/timezone/json?location={0},{1}&timestamp={2}'
+URL_GEOCODE  = f'{URL_API}/geocode/json'
+URL_TIMEZONE = f'{URL_API}/timezone/json'
 
 
 # classes
@@ -34,58 +34,56 @@ class Locations(dict):
             'timeout': timeout,
         }
 
+    def __getitem__(self, name):
+        self._update_item(name)
+        self._update_known_locations()
+        return super().__getitem__(name)
+
+    def _update_item(self, name):
+        if name in self:
+            # update only information of timezone on given date
+            try:
+                query = super().__getitem__(name)['query']
+                item = self._request_item(query)
+                tz_info = {key: item[key] for key in item if 'timezone' in key}
+                super().__getitem__(name).update(tz_info)
+            except KeyError:
+                # manually defined location
+                pass
+            except URLError:
+                # no internet connection
+                print('URLError!')
+            except ValueError:
+                # result with some error
+                print('ValueError!')
+        else:
+            # request whole information of location on given date
+            query = azely.parse_location(name)
+            item = self._request_item(query)
+            super().__setitem__(name, item)
+
     def _update_known_locations(self):
         with azely.KNOWN_LOCS.open('w') as f:
             f.write(yaml.dump(dict(self), default_flow_style=False))
 
-    def _update_item(self, name):
-        if name in self:
-            try:
-                query = super().__getitem__(name)['query']
-                item = self._request_item(query) # updated
-                timezone = {key: item[key] for key in item if 'timezone' in key}
-                super().__getitem__(name).update(timezone)
-            except KeyError:
-                print('warning!')
-            except URLError:
-                print('warning!')
-        else:
-            try:
-                query = azely.parse_location(name)
-                item = self._request_item(query) # created
-                super().__setitem__(name, item)
-            except URLError:
-                raise ConnectionError('error!')
-
     def _request_item(self, query):
-        # get geocode from google maps api
-        url = URL_GEOCODE.format(query)
-        with urlopen(url, timeout=self.timeout) as f:
-            string = f.read().decode(self.encoding)
-            result = yaml.load(string)['results'][0]
-
         item = {}
+
+        # get geocode from google maps api
+        params = {'address': query}
+        result = self._request_api(URL_GEOCODE, params)['results'][0]
         item['name']      = result['address_components'][0]['long_name']
         item['address']   = result['formatted_address']
         item['latitude']  = result['geometry']['location']['lat']
         item['longitude'] = result['geometry']['location']['lng']
         item['query']     = query
 
-        # get elevation from google maps api
-        url = URL_ELEVATION.format(item['latitude'], item['longitude'])
-        with urlopen(url, timeout=self.timeout) as f:
-            string = f.read().decode(self.encoding)
-            result = yaml.load(string)['results'][0]
-
-        item['elevation'] = result['elevation']
-
         # get timezone from google maps api
-        ut = azely.get_unixtime(self.date)
-        url = URL_TIMEZONE.format(item['latitude'], item['longitude'], ut)
-        with urlopen(url, timeout=self.timeout) as f:
-            string = f.read().decode(self.encoding)
-            result = yaml.load(string)
-
+        params = {
+            'location': f'{item["latitude"]}, {item["longitude"]}',
+            'timestamp': azely.get_unixtime(self.date)
+        }
+        result = self._request_api(URL_TIMEZONE, params)
         item['timezone_name'] = result['timeZoneName']
         item['timezone_date'] = self.date
         item['timezone_hour'] = result['rawOffset'] / 3600
@@ -93,10 +91,15 @@ class Locations(dict):
 
         return item
 
-    def __getitem__(self, name):
-        self._update_item(name)
-        self._update_known_locations()
-        return super().__getitem__(name)
+    def _request_api(self, url, query):
+        with urlopen(f'{url}?{urlencode(query)}', timeout=self.timeout) as f:
+            result = yaml.load(f.read().decode(self.encoding))
+            status = result['status']
+
+        if status == 'OK':
+            return result
+        else:
+            raise ValueError
 
     def __getattr__(self, name):
         return self.params[name]
