@@ -1,19 +1,14 @@
 # coding: utf-8
 
 # public items
-__all__ = [
-    'get_body',
-    'get_googlemaps',
-    'get_unixtime',
-    'isnum',
-    'parse_date',
-    'parse_location',
-    'parse_objects',
-]
+__all__ = ['get_body',
+           'isnumber',
+           'isobject',
+           'open_googlemaps',
+           'parse_date']
 
 # standard library
 import re
-import time
 import webbrowser
 from datetime import datetime
 from urllib.parse import urlencode
@@ -21,10 +16,9 @@ from urllib.parse import urlencode
 # dependent packages
 import azely
 import ephem
+from astropy.coordinates import SkyCoord
 
 # module constants
-DATE_FORMAT = '%Y-%m-%d'
-SEPARATORS = '[+\-_&,./|:; ]+'
 URL_GOOGLEMAPS = 'https://www.google.com/maps'
 
 
@@ -49,55 +43,52 @@ def get_body(object_like):
         raise ValueError(object_like)
 
 
-def get_googlemaps(name):
-    locs = azely.Locations()
-    query = azely.parse_location(name)
-    item = locs._request_item(query)
-    params = {'q': f'{item["latitude"]}, {item["longitude"]}'}
-    webbrowser.open(f'{URL_GOOGLEMAPS}?{urlencode(params)}')
-
-
-def get_unixtime(date_like=None):
-    date = datetime.strptime(parse_date(date_like), DATE_FORMAT)
-    return time.mktime(date.utctimetuple())
-
-
-def isnum(string):
+def isnumber(obj):
+    """Whether an object can be converted to number or not."""
     try:
-        float(string)
+        float(obj)
         return True
     except ValueError:
         return False
 
 
+def isobject(obj):
+    """Whether an object is astronomical object-like or not.
+
+    """
+    if isinstance(obj, str):
+        return True
+    elif isinstance(obj, dict):
+        try:
+            SkyCoord(**obj)
+            return True
+        except ValueError:
+            return False
+    else:
+        return False
+
+
+def open_googlemaps(location):
+    """Open Google Maps of given location by a web browser."""
+    query = azely.parse_location(location)
+    item = azely.Locations()._request_item(query)
+    params = {'q': f'{item["latitude"]}, {item["longitude"]}'}
+    webbrowser.open(f'{URL_GOOGLEMAPS}?{urlencode(params)}')
+
+
 def parse_date(date_like=None):
+    """Parse date-like object and return format string."""
     if date_like is None:
-        return datetime.now().strftime(DATE_FORMAT)
+        return datetime.now().strftime(azely.DATE_FORMAT)
     elif isinstance(date_like, datetime):
-        return date_like.strftime(DATE_FORMAT)
-    elif type(date_like) == str:
-        date_like = re.sub(SEPARATORS, '', date_like)
+        return date_like.strftime(azely.DATE_FORMAT)
+    elif isinstance(date_like, str):
+        date_like = re.sub(azely.SEPARATORS, '', date_like)
         try:
             dt = datetime.strptime(date_like, '%y%m%d')
-            return dt.strftime(DATE_FORMAT)
+            return dt.strftime(azely.DATE_FORMAT)
         except ValueError:
             dt = datetime.strptime(date_like, '%Y%m%d')
-            return dt.strftime(DATE_FORMAT)
+            return dt.strftime(azely.DATE_FORMAT)
     else:
         raise ValueError(date_like)
-
-
-def parse_location(location_like):
-    if type(location_like) in (list, tuple):
-        return '+'.join(location_like)
-    elif type(location_like) == str:
-        return re.sub(SEPARATORS, '+', location_like)
-    else:
-        raise ValueError(location_like)
-
-
-def parse_objects(objects_like):
-    if type(objects_like) in (list, tuple):
-        return objects_like
-    elif type(objects_like) == str:
-        return re.sub(SEPARATORS, ' ', objects_like).split()
