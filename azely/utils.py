@@ -16,6 +16,7 @@ import re
 import time
 import webbrowser
 from datetime import datetime
+from urllib.parse import urlencode
 
 # dependent packages
 import azely
@@ -24,7 +25,7 @@ import ephem
 # local constants
 DATE_FORMAT = '%Y-%m-%d'
 SEPARATORS = '[+\-_&,./|:; ]+'
-URL_GOOGLEMAPS = 'https://www.google.com/maps?q={0},{1}'
+URL_GOOGLEMAPS = 'https://www.google.com/maps'
 
 
 # functions
@@ -52,8 +53,8 @@ def get_googlemaps(name):
     locs = azely.Locations()
     query = azely.parse_location(name)
     item = locs._request_item(query)
-    url = URL_GOOGLEMAPS.format(item['latitude'], item['longitude'])
-    webbrowser.open(url)
+    params = {'q': f'{item["latitude"]}, {item["longitude"]}'}
+    webbrowser.open(f'{URL_GOOGLEMAPS}?{urlencode(params)}')
 
 
 def get_unixtime(date_like=None):
