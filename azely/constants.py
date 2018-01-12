@@ -28,7 +28,7 @@ DATA_DIR = Path(azely.__path__[0]) / 'data'
 USER_DIR = HOME / '.azely'
 AZELY_CONF = USER_DIR / CONF
 KNOWN_LOCS = USER_DIR / LOCS
-SEPARATORS = '[+\-_&,./|:; ]+'
+SEPARATORS = '-+_,./ '
 DATE_FORMAT = '%Y-%m-%d'
 
 
