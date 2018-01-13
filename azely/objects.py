@@ -34,19 +34,28 @@ class Objects(dict):
             if filepath.name == azely.KNOWN_LOCS.name:
                 continue
 
-            with filepath.open() as f:
-                self.update(yaml.load(f))
+            try:
+                with filepath.open() as f:
+                    self.update(yaml.load(f))
+            except:
+                print('logging later!')
+                continue
 
         # current directory
         for filepath in Path('.').glob('*.yaml'):
             if filepath.name == azely.KNOWN_LOCS.name:
                 continue
 
-            with filepath.open() as f:
-                self.update(yaml.load(f))
+            try:
+                with filepath.open() as f:
+                    self.update(yaml.load(f))
+            except:
+                print('logging later!')
+                continue
 
     def __getitem__(self, names_like):
         objects = OrderedDict()
+
         for name in self._parse_object_names(names_like):
             if name in self:
                 value = super().__getitem__(name)
@@ -57,6 +66,7 @@ class Objects(dict):
                     # name of group such as "Default"
                     objects.update(value)
                 else:
+                    print('logging later!')
                     continue
             else:
                 # name of preset such as Sun, M82,
