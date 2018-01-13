@@ -53,10 +53,10 @@ class Locations(dict):
                 pass
             except URLError:
                 # no internet connection
-                print('URLError!')
+                print('logging later!')
             except ValueError:
                 # result with some error
-                print('ValueError!')
+                print('logging later!')
         else:
             # request whole information of location on given date
             query = self._parse_location_name(name_like)
