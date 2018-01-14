@@ -25,9 +25,8 @@ URL_TIMEZONE = f'{URL_API}/timezone/json'
 # classes
 class Locations(dict):
     def __init__(self, date=None, encoding='utf-8', timeout=5):
-        with azely.KNOWN_LOCS.open() as f:
-            known_locs = yaml.load(f, yaml.loader.SafeLoader)
-            super().__init__(known_locs)
+        super().__init__()
+        self._load_known_locations()
 
         date = azely.parse_date(date)
         self.params = {'date': date,
@@ -38,6 +37,14 @@ class Locations(dict):
         self._update_location(name_like)
         self._update_known_locations()
         return super().__getitem__(name_like)
+
+    def _load_known_locations(self):
+        with azely.KNOWN_LOCS.open('r') as f:
+            self.update(yaml.load(f, yaml.loader.SafeLoader))
+
+    def _update_known_locations(self):
+        with azely.KNOWN_LOCS.open('w') as f:
+            f.write(yaml.dump(dict(self), default_flow_style=False))
 
     def _update_location(self, name_like):
         if name_like in self:
@@ -63,10 +70,6 @@ class Locations(dict):
             location = self._request_location(query)
             super().__setitem__(name_like, location)
 
-    def _update_known_locations(self):
-        with azely.KNOWN_LOCS.open('w') as f:
-            f.write(yaml.dump(dict(self), default_flow_style=False))
-
     def _request_location(self, query):
         location = {}
 
@@ -80,8 +83,9 @@ class Locations(dict):
         location['query']     = query
 
         # get timezone from google maps api
+        date = datetime.strptime(self.date, azely.DATE_FORMAT)
         params = {'location': f'{location["latitude"]}, {location["longitude"]}',
-                 'timestamp': self._get_unixtime()}
+                  'timestamp': time.mktime(date.utctimetuple())}
         result = self._request_api(URL_TIMEZONE, params)
         location['timezone_name'] = result['timeZoneName']
         location['timezone_date'] = self.date
@@ -100,10 +104,6 @@ class Locations(dict):
         else:
             message = result['error_message']
             raise ValueError(message)
-
-    def _get_unixtime(self):
-        date = datetime.strptime(self.date, azely.DATE_FORMAT)
-        return time.mktime(date.utctimetuple())
 
     def _parse_location_name(self, name_like):
         if isinstance(name_like, (list, tuple)):
