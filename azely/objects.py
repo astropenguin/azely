@@ -107,10 +107,13 @@ class Objects(OrderedDict):
                     continue
 
                 try:
-                    coord = SkyCoord.from_name(name)
-                    radec = {'ra': str(coord.ra), 'dec': str(coord.dec)}
+                    frame = 'icrs'
+                    coord = SkyCoord.from_name(object_like, frame)
+                    ra, dec = coord.to_string('hmsdms').split()
+                    dict_object = {'ra': ra, 'dec': dec, 'frame': frame}
+
                     skycoords.update({name: coord})
-                    self._known_objects.update({name: radec})
+                    self._known_objects.update({name: dict_object})
                 except NameResolveError:
                     print('logging later!')
             else:
