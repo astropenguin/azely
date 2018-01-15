@@ -27,11 +27,16 @@ yaml.add_constructor(
 
 
 # classes
-class Objects(OrderedDict):
-    def __init__(self):
+class Objects(dict):
+    def __init__(self, reload=True):
         super().__init__()
         self._load_object_yamls()
         self._load_known_objects()
+        self.reload = reload
+
+    @property
+    def params(self):
+        return {'reload': self.reload}
 
     @property
     def groups(self):
@@ -65,62 +70,61 @@ class Objects(OrderedDict):
         return self._flatitems
 
     def __getitem__(self, names_like):
-        objects = self._select_objects(names_like)
-        skycoords = self._parse_objects(objects)
-        return skycoords
+        if self.reload:
+            self._load_object_yamls()
 
-    def _select_objects(self, names_like):
         objects = OrderedDict()
 
-        for name in self._parse_object_names(names_like):
-            if name in self.groups:
-                objects.update(self.groups[name])
-            elif name in self.flatitems:
-                objects.update({name: self.flatitems[name]})
-            else:
-                objects.update({name: name})
+        for name in self._parse_names(names_like):
+            self._add_object(objects, name)
 
-        for name, object_like in objects.items():
-            if not object_like:
-                objects.update({name: name})
-
-        return objects
-
-    def _parse_objects(self, objects):
-        skycoords = OrderedDict()
-
-        for name, object_like in objects.items():
-            if isinstance(object_like, dict):
-                try:
-                    coord = SkyCoord(**object_like)
-                    skycoords.update({name: coord})
-                except ValueError:
-                    print('logging later!')
-            elif isinstance(object_like, str):
-                if object_like.lower() in EPHEMS:
-                    skycoords.update({name: object_like})
-                    continue
-
-                if name in self._known_objects:
-                    coord = SkyCoord(**self._known_objects[name])
-                    skycoords.update({name: coord})
-                    continue
-
-                try:
-                    frame = 'icrs'
-                    coord = SkyCoord.from_name(object_like, frame)
-                    ra, dec = coord.to_string('hmsdms').split()
-                    dict_object = {'ra': ra, 'dec': dec, 'frame': frame}
-
-                    skycoords.update({name: coord})
-                    self._known_objects.update({name: dict_object})
-                except NameResolveError:
-                    print('logging later!')
-            else:
-                print('logging later!')
+        for name in objects:
+            self._parse_object(objects, name)
 
         self._update_known_objects()
-        return skycoords
+        return objects
+
+    def _add_object(self, objects, name):
+        if name in self.groups:
+            objects.update(self.groups[name])
+        elif name in self.flatitems:
+            objects.update({name: self.flatitems[name]})
+        else:
+            objects.update({name: name})
+
+    def _parse_object(self, objects, name):
+        if not objects[name]:
+            objects.update({name: name})
+
+        object_like = objects[name]
+
+        if isinstance(object_like, dict):
+            try:
+                coord = SkyCoord(**object_like)
+                objects.update({name: coord})
+            except ValueError:
+                print('logging later!')
+        elif isinstance(object_like, str):
+            if object_like.lower() in EPHEMS:
+                return
+
+            if name in self._known_objects:
+                coord = SkyCoord(**self._known_objects[name])
+                objects.update({name: coord})
+                return
+
+            try:
+                frame = 'icrs'
+                coord = SkyCoord.from_name(object_like, frame)
+                ra, dec = coord.to_string('hmsdms').split()
+                dict_coord = {'ra': ra, 'dec': dec, 'frame': frame}
+
+                objects.update({name: coord})
+                self._known_objects.update({name: dict_coord})
+            except NameResolveError:
+                print('logging later!')
+        else:
+            print('logging later!')
 
     def _load_object_yamls(self):
         # azely data directory
@@ -160,17 +164,19 @@ class Objects(OrderedDict):
                     print('logging later!')
 
     def _load_known_objects(self):
-        if not hasattr(self, '_known_objects'):
-            self._known_objects = {}
+        self._known_objects = {}
 
         with azely.KNOWN_OBJS.open('r') as f:
-            self._known_objects.update(yaml.load(f, yaml.loader.SafeLoader))
+            known_objects = yaml.load(f, yaml.loader.SafeLoader)
+
+        if known_objects is not None:
+            self._known_objects.update(known_objects)
 
     def _update_known_objects(self):
         with azely.KNOWN_OBJS.open('w') as f:
             f.write(yaml.dump(self._known_objects, default_flow_style=False))
 
-    def _parse_object_names(self, names_like):
+    def _parse_names(self, names_like):
         if isinstance(names_like, (list, tuple)):
             return names_like
         elif isinstance(names_like, str):
@@ -178,4 +184,7 @@ class Objects(OrderedDict):
             return re.sub(pattern, ' ', names_like).split()
 
     def __repr__(self):
+        if self.reload:
+            self._load_object_yamls()
+
         return pformat(dict(self))
