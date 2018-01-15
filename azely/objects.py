@@ -29,7 +29,7 @@ class Objects(dict):
 
     @property
     def groups(self):
-        if hasattr(self, '_groups'):
+        if hasattr(self, '_groups') and not self.reload:
             return self._groups
 
         self._groups = OrderedDict()
@@ -46,7 +46,7 @@ class Objects(dict):
 
     @property
     def flatitems(self):
-        if hasattr(self, '_flatitems'):
+        if hasattr(self, '_flatitems') and not self.reload:
             return self._flatitems
 
         self._flatitems = OrderedDict()
