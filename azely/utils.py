@@ -4,7 +4,6 @@
 __all__ = ['get_body',
            'islst',
            'isnumber',
-           'isobject',
            'open_googlemaps',
            'parse_date']
 
@@ -60,22 +59,6 @@ def isnumber(obj):
         float(obj)
         return True
     except ValueError:
-        return False
-
-
-def isobject(obj):
-    """Whether an object is astronomical object-like or not.
-
-    """
-    if isinstance(obj, str):
-        return True
-    elif isinstance(obj, dict):
-        try:
-            SkyCoord(**obj)
-            return True
-        except ValueError:
-            return False
-    else:
         return False
 
 
