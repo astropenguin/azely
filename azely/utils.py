@@ -131,7 +131,7 @@ def parse_date(date_like=None, separators='/\.\-'):
     elif isinstance(date_like, datetime):
         return date_like.strftime(azely.DATE_FORMAT)
     elif isinstance(date_like, str):
-        date_like = ''.join(parse_name(date_like, separators))
+        date_like = ''.join(azely.parse_name(date_like, separators))
         try:
             dt = datetime.strptime(date_like, '%y%m%d')
             return dt.strftime(azely.DATE_FORMAT)
@@ -144,6 +144,7 @@ def parse_date(date_like=None, separators='/\.\-'):
 
 def open_googlemaps(name):
     """Open Google Maps of given location by a web browser."""
-    location = azely.locations[name]
+    query = ' '.join(azely.parse_name(name))
+    location = azely.locations._request_location(query)
     params = {'q': f'{location["latitude"]}, {location["longitude"]}'}
     webbrowser.open(f'{URL_GOOGLEMAPS}?{urlencode(params)}')
