@@ -54,7 +54,10 @@ class Locations(dict):
 
     def _load_known_locations(self):
         with azely.KNOWN_LOCS.open('r') as f:
-            self.update(yaml.load(f, yaml.loader.SafeLoader))
+            known_locations = yaml.load(f, yaml.loader.SafeLoader)
+
+        if known_locations is not None:
+            self.update(known_locations)
 
     def _update_known_locations(self):
         with azely.KNOWN_LOCS.open('w') as f:
