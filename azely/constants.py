@@ -6,8 +6,8 @@ __all__ = ['DATA_DIR',
            'CLI_CONFIG',
            'KNOWN_LOCS',
            'KNOWN_OBJS',
-           'SEPARATORS',
-           'DATE_FORMAT']
+           'DATE_FORMAT',
+           'PASS_FLAG']
 
 # standard library
 from shutil import copy
@@ -31,8 +31,8 @@ USER_DIR = HOME / '.azely'
 CLI_CONFIG = USER_DIR / CONFIG
 KNOWN_LOCS = USER_DIR / LOCS
 KNOWN_OBJS = USER_DIR / OBJS
-SEPARATORS = '-+_,./ '
 DATE_FORMAT = '%Y-%m-%d'
+PASS_FLAG = '<PASS>'
 
 
 # create directory and file (if not existing)
