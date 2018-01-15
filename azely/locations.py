@@ -24,33 +24,31 @@ URL_TIMEZONE = f'{URL_API}/timezone/json'
 
 # classes
 class Locations(dict):
-    def __init__(self, date=None, encoding='utf-8', timeout=5):
+    def __init__(self, date=None, encoding='utf-8', timeout=5, reload=True):
         super().__init__()
         self._load_known_locations()
 
         self.date = azely.parse_date(date) # for old AzEl
         self.encoding = encoding
         self.timeout = timeout
+        self.reload = reload
 
-    @property
-    def params(self):
-        return {'date': self.date,
-                'encoding': self.encoding,
-                'timeout': self.timeout}
+    def __getitem__(self, name):
+        if self.reload:
+            self._load_known_locations()
 
-    def __getitem__(self, name_like):
-        if isinstance(name_like, tuple):
-            name_like, date = name_like
+        if isinstance(name, tuple):
+            name, date = name
             date = azely.parse_date(date)
-        elif isinstance(name_like, str):
+        elif isinstance(name, str):
             # date = azely.parse_date()
             date = self.date # for old AzEl
         else:
-            raise ValueError(name_like)
+            raise ValueError(name)
 
-        self._update_location(name_like, date)
+        self._update_location(name, date)
         self._update_known_locations()
-        return super().__getitem__(name_like)
+        return super().__getitem__(name)
 
     def _load_known_locations(self):
         self.update(azely.read_yaml(azely.KNOWN_LOCS))
@@ -58,14 +56,14 @@ class Locations(dict):
     def _update_known_locations(self):
         azely.write_yaml(azely.KNOWN_LOCS, dict(self))
 
-    def _update_location(self, name_like, date):
-        if name_like in self:
+    def _update_location(self, name, date):
+        if name in self:
             # update only information of timezone on given date
             try:
-                query = super().__getitem__(name_like)['query']
+                query = super().__getitem__(name)['query']
                 location = self._request_location(query, date)
                 tz_info = {k:v for k,v in location.items() if 'timezone' in k}
-                super().__getitem__(name_like).update(tz_info)
+                super().__getitem__(name).update(tz_info)
             except KeyError:
                 # manually defined location
                 # not necessary to be updated
@@ -78,9 +76,9 @@ class Locations(dict):
                 print('logging later!')
         else:
             # request whole information of location on given date
-            query = self._parse_location_name(name_like)
+            query = self._parse_name(name)
             location = self._request_location(query, date)
-            super().__setitem__(name_like, location)
+            super().__setitem__(name, location)
 
     def _request_location(self, query, date):
         location = {}
@@ -95,9 +93,9 @@ class Locations(dict):
         location['query']     = query
 
         # get timezone from google maps api
-        dateobj = datetime.strptime(date, azely.DATE_FORMAT)
-        params = {'location': f'{location["latitude"]}, {location["longitude"]}',
-                  'timestamp': time.mktime(dateobj.utctimetuple())}
+        dt = datetime.strptime(date, azely.DATE_FORMAT)
+        params = {'timestamp': time.mktime(dt.utctimetuple()), # unix time
+                  'location': f'{location["latitude"]}, {location["longitude"]}'}
         result = self._request_api(URL_TIMEZONE, params)
         location['timezone_name'] = result['timeZoneName']
         location['timezone_date'] = date
@@ -117,14 +115,17 @@ class Locations(dict):
             message = result['error_message']
             raise ValueError(message)
 
-    def _parse_location_name(self, name_like):
-        if isinstance(name_like, (list, tuple)):
-            return SEP.join(name_like)
-        elif isinstance(name_like, str):
+    def _parse_name(self, name):
+        if isinstance(name, (list, tuple)):
+            return SEP.join(name)
+        elif isinstance(name, str):
             pattern = f'[{azely.SEPARATORS}]+'
-            return re.sub(pattern, '+', name_like)
+            return re.sub(pattern, '+', name)
         else:
-            raise ValueError(name_like)
+            raise ValueError(name)
 
     def __repr__(self):
+        if self.reload:
+            self._load_known_locations()
+
         return pformat(dict(self))
