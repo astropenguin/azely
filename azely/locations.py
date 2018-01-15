@@ -14,7 +14,7 @@ from urllib.request import urlopen
 
 # dependent packages
 import azely
-import yaml
+import json
 
 # module constants
 URL_API = 'https://maps.googleapis.com/maps/api'
@@ -53,15 +53,10 @@ class Locations(dict):
         return super().__getitem__(name_like)
 
     def _load_known_locations(self):
-        with azely.KNOWN_LOCS.open('r') as f:
-            known_locations = yaml.load(f, yaml.loader.SafeLoader)
-
-        if known_locations is not None:
-            self.update(known_locations)
+        self.update(azely.read_yaml(azely.KNOWN_LOCS))
 
     def _update_known_locations(self):
-        with azely.KNOWN_LOCS.open('w') as f:
-            f.write(yaml.dump(dict(self), default_flow_style=False))
+        azely.write_yaml(azely.KNOWN_LOCS, dict(self))
 
     def _update_location(self, name_like, date):
         if name_like in self:
@@ -113,7 +108,7 @@ class Locations(dict):
 
     def _request_api(self, url, params):
         with urlopen(f'{url}?{urlencode(params)}', timeout=self.timeout) as f:
-            result = yaml.load(f.read().decode(self.encoding))
+            result = json.loads(f.read().decode(self.encoding))
             status = result['status']
 
         if status == 'OK':
