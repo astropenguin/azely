@@ -83,6 +83,7 @@ class Objects(dict):
             objects.update({name: name})
 
     def _parse_object(self, objects, name):
+        # pre-processing
         if not objects[name]:
             objects.update({name: name})
 
@@ -95,6 +96,7 @@ class Objects(dict):
                 objects.update({name: coord})
             except ValueError:
                 print('logging later!')
+                objects.update({name: azely.PASS_FLAG})
         elif isinstance(object_like, str):
             # if object_like is a name of object
             if object_like.lower() in EPHEMS:
@@ -120,9 +122,11 @@ class Objects(dict):
                 self.known_objects.update({name: dict_coord})
             except NameResolveError:
                 print('logging later!')
+                objects.update({name: azely.PASS_FLAG})
         else:
             # if object_like has invalid type
             print('logging later!')
+            objects.update({name: azely.PASS_FLAG})
 
     def _load_objects(self):
         # azely data directory
