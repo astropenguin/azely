@@ -65,7 +65,7 @@ class Objects(dict):
 
         objects = OrderedDict()
 
-        for name in self._parse_names(names):
+        for name in azely.parse_name(names):
             self._add_object(objects, name)
 
         for name in objects:
@@ -123,13 +123,6 @@ class Objects(dict):
         else:
             # if object_like has invalid type
             print('logging later!')
-
-    def _parse_names(self, names):
-        if isinstance(names, (list, tuple)):
-            return names
-        elif isinstance(names, str):
-            pattern = f'[{azely.SEPARATORS}]+'
-            return re.sub(pattern, ' ', names).split()
 
     def _load_objects(self):
         # azely data directory
