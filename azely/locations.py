@@ -28,7 +28,7 @@ class Locations(dict):
         super().__init__()
         self._load_known_locations()
 
-        self.date = azely.parse_date(date) # for old AzEl
+        self.date = azely.parse_date(date) # for old AzEl (temporary)
         self.encoding = encoding
         self.timeout = timeout
         self.reload = reload
@@ -39,10 +39,9 @@ class Locations(dict):
 
         if isinstance(name, tuple):
             name, date = name
-            date = azely.parse_date(date)
         elif isinstance(name, str):
-            # date = azely.parse_date()
-            date = self.date # for old AzEl
+            # name, date = name, None (uncomment soon!)
+            date = self.date # for old AzEl (temporary)
         else:
             raise ValueError(name)
 
@@ -50,13 +49,7 @@ class Locations(dict):
         self._update_known_locations()
         return super().__getitem__(name)
 
-    def _load_known_locations(self):
-        self.update(azely.read_yaml(azely.KNOWN_LOCS))
-
-    def _update_known_locations(self):
-        azely.write_yaml(azely.KNOWN_LOCS, dict(self))
-
-    def _update_location(self, name, date):
+    def _update_location(self, name, date=None):
         if name in self:
             # update only information of timezone on given date
             try:
@@ -76,11 +69,11 @@ class Locations(dict):
                 print('logging later!')
         else:
             # request whole information of location on given date
-            query = self._parse_name(name)
+            query = ' '.join(azely.parse_name(name))
             location = self._request_location(query, date)
-            super().__setitem__(name, location)
+            super().__setitem__(query, location)
 
-    def _request_location(self, query, date):
+    def _request_location(self, query, date=None):
         location = {}
 
         # get geocode from google maps api
@@ -93,8 +86,9 @@ class Locations(dict):
         location['query']     = query
 
         # get timezone from google maps api
-        dt = datetime.strptime(date, azely.DATE_FORMAT)
-        params = {'timestamp': time.mktime(dt.utctimetuple()), # unix time
+        date = azely.parse_date(date)
+        dateobj = datetime.strptime(date, azely.DATE_FORMAT)
+        params = {'timestamp': time.mktime(dateobj.utctimetuple()), # unix time
                   'location': f'{location["latitude"]}, {location["longitude"]}'}
         result = self._request_api(URL_TIMEZONE, params)
         location['timezone_name'] = result['timeZoneName']
@@ -115,14 +109,11 @@ class Locations(dict):
             message = result['error_message']
             raise ValueError(message)
 
-    def _parse_name(self, name):
-        if isinstance(name, (list, tuple)):
-            return SEP.join(name)
-        elif isinstance(name, str):
-            pattern = f'[{azely.SEPARATORS}]+'
-            return re.sub(pattern, '+', name)
-        else:
-            raise ValueError(name)
+    def _load_known_locations(self):
+        self.update(azely.read_yaml(azely.KNOWN_LOCS))
+
+    def _update_known_locations(self):
+        azely.write_yaml(azely.KNOWN_LOCS, dict(self))
 
     def __repr__(self):
         if self.reload:
