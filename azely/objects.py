@@ -28,10 +28,6 @@ class Objects(dict):
         self.reload = reload
 
     @property
-    def params(self):
-        return {'reload': self.reload}
-
-    @property
     def groups(self):
         if hasattr(self, '_groups'):
             return self._groups
@@ -62,13 +58,14 @@ class Objects(dict):
 
         return self._flatitems
 
-    def __getitem__(self, names_like):
+    def __getitem__(self, names):
         if self.reload:
             self._load_objects()
+            self._load_known_objects()
 
         objects = OrderedDict()
 
-        for name in self._parse_names(names_like):
+        for name in self._parse_names(names):
             self._add_object(objects, name)
 
         for name in objects:
@@ -92,20 +89,27 @@ class Objects(dict):
         object_like = objects[name]
 
         if isinstance(object_like, dict):
+            # if object_like is a group of objects
             try:
                 coord = SkyCoord(**object_like)
                 objects.update({name: coord})
             except ValueError:
                 print('logging later!')
         elif isinstance(object_like, str):
+            # if object_like is a name of object
             if object_like.lower() in EPHEMS:
+                # solar objects are not processed here
+                # they need date and time for calculation
                 return
 
             if name in self.known_objects:
+                # if name exists in known_objects.yaml
                 coord = SkyCoord(**self.known_objects[name])
                 objects.update({name: coord})
                 return
 
+            # otherwise: try to get information from catalogue
+            # and update known_objects.yaml with the result
             try:
                 frame = 'icrs'
                 coord = SkyCoord.from_name(object_like, frame)
@@ -117,7 +121,15 @@ class Objects(dict):
             except NameResolveError:
                 print('logging later!')
         else:
+            # if object_like has invalid type
             print('logging later!')
+
+    def _parse_names(self, names):
+        if isinstance(names, (list, tuple)):
+            return names
+        elif isinstance(names, str):
+            pattern = f'[{azely.SEPARATORS}]+'
+            return re.sub(pattern, ' ', names).split()
 
     def _load_objects(self):
         # azely data directory
@@ -151,15 +163,9 @@ class Objects(dict):
     def _update_known_objects(self):
         azely.write_yaml(azely.KNOWN_OBJS, self.known_objects)
 
-    def _parse_names(self, names_like):
-        if isinstance(names_like, (list, tuple)):
-            return names_like
-        elif isinstance(names_like, str):
-            pattern = f'[{azely.SEPARATORS}]+'
-            return re.sub(pattern, ' ', names_like).split()
-
     def __repr__(self):
         if self.reload:
             self._load_objects()
+            self._load_known_objects()
 
         return pformat(dict(self))
