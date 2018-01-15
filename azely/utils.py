@@ -6,8 +6,9 @@ __all__ = ['get_body',
            'isnumber',
            'read_yaml',
            'write_yaml',
-           'open_googlemaps',
-           'parse_date']
+           'parse_date',
+           'parse_name',
+           'open_googlemaps']
 
 # standard library
 import re
@@ -96,7 +97,7 @@ def read_yaml(filepath, keep_order=False):
 def write_yaml(filepath, data, flow_style=False):
     try:
         if flow_style:
-            stream = yaml.dump(data)
+            stream = yaml.dump(data, default_flow_style=True)
         else:
             stream = yaml.dump(data, default_flow_style=False)
     except:
@@ -112,23 +113,25 @@ def write_yaml(filepath, data, flow_style=False):
             print('logging later!')
 
 
-def open_googlemaps(location):
-    """Open Google Maps of given location by a web browser."""
-    query = azely.parse_location(location)
-    item = azely.Locations()._request_item(query)
-    params = {'q': f'{item["latitude"]}, {item["longitude"]}'}
-    webbrowser.open(f'{URL_GOOGLEMAPS}?{urlencode(params)}')
+def parse_name(name_like, separators=','):
+    if isinstance(name_like, (list, tuple)):
+        return tuple(name_like)
+    elif isinstance(name_like, str):
+        pattern, repl = f'[{separators}]+', separators[0]
+        replaced = re.sub(pattern, repl, name_like)
+        return tuple(s.strip() for s in replaced.split(repl))
+    else:
+        raise ValueError(name_like)
 
 
-def parse_date(date_like=None):
+def parse_date(date_like=None, separators='/\.\-'):
     """Parse date-like object and return format string."""
     if date_like is None:
         return datetime.now().strftime(azely.DATE_FORMAT)
     elif isinstance(date_like, datetime):
         return date_like.strftime(azely.DATE_FORMAT)
     elif isinstance(date_like, str):
-        pattern = f'[{azely.SEPARATORS}]+'
-        date_like = re.sub(pattern, '', date_like)
+        date_like = ''.join(parse_name(date_like, separators))
         try:
             dt = datetime.strptime(date_like, '%y%m%d')
             return dt.strftime(azely.DATE_FORMAT)
@@ -137,3 +140,10 @@ def parse_date(date_like=None):
             return dt.strftime(azely.DATE_FORMAT)
     else:
         raise ValueError(date_like)
+
+
+def open_googlemaps(name):
+    """Open Google Maps of given location by a web browser."""
+    location = azely.locations[name]
+    params = {'q': f'{location["latitude"]}, {location["longitude"]}'}
+    webbrowser.open(f'{URL_GOOGLEMAPS}?{urlencode(params)}')
