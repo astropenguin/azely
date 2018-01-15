@@ -31,6 +31,7 @@ yaml.add_constructor(
     lambda loader, node: OrderedDict(loader.construct_pairs(node))
 )
 
+
 # functions
 def get_body(object_like):
     if isinstance(object_like, str):
@@ -82,23 +83,30 @@ def read_yaml(filepath, keep_order=False):
         except:
             # fail to load yaml
             print('logging later!')
-            return {}
+            return dict()
 
     if not result:
         # empty file
-        return {}
+        return dict()
     else:
         # valid yaml
         return result
 
 
 def write_yaml(filepath, data, flow_style=False):
+    try:
+        if flow_style:
+            stream = yaml.dump(data)
+        else:
+            stream = yaml.dump(data, default_flow_style=False)
+    except:
+        # fail to dump data
+        print('logging later!')
+        return
+
     with filepath.open('w') as f:
         try:
-            if flow_style:
-                f.write(yaml.dump(data))
-            else:
-                f.write(yaml.dump(data, default_flow_style=False))
+            f.write(stream)
         except:
             # fail to write yaml
             print('logging later!')
