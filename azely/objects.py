@@ -11,7 +11,6 @@ from pprint import pformat
 
 # dependent packages
 import azely
-import yaml
 from astropy.coordinates import SkyCoord
 from astropy.coordinates import solar_system_ephemeris
 from astropy.coordinates.name_resolve import NameResolveError
@@ -19,18 +18,12 @@ from astropy.coordinates.name_resolve import NameResolveError
 # module constants
 EPHEMS = solar_system_ephemeris.bodies
 
-# use OrderedDict in PyYAML
-yaml.add_constructor(
-    yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
-    lambda loader, node: OrderedDict(loader.construct_pairs(node))
-)
-
 
 # classes
 class Objects(dict):
     def __init__(self, reload=True):
         super().__init__()
-        self._load_object_yamls()
+        self._load_objects()
         self._load_known_objects()
         self.reload = reload
 
@@ -71,7 +64,7 @@ class Objects(dict):
 
     def __getitem__(self, names_like):
         if self.reload:
-            self._load_object_yamls()
+            self._load_objects()
 
         objects = OrderedDict()
 
@@ -108,8 +101,8 @@ class Objects(dict):
             if object_like.lower() in EPHEMS:
                 return
 
-            if name in self._known_objects:
-                coord = SkyCoord(**self._known_objects[name])
+            if name in self.known_objects:
+                coord = SkyCoord(**self.known_objects[name])
                 objects.update({name: coord})
                 return
 
@@ -120,61 +113,43 @@ class Objects(dict):
                 dict_coord = {'ra': ra, 'dec': dec, 'frame': frame}
 
                 objects.update({name: coord})
-                self._known_objects.update({name: dict_coord})
+                self.known_objects.update({name: dict_coord})
             except NameResolveError:
                 print('logging later!')
         else:
             print('logging later!')
 
-    def _load_object_yamls(self):
+    def _load_objects(self):
         # azely data directory
         for filepath in azely.DATA_DIR.glob('*.yaml'):
             if filepath.name == azely.CLI_CONFIG.name:
                 continue
 
-            with filepath.open('r') as f:
-                self.update(yaml.load(f))
+            self.update(azely.read_yaml(filepath, True))
 
         # ~/.azely directory (search in subdirectories)
         for filepath in azely.USER_DIR.glob('**/*.yaml'):
-            if filepath.name == azely.KNOWN_LOCS.name:
+            if (filepath.name == azely.KNOWN_LOCS.name
+                or filepath.name == azely.KNOWN_OBJS.name):
+                # ignore these files
                 continue
 
-            if filepath.name == azely.KNOWN_OBJS.name:
-                continue
-
-            with filepath.open('r') as f:
-                try:
-                    self.update(yaml.load(f))
-                except:
-                    print('logging later!')
+            self.update(azely.read_yaml(filepath, True))
 
         # current directory (do not search in subdirectories)
         for filepath in Path('.').glob('*.yaml'):
-            if filepath.name == azely.KNOWN_LOCS.name:
+            if (filepath.name == azely.KNOWN_LOCS.name
+                or filepath.name == azely.KNOWN_OBJS.name):
+                # ignore these files
                 continue
 
-            if filepath.name == azely.KNOWN_OBJS.name:
-                continue
-
-            with filepath.open('r') as f:
-                try:
-                    self.update(yaml.load(f))
-                except:
-                    print('logging later!')
+            self.update(azely.read_yaml(filepath, True))
 
     def _load_known_objects(self):
-        self._known_objects = {}
-
-        with azely.KNOWN_OBJS.open('r') as f:
-            known_objects = yaml.load(f, yaml.loader.SafeLoader)
-
-        if known_objects is not None:
-            self._known_objects.update(known_objects)
+        self.known_objects = azely.read_yaml(azely.KNOWN_OBJS)
 
     def _update_known_objects(self):
-        with azely.KNOWN_OBJS.open('w') as f:
-            f.write(yaml.dump(self._known_objects, default_flow_style=False))
+        azely.write_yaml(azely.KNOWN_OBJS, self.known_objects)
 
     def _parse_names(self, names_like):
         if isinstance(names_like, (list, tuple)):
@@ -185,6 +160,6 @@ class Objects(dict):
 
     def __repr__(self):
         if self.reload:
-            self._load_object_yamls()
+            self._load_objects()
 
         return pformat(dict(self))
