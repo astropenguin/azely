@@ -46,9 +46,7 @@ if not (USER_DIR / SAMPLE).exists():
     copy(DATA_DIR / SAMPLE, USER_DIR)
 
 if not KNOWN_LOCS.exists():
-    with KNOWN_LOCS.open('w') as f:
-        f.write(yaml.dump({}, default_flow_style=False))
+    azely.write_yaml(KNOWN_LOCS, {})
 
 if not KNOWN_OBJS.exists():
-    with KNOWN_OBJS.open('w') as f:
-        f.write(yaml.dump({}, default_flow_style=False))
+    azely.write_yaml(KNOWN_OBJS, {})
