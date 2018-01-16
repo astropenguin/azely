@@ -57,21 +57,14 @@ def read_yaml(filepath, keep_order=False):
     with filepath.open('r') as f:
         try:
             if keep_order:
-                result = yaml.load(f)
+                return yaml.load(f) or dict()
             else:
                 Loader = yaml.loader.SafeLoader
-                result = yaml.load(f, Loader)
+                return yaml.load(f, Loader) or dict()
         except:
             # fail to load yaml
             print('logging later!')
             return dict()
-
-    if result:
-        # valid yaml
-        return result
-    else:
-        # empty file
-        return dict()
 
 
 def write_yaml(filepath, data, flow_style=False):
