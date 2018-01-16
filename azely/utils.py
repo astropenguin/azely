@@ -66,12 +66,12 @@ def read_yaml(filepath, keep_order=False):
             print('logging later!')
             return dict()
 
-    if not result:
-        # empty file
-        return dict()
-    else:
+    if result:
         # valid yaml
         return result
+    else:
+        # empty file
+        return dict()
 
 
 def write_yaml(filepath, data, flow_style=False):
@@ -94,26 +94,26 @@ def write_yaml(filepath, data, flow_style=False):
             print('logging later!')
 
 
-def parse_name(name_like, separators=','):
+def parse_name(name_like, seps=','):
     """Parse name-like object and return tuple of names."""
     if isinstance(name_like, (list, tuple)):
         return tuple(name_like)
     elif isinstance(name_like, str):
-        pattern, repl = f'[{separators}]+', separators[0]
+        pattern, repl = f'[{seps}]+', seps[0]
         replaced = re.sub(pattern, repl, name_like)
         return tuple(s.strip() for s in replaced.split(repl))
     else:
         raise ValueError(name_like)
 
 
-def parse_date(date_like=None, separators='/\.\-'):
+def parse_date(date_like=None, seps='/\.\-'):
     """Parse date-like object and return format string."""
     if date_like is None:
         return datetime.now().strftime(azely.DATE_FORMAT)
     elif isinstance(date_like, datetime):
         return date_like.strftime(azely.DATE_FORMAT)
     elif isinstance(date_like, str):
-        date_like = ''.join(azely.parse_name(date_like, separators))
+        date_like = ''.join(azely.parse_name(date_like, seps))
         try:
             dt = datetime.strptime(date_like, '%y%m%d')
             return dt.strftime(azely.DATE_FORMAT)
