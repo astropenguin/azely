@@ -2,8 +2,6 @@
 
 # public items
 __all__ = ['get_body',
-           'islst',
-           'isnumber',
            'read_yaml',
            'write_yaml',
            'parse_date',
@@ -54,26 +52,8 @@ def get_body(object_like):
         raise ValueError(object_like)
 
 
-def islst(string):
-    """Whether a string can be interpreted as local sideral time."""
-    if not isinstance(string, str):
-        return False
-
-    pattern = f'[{azely.SEPARATORS}]+'
-    string = re.sub(pattern, ' ', string).upper()
-    return string == 'LST' or string == 'LOCAL SIDEREAL TIME'
-
-
-def isnumber(obj):
-    """Whether an object can be converted to number or not."""
-    try:
-        float(obj)
-        return True
-    except ValueError:
-        return False
-
-
 def read_yaml(filepath, keep_order=False):
+    """Read YAML file safely and return (ordered) dictionary."""
     with filepath.open('r') as f:
         try:
             if keep_order:
@@ -95,6 +75,7 @@ def read_yaml(filepath, keep_order=False):
 
 
 def write_yaml(filepath, data, flow_style=False):
+    """Write data safely to YAML file."""
     try:
         if flow_style:
             stream = yaml.dump(data, default_flow_style=True)
@@ -114,6 +95,7 @@ def write_yaml(filepath, data, flow_style=False):
 
 
 def parse_name(name_like, separators=','):
+    """Parse name-like object and return tuple of names."""
     if isinstance(name_like, (list, tuple)):
         return tuple(name_like)
     elif isinstance(name_like, str):
