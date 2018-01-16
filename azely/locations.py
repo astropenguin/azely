@@ -99,7 +99,8 @@ class Locations(dict):
         return location
 
     def _request_api(self, url, params):
-        with urlopen(f'{url}?{urlencode(params)}', timeout=self.timeout) as f:
+        url_with_params = f'{url}?{urlencode(params)}'
+        with urlopen(url_with_params, timeout=self.timeout) as f:
             result = json.loads(f.read().decode(self.encoding))
             status = result['status']
 
