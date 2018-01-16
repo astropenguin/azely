@@ -20,6 +20,6 @@ del objects
 del plotting
 del utils
 
-# convenient objects
+# for convenience
 objects = Objects()
 locations = Locations()
