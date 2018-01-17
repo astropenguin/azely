@@ -102,13 +102,13 @@ class Objects(dict):
             if object_like.lower() in EPHEMS:
                 # solar objects are not processed here
                 # they need date and time for calculation
-                return
+                return None
 
             if name in self.known_objects:
                 # if name exists in known_objects.yaml
                 coord = SkyCoord(**self.known_objects[name])
                 objects.update({name: coord})
-                return
+                return None
 
             # otherwise: try to get information from catalogue
             # and update known_objects.yaml with the result
