@@ -1,8 +1,7 @@
 # coding: utf-8
 
 # public items
-__all__ = ['get_body',
-           'read_yaml',
+__all__ = ['read_yaml',
            'write_yaml',
            'parse_date',
            'parse_name',
@@ -17,9 +16,7 @@ from urllib.parse import urlencode
 
 # dependent packages
 import azely
-import ephem
 import yaml
-from astropy.coordinates import SkyCoord
 
 # module constants
 URL_GOOGLEMAPS = 'https://www.google.com/maps'
@@ -32,26 +29,6 @@ yaml.add_constructor(
 
 
 # functions
-def get_body(object_like):
-    if isinstance(object_like, str):
-        try:
-            return getattr(ephem, object_like)()
-        except AttributeError:
-            return ephem.star(object_like)
-    elif issubclass(type(object_like), dict):
-        body = ephem.FixedBody()
-        body._ra = ephem.hours(str(object_like['ra']))
-        body._dec = ephem.degrees(str(object_like['dec']))
-        if 'epoch' in object_like:
-            body._epoch = getattr(ephem, object_like['epoch'])
-            return body
-        else:
-            body._epoch = ephem.J2000
-            return body
-    else:
-        raise ValueError(object_like)
-
-
 def read_yaml(filepath, keep_order=False):
     """Read YAML file safely and return (ordered) dictionary."""
     with filepath.open('r') as f:
