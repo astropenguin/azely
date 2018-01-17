@@ -24,7 +24,7 @@ class AzEl(object):
         # timezone
         if timezone is None or timezone == '':
             timezone = location
-        elif azely.isnum(timezone):
+        elif self._isnumber(timezone):
             timezone = {
                 'name': 'UTC{0:+.1f}'.format(float(timezone)),
                 'timezone_hour': float(timezone),
@@ -51,7 +51,7 @@ class AzEl(object):
 
     def __call__(self, obj, hr=None):
         # body
-        body = azely.get_body(obj)
+        body = self._get_body(obj)
 
         # observer
         observer = ephem.Observer()
@@ -94,6 +94,34 @@ class AzEl(object):
         ra, dec = np.rad2deg([body.ra, body.dec])
         lst = observer.sidereal_time() / (2*np.pi) * 24
         return az, el, ra, dec, lst
+
+    def _isnumber(self, timezone):
+        """Whether timezone can be converted to number or not."""
+        try:
+            float(timezone)
+            return True
+        except ValueError:
+            return False
+
+    @staticmethod
+    def _get_body(object_like):
+        if isinstance(object_like, str):
+            try:
+                return getattr(ephem, object_like)()
+            except AttributeError:
+                return ephem.star(object_like)
+        elif isinstance(object_like, dict):
+            body = ephem.FixedBody()
+            body._ra = ephem.hours(str(object_like['ra']))
+            body._dec = ephem.degrees(str(object_like['dec']))
+            if 'epoch' in object_like:
+                body._epoch = getattr(ephem, object_like['epoch'])
+                return body
+            else:
+                body._epoch = ephem.J2000
+                return body
+        else:
+            raise ValueError(object_like)
 
     def __getattr__(self, name):
         return self.params[name]
