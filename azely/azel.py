@@ -11,7 +11,7 @@ import ephem
 import numpy as np
 
 # module constants
-UTC_TO_LST = 1.0027379
+UTC_TO_LST = 1.002_737_909
 
 
 # classes
