@@ -11,7 +11,7 @@ import ephem
 import numpy as np
 
 # module constants
-UT_TO_LST = 1.0027379
+UTC_TO_LST = 1.0027379
 
 
 # classes
@@ -65,7 +65,7 @@ class AzEl(object):
 
             if self.timezone['name'] == 'LST':
                 st = observer.sidereal_time()
-                offset_hr = st / (2*np.pi) * 24 / UT_TO_LST
+                offset_hr = st / (2*np.pi) * 24 / UTC_TO_LST
             else:
                 offset_hr = self.timezone['timezone_hour'] % 24
 
@@ -85,7 +85,7 @@ class AzEl(object):
 
         if hr is not None:
             if self.timezone['name'] == 'LST':
-                observer.date += hr * ephem.hour / UT_TO_LST
+                observer.date += hr * ephem.hour / UTC_TO_LST
             else:
                 observer.date += hr * ephem.hour
 
