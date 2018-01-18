@@ -1,7 +1,7 @@
 # coding: utf-8
 
 # public items
-__all__ = ['plot_azel']
+__all__ = ['dayplot']
 
 # standard library
 from collections import OrderedDict
@@ -14,13 +14,14 @@ from matplotlib.widgets import CheckButtons
 
 
 # functions
-def plot_azel(**kwargs):
-    # objects and azel instances
-    objs = azely.Objects()[kwargs['objects']]
-    azel = azely.AzEl(kwargs['location'], kwargs['timezone'], kwargs['date'])
+def dayplot(**kwargs):
+    # azel calculator
+    c = azely.Calculator(kwargs['location'], kwargs['timezone'], kwargs['date'])
+    t = np.linspace(0, 24, 601)
+    azels = c(kwargs['objects'], t, squeeze=False)
 
     # figure settings
-    figure, axes = plt.subplots(2, 1, sharex=True)
+    figure, axes = plt.subplots(2, 1, figsize=(10, 5), sharex=True)
     figure.subplots_adjust(0.1, 0.1, 0.8, 0.9, 0.1, 0.2)
 
     # el-axis settings
@@ -30,7 +31,7 @@ def plot_azel(**kwargs):
     ax_el.set_ylim([0, 90])
     ax_el.set_xticks(np.arange(24+1))
     ax_el.set_yticks(np.arange(0, 90+1, 10))
-    ax_el.set_title('{0} / {1}'.format(azel.location['name'], azel.date))
+    ax_el.set_title(f'{c.location["name"]} / {c.date}')
     ax_el.set_ylabel('Elevation (deg)')
     tw_el.set_yticks(np.arange(0, 90+1, 30))
     tw_el.grid(False)
@@ -42,7 +43,7 @@ def plot_azel(**kwargs):
     ax_az.set_ylim([0, 360])
     ax_az.set_xticks(np.arange(24+1))
     ax_az.set_yticks(np.arange(0, 360+1, 45))
-    ax_az.set_xlabel('{0} (hr)'.format(azel.timezone['timezone_name']))
+    ax_az.set_xlabel(f'{c.timezone["timezone_name"]} (hr)')
     ax_az.set_ylabel('Azimuth (deg)')
     tw_az.set_yticks(np.arange(0, 360+1, 45))
     tw_az.set_yticklabels(list('N E S W N'))
@@ -51,18 +52,12 @@ def plot_azel(**kwargs):
     # plot az & el
     ls_az = OrderedDict()
     ls_el = OrderedDict()
-    t = np.arange(0, 24+0.01, 0.01)
-    for label, obj in objs.items():
-        try:
-            rec = azel(obj, t)
-            az, el = rec.az, rec.el
-        except:
-            continue
-
+    for name, azel in azels.items():
+        az, el = azel.az.value, azel.el.value
         ma_az = np.hstack([np.abs(np.diff(az))>180, False]) | (el < 0)
         ma_el = (el < 0)
-        ls_el[label], = ax_el.plot(t, np.ma.array(el, mask=ma_el), label=label)
-        ls_az[label], = ax_az.plot(t, np.ma.array(az, mask=ma_az), label=label)
+        ls_el[name], = ax_el.plot(t, np.ma.array(el, mask=ma_el), label=name)
+        ls_az[name], = ax_az.plot(t, np.ma.array(az, mask=ma_az), label=name)
 
     # check-buttons settings
     ax_cb = plt.axes([0.85, 0.1, 0.1, 0.8])
@@ -87,8 +82,8 @@ def plot_azel(**kwargs):
 
     cb.on_clicked(toggle)
 
-    # show or save
+    # show or save plot
     if kwargs['show']:
         plt.show()
     elif kwargs['save']:
-        plt.savefig('plot.{0}'.format(kwargs['extension']))
+        plt.savefig('azely_dayplot.{kwargs["extension"]}')
