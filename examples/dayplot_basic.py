@@ -7,25 +7,23 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # date and locations
-date = '2017-01-01' # optional: None
-location = 'ALMA Observatory'
-timezone = 'Mitaka' # optional: None, 9.0, 'LST'
+date = '2018-01-01'
+location = 'alma observatory'
+timezone = 'mitaka'
 
-# objects
-objs = azely.Objects()['Solar']
+# calculation
+c = azely.Calculator(location, timezone, date)
+t = np.linspace(0, 24, 200)
+azels = c('Solar', t) # OrderedDict
 
-# calculating and plotting
-azel = azely.AzEl(location, timezone, date)
-t = np.arange(0, 24.01, 0.01)
+# plotting
+for name, azel in azels.items():
+    plt.plot(t, azel.el, label=name)
 
-for label, obj in objs.items():
-    el = azel(obj, t).el
-    plt.plot(t, el, label=label)
-
-plt.xlim([0, 24])
-plt.ylim([0, 90])
-plt.title('{0} / {1}'.format(azel.location['name'], azel.date))
-plt.xlabel('{0} (hr)'.format(azel.timezone['timezone_name']))
+plt.xlim(0, 24)
+plt.ylim(0, 90)
+plt.title(f'{c.location["name"]} / {c.date}')
+plt.xlabel(f'{c.timezone["timezone_name"]} (hr)')
 plt.ylabel('Elevation (deg)')
 plt.legend()
 plt.show()
