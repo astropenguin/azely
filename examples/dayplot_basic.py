@@ -13,7 +13,7 @@ timezone = 'mitaka'
 
 # calculation
 c = azely.Calculator(location, timezone, date)
-t = np.linspace(0, 24, 200)
+t = np.linspace(0, 24, 601)
 azels = c('Solar', t) # OrderedDict
 
 # plotting
