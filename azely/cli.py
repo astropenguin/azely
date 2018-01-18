@@ -26,8 +26,8 @@ from docopt import docopt
 # module constants
 DEFAULTS = {
     'date': azely.parse_date(),
-    'location': 'Mitaka',
-    'objects': 'Default',
+    'location': 'mitaka',
+    'objects': 'default',
     'timezone': '',
     'extension': 'pdf',
 }
@@ -36,10 +36,10 @@ DEFAULTS = {
 # functions
 def main():
     args = docopt(__doc__.format(**DEFAULTS), version=azely.__version__)
-    kwargs = {k.lstrip('-'): v for k, v in args.items()}
+    kwargs = {k.lstrip('-'):v for k,v in args.items()}
 
     if kwargs['show'] or kwargs['save']:
-        azely.plot_azel(**kwargs)
+        azely.dayplot(**kwargs)
 
 
 # main
