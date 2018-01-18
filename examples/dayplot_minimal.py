@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 
 # calculation
 c = azely.Calculator('mitaka')
-t = np.linspace(0, 24, 200)
+t = np.linspace(0, 24, 601)
 azel = c('Sun', t) # AzEl object
 
 # plotting
