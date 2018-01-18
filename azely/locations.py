@@ -24,14 +24,14 @@ URL_TIMEZONE = f'{URL_API}/timezone/json'
 
 # classes
 class Locations(dict):
-    def __init__(self, date=None, encoding='utf-8', timeout=5, reload=True):
+    def __init__(self, date=None, *, reload=True, timeout=5, encoding='utf-8'):
         super().__init__()
         self._load_known_locations()
 
         self.date = azely.parse_date(date) # for old AzEl (temporary)
-        self.encoding = encoding
-        self.timeout = timeout
         self.reload = reload
+        self.timeout = timeout
+        self.encoding = encoding
 
     def __getitem__(self, name):
         if self.reload:
@@ -111,10 +111,10 @@ class Locations(dict):
             raise ValueError(message)
 
     def _load_known_locations(self):
-        self.update(azely.read_yaml(azely.KNOWN_LOCS))
+        self.update(azely.read_yaml(azely.KNOWN_LOCS, encoding=self.encoding))
 
     def _update_known_locations(self):
-        azely.write_yaml(azely.KNOWN_LOCS, dict(self))
+        azely.write_yaml(azely.KNOWN_LOCS, dict(self), encoding=self.encoding)
 
     def __repr__(self):
         if self.reload:
