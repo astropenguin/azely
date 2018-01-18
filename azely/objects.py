@@ -23,11 +23,12 @@ EPHEMS = solar_system_ephemeris.bodies
 class Objects(dict):
     def __init__(self, *, reload=True, timeout=5, encoding='utf-8'):
         super().__init__()
-        self._load_objects()
-        self._load_known_objects()
         self.reload = reload
         self.timeout = timeout # not implemented yet
         self.encoding = encoding
+
+        self._load_objects()
+        self._load_known_objects()
 
     @property
     def groups(self):
