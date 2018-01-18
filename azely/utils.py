@@ -45,7 +45,7 @@ def read_yaml(filepath, keep_order=False, *, encoding='utf-8'):
 
 
 def write_yaml(filepath, data, flow_style=False, *, encoding='utf-8'):
-    """Write data safely to YAML file."""
+    """Write dictionary data safely to YAML file."""
     try:
         if flow_style:
             stream = yaml.dump(data, default_flow_style=True)
