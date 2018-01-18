@@ -21,11 +21,13 @@ EPHEMS = solar_system_ephemeris.bodies
 
 # classes
 class Objects(dict):
-    def __init__(self, reload=True):
+    def __init__(self, *, reload=True, timeout=5, encoding='utf-8'):
         super().__init__()
         self._load_objects()
         self._load_known_objects()
         self.reload = reload
+        self.timeout = timeout # not implemented yet
+        self.encoding = encoding
 
     @property
     def groups(self):
@@ -134,7 +136,7 @@ class Objects(dict):
             if filepath.name == azely.CLI_CONFIG.name:
                 continue
 
-            self.update(azely.read_yaml(filepath, True))
+            self.update(azely.read_yaml(filepath, True, encoding=self.encoding))
 
         # ~/.azely directory (search in subdirectories)
         for filepath in azely.USER_DIR.glob('**/*.yaml'):
@@ -143,7 +145,7 @@ class Objects(dict):
                 # ignore these files
                 continue
 
-            self.update(azely.read_yaml(filepath, True))
+            self.update(azely.read_yaml(filepath, True, encoding=self.encoding))
 
         # current directory (do not search in subdirectories)
         for filepath in Path('.').glob('*.yaml'):
@@ -152,13 +154,13 @@ class Objects(dict):
                 # ignore these files
                 continue
 
-            self.update(azely.read_yaml(filepath, True))
+            self.update(azely.read_yaml(filepath, True, encoding=self.encoding))
 
     def _load_known_objects(self):
-        self.known_objects = azely.read_yaml(azely.KNOWN_OBJS)
+        self.known_objects = azely.read_yaml(azely.KNOWN_OBJS, encoding=self.encoding)
 
     def _update_known_objects(self):
-        azely.write_yaml(azely.KNOWN_OBJS, self.known_objects)
+        azely.write_yaml(azely.KNOWN_OBJS, self.known_objects, encoding=self.encoding)
 
     def __repr__(self):
         if self.reload:
