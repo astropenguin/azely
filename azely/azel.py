@@ -59,7 +59,7 @@ class Calculator(object):
         else:
             self.timezone = self.location.copy()
 
-    def __call__(self, object_names, hours=None):
+    def __call__(self, object_names, hours=None, squeeze=True):
         """Calculate azimuth and elevation of objects at given hour(angle)s."""
         skycoords = self._objects[object_names]
         time_utc = self._get_time_utc(hours)
@@ -71,7 +71,10 @@ class Calculator(object):
 
             azels.update({name: self._get_azel(skycoord, time_utc)})
 
-        return azels
+        if squeeze and len(azels) == 1:
+            return azels.popitem()[1]
+        else:
+            return azels
 
     def _get_azel(self, skycoord, time_utc):
         """Get azimuth and elevation of given skycoord and time in UTC."""
