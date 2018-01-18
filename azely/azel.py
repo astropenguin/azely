@@ -1,7 +1,8 @@
 # coding: utf-8
 
 # public items
-__all__ = ['Calculator']
+__all__ = ['AzEl',
+           'Calculator']
 
 # standard library
 from collections import OrderedDict
@@ -21,6 +22,26 @@ LST_TO_UTC = 1 / 1.002_737_909
 
 
 # classes
+class AzEl(SkyCoord):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    @property
+    def ra(self):
+        return SkyCoord(self.transform_to('icrs')).ra
+
+    @property
+    def dec(self):
+        return SkyCoord(self.transform_to('icrs')).dec
+
+    @property
+    def el(self):
+        return self.alt
+
+    def __repr__(self):
+        return '<SkyCoord (AzEl)>'
+
+
 class Calculator(object):
     def __init__(self, location, timezone=None, date=None,
                  *, reload=True, timeout=5, encoding='utf-8'):
@@ -56,10 +77,10 @@ class Calculator(object):
         """Get azimuth and elevation of given skycoord and time in UTC."""
         if isinstance(skycoord, str):
             skycoord = get_body(skycoord, time=time_utc)
-            return skycoord.transform_to(self._frame)
+            return azely.AzEl(skycoord.transform_to(self._frame))
         elif isinstance(skycoord, SkyCoord):
             skycoord.obstime = time_utc
-            return skycoord.transform_to(self._frame)
+            return azely.AzEl(skycoord.transform_to(self._frame))
         else:
             raise ValueError(skycoord)
 
