@@ -29,9 +29,9 @@ yaml.add_constructor(
 
 
 # functions
-def read_yaml(filepath, keep_order=False):
+def read_yaml(filepath, keep_order=False, *, encoding='utf-8'):
     """Read YAML file safely and return (ordered) dictionary."""
-    with filepath.open('r') as f:
+    with filepath.open('r', encoding=encoding) as f:
         try:
             if keep_order:
                 return yaml.load(f) or dict()
@@ -44,7 +44,7 @@ def read_yaml(filepath, keep_order=False):
             return dict()
 
 
-def write_yaml(filepath, data, flow_style=False):
+def write_yaml(filepath, data, flow_style=False, *, encoding='utf-8'):
     """Write data safely to YAML file."""
     try:
         if flow_style:
@@ -56,7 +56,7 @@ def write_yaml(filepath, data, flow_style=False):
         print('logging later!')
         return
 
-    with filepath.open('w') as f:
+    with filepath.open('w', encoding=encoding) as f:
         try:
             f.write(stream)
         except:
