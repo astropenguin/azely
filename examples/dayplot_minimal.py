@@ -6,16 +6,16 @@ import azely
 import numpy as np
 import matplotlib.pyplot as plt
 
-# calculating
-azel = azely.AzEl('Mitaka')
-t = np.arange(0, 24.01, 0.01)
-el = azel('Sun', t).el
+# calculation
+c = azely.Calculator('mitaka')
+t = np.linspace(0, 24, 200)
+azel = c('Sun', t).el # AzEl object
 
 # plotting
-plt.plot(t, el)
-plt.xlim([0, 24])
-plt.ylim([0, 90])
-plt.title('{0} / {1}'.format(azel.location['name'], azel.date))
-plt.xlabel('{0} (hr)'.format(azel.timezone['timezone_name']))
+plt.plot(t, azel.el)
+plt.xlim(0, 24)
+plt.ylim(0, 90)
+plt.title(f'{c.location["name"]} / {c.date}')
+plt.xlabel(f'{c.timezone["timezone_name"]} (hr)')
 plt.ylabel('Elevation (deg)')
 plt.show()
