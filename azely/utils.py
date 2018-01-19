@@ -20,11 +20,8 @@ import yaml
 URL_GOOGLEMAPS = 'https://www.google.com/maps'
 
 # use OrderedDict in PyYAML by default
-yaml.add_constructor(
-    yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
-    lambda loader, node: OrderedDict(loader.construct_pairs(node))
-)
-
+yaml.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
+                     lambda loader, node: OrderedDict(loader.construct_pairs(node)))
 
 # functions
 def read_yaml(filepath, keep_order=False, *, encoding='utf-8'):
