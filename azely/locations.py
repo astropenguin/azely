@@ -24,14 +24,14 @@ URL_TIMEZONE = f'{URL_API}/timezone/json'
 
 # classes
 class Locations(dict):
-    def __init__(self, date=None, *, reload=True, timeout=5, encoding='utf-8'):
+    def __init__(self, *, reload=False, timeout=5, encoding='utf-8'):
         super().__init__()
         self.reload = reload
         self.timeout = timeout
         self.encoding = encoding
 
+        # initial loading
         self._load_known_locations()
-        self.date = azely.parse_date(date) # for old AzEl (temporary)
 
     def __getitem__(self, name):
         if self.reload:
@@ -40,8 +40,7 @@ class Locations(dict):
         if isinstance(name, tuple):
             name, date = name
         elif isinstance(name, str):
-            # name, date = name, None (uncomment soon!)
-            date = self.date # for old AzEl (temporary)
+            name, date = name, None
         else:
             raise ValueError(name)
 
