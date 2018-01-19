@@ -35,6 +35,7 @@ class Objects(dict):
             return self._groups
 
         self._groups = OrderedDict()
+
         for name, object_like in self.items():
             if not isinstance(object_like, dict):
                 continue
@@ -52,6 +53,7 @@ class Objects(dict):
             return self._flatitems
 
         self._flatitems = OrderedDict()
+
         for name, object_like in self.items():
             if name in self.groups:
                 self._flatitems.update(object_like)
