@@ -1,5 +1,3 @@
-# coding: utf-8
-
 """Python 3 tool to plot azimuth and elevation of astronomical objects"""
 
 # standard library

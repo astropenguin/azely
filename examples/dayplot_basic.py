@@ -1,5 +1,3 @@
-# coding: utf-8
-
 """Day plot of the solar objects' elevations with given date, location, and timezone."""
 
 import azely

@@ -1,5 +1,3 @@
-# coding: utf-8
-
 """Azely: plot azimuth and elevation of astronomical objects.
 
 Usage:

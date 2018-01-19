@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # public items
 __all__ = ['dayplot']
 

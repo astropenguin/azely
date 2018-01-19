@@ -1,5 +1,3 @@
-# coding: utf-8
-
 """Day plot of the Sun's elevation today."""
 
 import azely
