@@ -12,8 +12,13 @@ import azely
 import numpy as np
 from astropy import units as u
 from astropy.coordinates import AltAz, EarthLocation, SkyCoord
-from astropy.coordinates import get_body
+from astropy.coordinates import get_body, solar_system_ephemeris
 from astropy.time import Time
+
+try:
+    solar_system_ephemeris.set('jpl')
+except ImportError:
+    solar_system_ephemeris.set('builtin')
 
 # module constants
 UTC = ('UTC', 'COORDINATED UNIVERSAL TIME')
