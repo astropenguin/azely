@@ -21,5 +21,5 @@ del objects
 del plotting
 
 # for convenience
-objects = Objects()
-locations = Locations()
+objects = Objects(reload=True)
+locations = Locations(reload=True)
