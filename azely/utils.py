@@ -129,6 +129,7 @@ def parse_name(name_like, seps=','):
         replaced = re.sub(pattern, repl, name_like)
         return tuple(s.strip() for s in replaced.split(repl))
     else:
+        logger.error(f'ValueError: {name_like}')
         raise ValueError(name_like)
 
 
@@ -136,9 +137,10 @@ def parse_date(date_like=None, seps='/\.\-'):
     """Parse date-like object and return formatted string.
 
     Args:
-        date_like (str or datetime object): Date-like object like
-            2018-01-23, 180123, 1/23, or datetime.datetime.now().
-            If not spacified, then current time in local is used.
+        date_like (str or datetime object): Date-like object such as
+            '2018-01-23', '180123', '1/23', or datetime.datetime.now().
+            If `date_like` has no year info, then current year is used.
+            If not spacified, then current local date is used.
         seps (str, optional): Separators for `date_like`.
             Default is either hyphen (-), slash (/), or dot (.).
 
@@ -159,16 +161,24 @@ def parse_date(date_like=None, seps='/\.\-'):
         date_like = ''.join(azely.parse_name(date_like, seps))
         try:
             dt = datetime.strptime(date_like, '%m%d')
-            dt = dt.replace(year=dt_now.year)
+            return dt.replace(year=dt_now.year).strftime(azely.DATE_FORMAT)
+        except ValueError:
+            pass
+
+        try:
+            dt = datetime.strptime(date_like, '%y%m%d')
             return dt.strftime(azely.DATE_FORMAT)
         except ValueError:
-            try:
-                dt = datetime.strptime(date_like, '%y%m%d')
-                return dt.strftime(azely.DATE_FORMAT)
-            except ValueError:
-                dt = datetime.strptime(date_like, '%Y%m%d')
-                return dt.strftime(azely.DATE_FORMAT)
+            pass
+
+        try:
+            dt = datetime.strptime(date_like, '%y%m%d')
+            return dt.strftime(azely.DATE_FORMAT)
+        except ValueError:
+            logger.error(f'ValueError: {date_like}')
+            raise ValueError(date_like)
     else:
+        logger.error(f'ValueError: {date_like}')
         raise ValueError(date_like)
 
 
