@@ -26,7 +26,7 @@ yaml.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
                      lambda loader, node: OrderedDict(loader.construct_pairs(node)))
 
 # functions
-def read_yaml(filepath, keep_order=False, *, encoding='utf-8'):
+def read_yaml(filepath, keep_order=False, *, mode='r', encoding='utf-8'):
     """Read YAML file safely and return (ordered) dictionary.
 
     Users can choose whether keeping order of items in mappings
@@ -38,6 +38,7 @@ def read_yaml(filepath, keep_order=False, *, encoding='utf-8'):
         filepath (str or path object): File path of YAML.
         keep_order (bool, optional): If True, a YAML is loaded with keeping
             order of items in mappings (i.e. OrderedDict). Default is False.
+        mode (str, optional, keyword-only): Mode for file open. Default is 'r'.
         encoding (str, optional, keyword-only): File encoding. Default is utf-8.
 
     Returns:
@@ -47,9 +48,10 @@ def read_yaml(filepath, keep_order=False, *, encoding='utf-8'):
     """
     logger.debug(f'filepath = {filepath}')
     logger.debug(f'keep_order = {keep_order}')
+    logger.debug(f'mode = {mode}')
     logger.debug(f'encoding = {encoding}')
 
-    with filepath.open('r', encoding=encoding) as f:
+    with filepath.open(mode=mode, encoding=encoding) as f:
         try:
             if keep_order:
                 return yaml.load(f) or dict()
@@ -61,7 +63,7 @@ def read_yaml(filepath, keep_order=False, *, encoding='utf-8'):
             return dict()
 
 
-def write_yaml(filepath, data, flow_style=False, *, encoding='utf-8'):
+def write_yaml(filepath, data, flow_style=False, *, mode='w', encoding='utf-8'):
     """Write dictionary data safely to YAML file.
 
     Users can choose style of YAML (flow or block style).
@@ -73,6 +75,7 @@ def write_yaml(filepath, data, flow_style=False, *, encoding='utf-8'):
         data (dict or OrderedDict): Data to be converted to YAML.
         flow_style (bool, optional): If True, data will be written
             with flow style of YAML. Default is False (block style).
+        mode (str, optional, keyword-only): Mode for file open. Default is 'w'.
         encoding (str, optional, keyword-only): File encoding. Default is utf-8.
 
     Returns:
@@ -81,6 +84,7 @@ def write_yaml(filepath, data, flow_style=False, *, encoding='utf-8'):
     """
     logger.debug(f'filepath = {filepath}')
     logger.debug(f'flow_style = {flow_style}')
+    logger.debug(f'mode = {mode}')
     logger.debug(f'encoding = {encoding}')
 
     try:
@@ -92,7 +96,7 @@ def write_yaml(filepath, data, flow_style=False, *, encoding='utf-8'):
         logger.warning('fail to convert data to YAML')
         return None
 
-    with filepath.open('w', encoding=encoding) as f:
+    with filepath.open(mode=mode, encoding=encoding) as f:
         try:
             f.write(stream)
         except:
@@ -102,8 +106,8 @@ def write_yaml(filepath, data, flow_style=False, *, encoding='utf-8'):
 def parse_name(name_like, seps=','):
     """Parse name-like object and return tuple of names.
 
-    For example, a string `'NGC 1068, M82, Sun'` will be converted
-    to a tuple of strings, `('NGC 1068', 'M82', 'Sun')` if `seps=','`.
+    For example, a string 'NGC 1068, M82, Sun' will be converted
+    to a tuple of strings, ('NGC 1068', 'M82', 'Sun') if `seps=','`.
 
     Args:
         name_like (string or tuple/list of string): Name-like object.
