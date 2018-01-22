@@ -161,7 +161,8 @@ def parse_date(date_like=None, seps='/\.\-'):
         date_like = ''.join(azely.parse_name(date_like, seps))
         try:
             dt = datetime.strptime(date_like, '%m%d')
-            return dt.replace(year=dt_now.year).strftime(azely.DATE_FORMAT)
+            dt = dt.replace(year=dt_now.year)
+            return dt.strftime(azely.DATE_FORMAT)
         except ValueError:
             pass
 
@@ -172,7 +173,7 @@ def parse_date(date_like=None, seps='/\.\-'):
             pass
 
         try:
-            dt = datetime.strptime(date_like, '%y%m%d')
+            dt = datetime.strptime(date_like, '%Y%m%d')
             return dt.strftime(azely.DATE_FORMAT)
         except ValueError:
             logger.error(f'ValueError: {date_like}')
