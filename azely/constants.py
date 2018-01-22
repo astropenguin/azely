@@ -8,8 +8,10 @@ __all__ = ['DATA_DIR',
            'PASS_FLAG']
 
 # standard library
+from logging import getLogger
 from shutil import copy
 from pathlib import Path
+logger = getLogger(__name__)
 
 # dependent packages
 import azely
@@ -35,16 +37,21 @@ PASS_FLAG = '<PASS>'
 
 # create directory and file (if not existing)
 if not USER_DIR.exists():
+    logger.info(f'created {USER_DIR}')
     USER_DIR.mkdir()
 
 if not CLI_CONFIG.exists():
+    logger.info(f'created {USER_DIR / CONFIG}')
     copy(DATA_DIR / CONFIG, USER_DIR)
 
 if not (USER_DIR / SAMPLE).exists():
+    logger.info(f'created {USER_DIR / SAMPLE}')
     copy(DATA_DIR / SAMPLE, USER_DIR)
 
 if not KNOWN_LOCS.exists():
+    logger.info(f'created {KNOWN_LOCS}')
     azely.write_yaml(KNOWN_LOCS, {})
 
 if not KNOWN_OBJS.exists():
+    logger.info(f'created {KNOWN_OBJS}')
     azely.write_yaml(KNOWN_OBJS, {})
