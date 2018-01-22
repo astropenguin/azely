@@ -29,7 +29,7 @@ yaml.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
 def read_yaml(filepath, keep_order=False, *, mode='r', encoding='utf-8'):
     """Read YAML file safely and return (ordered) dictionary.
 
-    Users can choose whether keeping order of items in mappings
+    User can choose whether keeping order of items in mappings
     when loading a YAML file (see `keep_order` argument).
     If a YAML file is invalid (i.e. syntax error or empty),
     this function will return an empty (ordered) dict.
@@ -66,7 +66,7 @@ def read_yaml(filepath, keep_order=False, *, mode='r', encoding='utf-8'):
 def write_yaml(filepath, data, flow_style=False, *, mode='w', encoding='utf-8'):
     """Write dictionary data safely to YAML file.
 
-    Users can choose style of YAML (flow or block style).
+    User can choose style of YAML (flow or block style).
     If data is invalid (e.g. incompatible with YAML format),
     this function does not open a file for protecting existing data.
 
