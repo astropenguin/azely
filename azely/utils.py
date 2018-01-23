@@ -26,7 +26,7 @@ yaml.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
                      lambda loader, node: OrderedDict(loader.construct_pairs(node)))
 
 # functions
-def read_yaml(filepath, keep_order=False, *, mode='r', encoding='utf-8'):
+def read_yaml(path, keep_order=False, *, mode='r', encoding='utf-8'):
     """Read YAML file safely and return (ordered) dictionary.
 
     User can choose whether keeping order of items in mappings
@@ -35,7 +35,7 @@ def read_yaml(filepath, keep_order=False, *, mode='r', encoding='utf-8'):
     this function will return an empty (ordered) dict.
 
     Args:
-        filepath (str or path object): File path of YAML.
+        path (str or path object): File path of YAML.
         keep_order (bool, optional): If True, a YAML is loaded with keeping
             order of items in mappings (i.e. OrderedDict). Default is False.
         mode (str, optional, keyword-only): Mode for file open. Default is 'r'.
@@ -46,12 +46,12 @@ def read_yaml(filepath, keep_order=False, *, mode='r', encoding='utf-8'):
             OrderedDict is returned if `keep_order` is True.
 
     """
-    logger.debug(f'filepath = {filepath}')
+    logger.debug(f'path = {path}')
     logger.debug(f'keep_order = {keep_order}')
     logger.debug(f'mode = {mode}')
     logger.debug(f'encoding = {encoding}')
 
-    with filepath.open(mode=mode, encoding=encoding) as f:
+    with path.open(mode=mode, encoding=encoding) as f:
         try:
             if keep_order:
                 return yaml.load(f) or dict()
@@ -59,11 +59,11 @@ def read_yaml(filepath, keep_order=False, *, mode='r', encoding='utf-8'):
                 Loader = yaml.loader.SafeLoader
                 return yaml.load(f, Loader) or OrderedDict()
         except:
-            logger.warning(f'fail to load {filepath}')
+            logger.warning(f'fail to load {path}')
             return dict()
 
 
-def write_yaml(filepath, data, flow_style=False, *, mode='w', encoding='utf-8'):
+def write_yaml(path, data, flow_style=False, *, mode='w', encoding='utf-8'):
     """Write dictionary data safely to YAML file.
 
     User can choose style of YAML (flow or block style).
@@ -71,7 +71,7 @@ def write_yaml(filepath, data, flow_style=False, *, mode='w', encoding='utf-8'):
     this function does not open a file for protecting existing data.
 
     Args:
-        filepath (str or path object): File path of YAML.
+        path (str or path object): File path of YAML.
         data (dict or OrderedDict): Data to be converted to YAML.
         flow_style (bool, optional): If True, data will be written
             with flow style of YAML. Default is False (block style).
@@ -82,7 +82,7 @@ def write_yaml(filepath, data, flow_style=False, *, mode='w', encoding='utf-8'):
         This function returns nothing.
 
     """
-    logger.debug(f'filepath = {filepath}')
+    logger.debug(f'path = {path}')
     logger.debug(f'flow_style = {flow_style}')
     logger.debug(f'mode = {mode}')
     logger.debug(f'encoding = {encoding}')
@@ -96,11 +96,11 @@ def write_yaml(filepath, data, flow_style=False, *, mode='w', encoding='utf-8'):
         logger.warning('fail to convert data to YAML')
         return None
 
-    with filepath.open(mode=mode, encoding=encoding) as f:
+    with path.open(mode=mode, encoding=encoding) as f:
         try:
             f.write(stream)
         except:
-            logger.warning(f'fail to write data to {filepath}')
+            logger.warning(f'fail to write data to {path}')
 
 
 def parse_name(name_like, seps=','):
