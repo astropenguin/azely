@@ -4,6 +4,8 @@ __all__ = ['AzEl',
 
 # standard library
 from collections import OrderedDict
+from logging import getLogger
+logger = getLogger(__name__)
 
 # dependent packages
 import azely
@@ -26,7 +28,10 @@ LST_TO_UTC = 1 / 1.002_737_909
 
 # classes
 class AzEl(SkyCoord):
+    """Az-el class as a subclass of Astropy's SkyCoord."""
     def __init__(self, *args, **kwargs):
+        logger.debug(f'args = {args}')
+        logger.debug(f'kwargs = {kwargs}')
         super().__init__(*args, **kwargs)
 
     @property
@@ -42,12 +47,42 @@ class AzEl(SkyCoord):
         return self.alt
 
     def __repr__(self):
-        return '<SkyCoord (AzEl)>'
+        return '<SkyCoord (AzEl): (az, el) in deg>'
 
 
 class Calculator(object):
+    """Function-like azimuth/elevation calculator class.
+
+    Attributes:
+        location (dict):
+        timezone (dict):
+        date (str):
+
+    """
     def __init__(self, location, timezone=None, date=None,
                  *, reload=True, timeout=5, encoding='utf-8'):
+        """Create (initialize) az-el calculator instance.
+
+        Args
+            location (str):
+            timezone (str, optional):
+            date (str, optional):
+            reload (bool, optional, keyword-only):
+            timeout (int, optional, keyword-only):
+            encoding (str, optional, keyword-only):
+
+        """
+        logger.debug(f'location = {location}')
+        logger.debug(f'timezone = {timezone}')
+        logger.debug(f'date = {date}')
+        logger.debug(f'reload = {reload}')
+        logger.debug(f'timeout = {timeout}')
+        logger.debug(f'encoding = {encoding}')
+
+        self.date = azely.parse_date(date)
+        self._location = location
+        self._timezone = timezone
+
         self._locations = azely.Locations(reload=reload,
                                           timeout=timeout,
                                           encoding=encoding)
@@ -55,15 +90,21 @@ class Calculator(object):
                                       timeout=timeout,
                                       encoding=encoding)
 
-        self.date = azely.parse_date(date)
-        self.location = self._locations[location, date]
-        if timezone:
-            self.timezone = self._parse_timezone(timezone)
+    @property
+    def location(self):
+        """Return location attribute (compatible with `reload`)."""
+        return self._locations[self._location, self.date]
+
+    @property
+    def timezone(self):
+        """Return timezone attribute (compatible with `reload`)."""
+        if not self._timezone:
+            return self.location.copy()
         else:
-            self.timezone = self.location.copy()
+            return self._parse_timezone(self._timezone)
 
     def __call__(self, object_names, hours=None, squeeze=True):
-        """Calculate azimuth and elevation of objects at given hour(angle)s."""
+        """Calculate azimuth/elevation of objects at given hour(angle)s."""
         skycoords = self._objects[object_names]
         time_utc = self._get_time_utc(hours)
 
@@ -80,7 +121,7 @@ class Calculator(object):
             return azels
 
     def _get_azel(self, skycoord, time_utc):
-        """Get azimuth and elevation of given skycoord and time in UTC."""
+        """Get azimuth/elevation of given skycoord and time in UTC."""
         if isinstance(skycoord, str):
             skycoord = get_body(skycoord, time=time_utc)
             return azely.AzEl(skycoord.transform_to(self._frame))
@@ -161,7 +202,7 @@ class Calculator(object):
 
     @property
     def _frame(self):
-        """Get az-el frame of location as an Astropy's AltAz object."""
+        """Get frame of location as an Astropy's AltAz object."""
         earthloc = EarthLocation(lon=self.location['longitude']*u.deg,
                                  lat=self.location['latitude']*u.deg)
 
