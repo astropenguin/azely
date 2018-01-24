@@ -4,14 +4,17 @@ __all__ = ['Objects']
 # standard library
 import re
 from collections import OrderedDict
+from logging import getLogger
 from pathlib import Path
 from pprint import pformat
+logger = getLogger(__name__)
 
 # dependent packages
 import azely
 from astropy.coordinates import SkyCoord
 from astropy.coordinates import solar_system_ephemeris
 from astropy.coordinates.name_resolve import NameResolveError
+from astropy.utils.data import Conf
 
 # module constants
 EPHEMS = solar_system_ephemeris.bodies
@@ -19,10 +22,40 @@ EPHEMS = solar_system_ephemeris.bodies
 
 # classes
 class Objects(dict):
+    """Dictionary-like astronomical objects class.
+
+    YAML files are detected and loaded from (1) package's data directory
+    (`azely.DATA_DIR`), (2) ~/.azely directory (`azely.USER_DIR`), and
+    (3) current directory with this order. If objects of same name are
+    found in later YAML files, the former ones are overwritten by them.
+
+    Attributes:
+        groups (OrderedDict):
+        flatitems (OrderedDict):
+
+    """
     def __init__(self, *, reload=False, timeout=5, encoding='utf-8'):
+        """Create (initialize) astronomical objects instance.
+
+        The following three keyword-only arguments are supported.
+
+        Args:
+            reload (bool, optional, keyword-only): If True, YAML files of
+                astronomical objects are automatically reloaded every time
+                before trying to get objects from self. Default is False.
+            timeout (int, optional, keyword-only): Time to wait for remote
+                data queries in units of second. Default is 5.
+            encoding (str, optional, keyword-only): File encoding used for
+                loading and updating YAML files. Default is 'utf-8'.
+
+        """
+        logger.debug(f'reload = {reload}')
+        logger.debug(f'timeout = {timeout}')
+        logger.debug(f'encoding = {encoding}')
+
         super().__init__()
         self.reload = reload
-        self.timeout = timeout # not implemented yet
+        self.timeout = timeout
         self.encoding = encoding
 
         # initial loading
@@ -31,6 +64,7 @@ class Objects(dict):
 
     @property
     def groups(self):
+        """Ordered dict that has only object groups."""
         if hasattr(self, '_groups') and not self.reload:
             return self._groups
 
@@ -49,6 +83,7 @@ class Objects(dict):
 
     @property
     def flatitems(self):
+        """Ordered dict of all objects with groups flattened."""
         if hasattr(self, '_flatitems') and not self.reload:
             return self._flatitems
 
@@ -87,6 +122,7 @@ class Objects(dict):
             objects.update({name: name})
 
     def _parse_object(self, objects, name):
+        """This may be a bad implementation ..."""
         # pre-processing
         if not objects[name]:
             objects.update({name: name})
@@ -117,10 +153,10 @@ class Objects(dict):
             # otherwise: try to get information from catalogue
             # and update known_objects.yaml with the result
             try:
-                frame = 'icrs'
-                coord = SkyCoord.from_name(object_like, frame)
+                Conf.remote_timeout.set(self.timeout)
+                coord = SkyCoord.from_name(object_like, 'icrs')
                 ra, dec = coord.to_string('hmsdms').split()
-                dict_coord = {'ra': ra, 'dec': dec, 'frame': frame}
+                dict_coord = {'ra': ra, 'dec': dec, 'frame': 'icrs'}
 
                 objects.update({name: coord})
                 self.known_objects.update({name: dict_coord})
@@ -133,36 +169,37 @@ class Objects(dict):
             objects.update({name: azely.PASS_FLAG})
 
     def _load_objects(self):
+        """Load YAML files (*.yaml) of astronomical objects."""
         # azely data directory
-        for filepath in azely.DATA_DIR.glob('*.yaml'):
-            if filepath.name == azely.CLI_CONFIG.name:
+        for path in azely.DATA_DIR.glob('*.yaml'):
+            if path.name in (azely.CLI_CONFIG.name,):
                 continue
 
-            self.update(azely.read_yaml(filepath, True, encoding=self.encoding))
+            self.update(azely.read_yaml(path, True, encoding=self.encoding))
 
         # ~/.azely directory (search in subdirectories)
-        for filepath in azely.USER_DIR.glob('**/*.yaml'):
-            if (filepath.name == azely.KNOWN_LOCS.name
-                or filepath.name == azely.KNOWN_OBJS.name):
-                # ignore these files
+        for path in azely.USER_DIR.glob('**/*.yaml'):
+            if path.name in (azely.KNOWN_LOCS.name, azely.KNOWN_OBJS.name):
                 continue
 
-            self.update(azely.read_yaml(filepath, True, encoding=self.encoding))
+            self.update(azely.read_yaml(path, True, encoding=self.encoding))
 
         # current directory (do not search in subdirectories)
-        for filepath in Path('.').glob('*.yaml'):
-            if (filepath.name == azely.KNOWN_LOCS.name
-                or filepath.name == azely.KNOWN_OBJS.name):
-                # ignore these files
+        for path in Path('.').glob('*.yaml'):
+            if path.name in (azely.KNOWN_LOCS.name, azely.KNOWN_OBJS.name):
                 continue
 
-            self.update(azely.read_yaml(filepath, True, encoding=self.encoding))
+            self.update(azely.read_yaml(path, True, encoding=self.encoding))
 
     def _load_known_objects(self):
-        self.known_objects = azely.read_yaml(azely.KNOWN_OBJS, encoding=self.encoding)
+        """Load ~/known_objects.yaml (`azely.KNOWN_OBJS`)."""
+        self.known_objects = azely.read_yaml(azely.KNOWN_OBJS,
+                                             encoding=self.encoding)
 
     def _update_known_objects(self):
-        azely.write_yaml(azely.KNOWN_OBJS, self.known_objects, encoding=self.encoding)
+        """Update ~/known_objects.yaml (`azely.KNOWN_OBJS`)."""
+        azely.write_yaml(azely.KNOWN_OBJS, self.known_objects,
+                                           encoding=self.encoding)
 
     def __repr__(self):
         if self.reload:
