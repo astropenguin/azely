@@ -17,6 +17,10 @@ Options:
 
 """
 
+# standard library
+from logging import getLogger
+logger = getLogger(__name__)
+
 # dependent packages
 import azely
 from docopt import docopt
