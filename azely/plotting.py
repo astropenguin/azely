@@ -3,6 +3,8 @@ __all__ = ['dayplot']
 
 # standard library
 from collections import OrderedDict
+from logging import getLogger
+logger = getLogger(__name__)
 
 # dependent packages
 import azely
