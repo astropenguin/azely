@@ -39,7 +39,7 @@ def read_yaml(path, keep_order=False, *, mode='r', encoding='utf-8'):
         keep_order (bool, optional): If True, a YAML is loaded with keeping
             order of items in mappings (i.e. OrderedDict). Default is False.
         mode (str, optional, keyword-only): Mode for file open. Default is 'r'.
-        encoding (str, optional, keyword-only): File encoding. Default is utf-8.
+        encoding (str, optional, keyword-only): File encoding. Default is 'utf-8'.
 
     Returns:
         data (dict or OrderedDict): Loaded YAML.
@@ -76,7 +76,7 @@ def write_yaml(path, data, flow_style=False, *, mode='w', encoding='utf-8'):
         flow_style (bool, optional): If True, data will be written
             with flow style of YAML. Default is False (block style).
         mode (str, optional, keyword-only): Mode for file open. Default is 'w'.
-        encoding (str, optional, keyword-only): File encoding. Default is utf-8.
+        encoding (str, optional, keyword-only): File encoding. Default is 'utf-8'.
 
     Returns:
         This function returns nothing.
