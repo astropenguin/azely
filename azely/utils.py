@@ -126,7 +126,7 @@ def parse_name(name_like, seps=','):
         return tuple(name_like)
     elif isinstance(name_like, str):
         replaced = re.sub(f'[{seps}]+', seps[0], name_like)
-        return tuple(s.strip() for s in replaced.split(repl))
+        return tuple(s.strip() for s in replaced.split(seps[0]))
     else:
         logger.error(f'ValueError: {name_like}')
         raise ValueError(name_like)
