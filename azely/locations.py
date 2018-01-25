@@ -55,6 +55,7 @@ class Locations(dict):
         self._load_known_locations()
 
     def __getitem__(self, name):
+        """Return location information of given name."""
         if self.reload:
             self._load_known_locations()
 
@@ -66,33 +67,61 @@ class Locations(dict):
             logger.error(f'ValueError: {name}')
             raise ValueError(name)
 
-        date = azely.parse_date(date)
-        self._update_location(name, date)
+        if name in self:
+            self._update_location(name, date)
+        else:
+            self._add_location(name, date)
+
         self._update_known_locations()
         return super().__getitem__(name)
 
-    def _update_location(self, name, date):
-        if name in self:
-            # update only information of timezone on given date
-            try:
-                query = super().__getitem__(name)['query']
-                location = self._request_location(query, date)
-                tz_info = {k:v for k,v in location.items() if TZ in k}
-                super().__getitem__(name).update(tz_info)
-            except KeyError:
-                # manually defined location
-                pass
-            except URLError:
-                # no internet connection
-                print('logging later!')
-            except ValueError:
-                # result with some error
-                print('logging later!')
-        else:
-            # request whole information of location on given date
+    def _add_location(self, name, date):
+        """Request whole information of location on given date."""
+        try:
             query = ' '.join(azely.parse_name(name))
+            date = azely.parse_date(date)
             location = self._request_location(query, date)
-            super().__setitem__(query, location) # OK?
+            super().__setitem__(name, location)
+        except URLError as err:
+            logger.error('no internet connection')
+            logger.error('location imformation could not be obtained')
+            raise err
+        except ValueError as err:
+            logger.error('exceeded daily request quota for Google Maps API')
+            logger.error('location imformation could not be obtained')
+            raise err
+        except Exception as err:
+            logger.error(err)
+            logger.error('location imformation could not be obtained')
+            raise err
+
+    def _update_location(self, name, date):
+        """Update only information of timezone on given date."""
+        location_old = super().__getitem__(name)
+        date = azely.parse_date(date)
+
+        if location_old[f'{TZ}_date'] == date:
+            # timezone name/hour should be unchanged
+            return None
+
+        if 'query' not in location_old:
+            # manually defined location (probably)
+            return None
+
+        try:
+            query = location_old['query']
+            location_new = self._request_location(query, date)
+            tz_info = {k:v for k,v in location_new.items() if TZ in k}
+            location_old.update(tz_info)
+        except URLError:
+            logger.warning('no internet connection')
+            logger.warning('timezone information was not updated')
+        except ValueError:
+            logger.warning('exceeded daily request quota for Google Maps API')
+            logger.warning('timezone information was not updated')
+        except Exception as err:
+            logger.warning(err)
+            logger.warning('timezone information was not updated')
 
     def _request_location(self, query, date):
         # get geocode from google maps api
@@ -125,9 +154,7 @@ class Locations(dict):
         if status == 'OK':
             return result
         else:
-            message = result['error_message']
-            logger.error(f'ValueError: {message}')
-            raise ValueError(message)
+            raise ValueError(result['error_message'])
 
     def _get_unixtime(self, date):
         """Get unix time of given date (midnight) in units of second."""
