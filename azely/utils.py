@@ -58,7 +58,7 @@ def read_yaml(path, keep_order=False, *, mode='r', encoding='utf-8'):
             else:
                 Loader = yaml.loader.SafeLoader
                 return yaml.load(f, Loader) or OrderedDict()
-        except:
+        except Exception:
             logger.warning(f'fail to load {path}')
             return dict()
 
@@ -92,14 +92,14 @@ def write_yaml(path, data, flow_style=False, *, mode='w', encoding='utf-8'):
             stream = yaml.dump(data, default_flow_style=True)
         else:
             stream = yaml.dump(data, default_flow_style=False)
-    except:
+    except Exception:
         logger.warning('fail to convert data to YAML')
         return None
 
     with path.open(mode=mode, encoding=encoding) as f:
         try:
             f.write(stream)
-        except:
+        except Exception:
             logger.warning(f'fail to write data to {path}')
 
 
@@ -157,26 +157,26 @@ def parse_date(date_like=None, seps='/\.\-'):
     elif isinstance(date_like, datetime):
         return date_like.strftime(azely.DATE_FORMAT)
     elif isinstance(date_like, str):
-        date_like = ''.join(azely.parse_name(date_like, seps))
+        string = ''.join(azely.parse_name(date_like, seps))
         try:
-            dt = datetime.strptime(date_like, '%m%d')
+            dt = datetime.strptime(string, '%m%d')
             dt = dt.replace(year=dt_now.year)
             return dt.strftime(azely.DATE_FORMAT)
         except ValueError:
             pass
 
         try:
-            dt = datetime.strptime(date_like, '%y%m%d')
+            dt = datetime.strptime(string, '%y%m%d')
             return dt.strftime(azely.DATE_FORMAT)
         except ValueError:
             pass
 
         try:
-            dt = datetime.strptime(date_like, '%Y%m%d')
+            dt = datetime.strptime(string, '%Y%m%d')
             return dt.strftime(azely.DATE_FORMAT)
         except ValueError:
             logger.error(f'ValueError: {date_like}')
-            raise ValueError(date_like)
+            raise ValueError(string)
     else:
         logger.error(f'ValueError: {date_like}')
         raise ValueError(date_like)
