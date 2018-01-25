@@ -60,7 +60,7 @@ def read_yaml(path, keep_order=False, *, mode='r', encoding='utf-8'):
                 return yaml.load(f, Loader) or OrderedDict()
         except Exception:
             logger.warning(f'fail to load {path}')
-            return dict()
+            return dict() if not keep_order else OrderedDict()
 
 
 def write_yaml(path, data, flow_style=False, *, mode='w', encoding='utf-8'):
