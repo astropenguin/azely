@@ -152,7 +152,7 @@ def parse_date(date_like=None, seps='/\.\-'):
 
     dt_now = datetime.now()
 
-    if date_like is None:
+    if not date_like:
         return dt_now.strftime(azely.DATE_FORMAT)
     elif isinstance(date_like, datetime):
         return date_like.strftime(azely.DATE_FORMAT)
