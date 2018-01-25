@@ -60,7 +60,7 @@ class Calculator(object):
 
     """
     def __init__(self, location, timezone=None, date=None,
-                 *, reload=True, timeout=5, encoding='utf-8'):
+                 *, reload=False, timeout=5, encoding='utf-8'):
         """Create (initialize) az-el calculator instance.
 
         Args
