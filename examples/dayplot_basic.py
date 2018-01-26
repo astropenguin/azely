@@ -1,4 +1,4 @@
-"""Day plot of the solar objects' elevations with given date, location, and timezone."""
+"""Dayplot of solar objects' elevations with given date, location, and timezone."""
 
 import azely
 import numpy as np
@@ -7,12 +7,12 @@ import matplotlib.pyplot as plt
 # date and locations
 date = '2018-01-01'
 location = 'alma observatory'
-timezone = 'mitaka'
+timezone = 'local sidereal time'
 
 # calculation
 c = azely.Calculator(location, timezone, date)
 t = np.linspace(0, 24, 601)
-azels = c('Solar', t) # OrderedDict
+azels = c('solar', t) # OrderedDict
 
 # plotting
 for name, azel in azels.items():
@@ -21,7 +21,7 @@ for name, azel in azels.items():
 plt.xlim(0, 24)
 plt.ylim(0, 90)
 plt.title(f'{c.location["name"]} / {c.date}')
-plt.xlabel(f'{c.timezone["timezone_name"]} (hr)')
+plt.xlabel(f'{c.timezone["name"]} (hr)')
 plt.ylabel('Elevation (deg)')
 plt.legend()
 plt.show()
