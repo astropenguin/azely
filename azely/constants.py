@@ -50,8 +50,8 @@ if not (USER_DIR / SAMPLE).exists():
 
 if not KNOWN_LOCS.exists():
     logger.info(f'created {KNOWN_LOCS}')
-    azely.write_yaml(KNOWN_LOCS, {})
+    azely.write_yaml(KNOWN_LOCS, dict())
 
 if not KNOWN_OBJS.exists():
     logger.info(f'created {KNOWN_OBJS}')
-    azely.write_yaml(KNOWN_OBJS, {})
+    azely.write_yaml(KNOWN_OBJS, dict())
