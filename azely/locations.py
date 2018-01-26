@@ -124,6 +124,7 @@ class Locations(dict):
             logger.warning('timezone information was not updated')
 
     def _request_location(self, query, date):
+        """Request result for Google Maps API with parameters"""
         # get geocode from google maps api
         params = {'address': query}
         result = self._request_api(URL_GEOCODE, params)['results'][0]
@@ -146,12 +147,12 @@ class Locations(dict):
                 f'{TZ}_name': tz_name, f'{TZ}_hour': tz_hour}
 
     def _request_api(self, url, params):
+        """Request result for Google Maps API with parameters"""
         url_with_params = f'{url}?{urlencode(params)}'
         with urlopen(url_with_params, timeout=self.timeout) as f:
             result = json.loads(f.read().decode(self.encoding))
-            status = result['status']
 
-        if status == 'OK':
+        if result['status'] == 'OK':
             return result
         else:
             raise ValueError(result['error_message'])
