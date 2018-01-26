@@ -65,7 +65,7 @@ class Objects(dict):
 
     @property
     def groups(self):
-        """Ordered dict that has only object groups."""
+        """Ordered dictionary that has only object groups."""
         if hasattr(self, '_groups') and not self.reload:
             return self._groups
 
@@ -84,7 +84,7 @@ class Objects(dict):
 
     @property
     def flatitems(self):
-        """Ordered dict of all objects with groups flattened."""
+        """Ordered dictionary of all objects with groups flattened."""
         if hasattr(self, '_flatitems') and not self.reload:
             return self._flatitems
 
