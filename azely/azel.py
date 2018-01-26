@@ -75,23 +75,41 @@ class AzEl(SkyCoord):
 class Calculator(object):
     """Function-like azimuth/elevation calculator class.
 
+    This is Azely's highest-level class. Most of operations are executed
+    through the class (its instance) including requesting location and
+    objects' information via internet and calculating azimuth/elevation
+    of objects. To create an instance, user can use ambiguous strings
+    about location, timezone, and date when and where azimuth/elevation
+    of objects should be calculated.
+
     Attributes:
-        location (dict):
-        timezone (dict):
-        date (Time):
+        date (Time): Astropy's time of date.
+        location (dict): Dictionary of location information.
+        timezone (dict): Dictionary of timezone information.
 
     """
     def __init__(self, location, timezone=None, date=None,
                  *, reload=False, timeout=5, encoding='utf-8'):
-        """Create (initialize) az-el calculator instance.
+        """Create (initialize) azimuth/elevation calculator instance.
 
-        Args
-            location (str):
-            timezone (str, optional):
-            date (str, optional):
-            reload (bool, optional, keyword-only):
-            timeout (int, optional, keyword-only):
-            encoding (str, optional, keyword-only):
+        Args:
+            location (str): Location's name (address) such as 'tokyo',
+                'san pedro de atacama', or '2-21-1 osawa mitaka'.
+            timezone (str, optional): Timezone's name. There are three types
+                of timezone-like names are supported: (1) 'UTC', 'UTC+9.0',
+                or '9.0', (2) 'LST', 'local sidereal time' (although it is
+                not timezone), and (3) 'tokyo' (same as `location`). If not
+                spacified, timezone of `location` at given `date` will be used.
+            date (str, optional): Date (YYYY-mm-dd) used for calculating
+                azimuth/elevation of objects and requesting timezone.
+            reload (bool, optional, keyword-only): If True, YAML files of
+                astronomical objects (*.yaml) and ~/known_locations.yaml are
+                automatically reloaded every time before calculation.
+                Default is False.
+            timeout (int, optional, keyword-only): Time to wait for remote
+                data queries in units of second. Default is 5.
+            encoding (str, optional, keyword-only): File encoding used for
+                loading and updating YAML files. Default is 'utf-8'.
 
         """
         logger.debug(f'location = {location}')
