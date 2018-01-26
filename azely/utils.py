@@ -32,7 +32,7 @@ def read_yaml(path, keep_order=False, *, mode='r', encoding='utf-8'):
     User can choose whether keeping order of items in mappings
     when loading a YAML file (see `keep_order` argument).
     If a YAML file is invalid (i.e. syntax error or empty),
-    this function will return an empty (ordered) dict.
+    this function will return an empty (ordered) dictionary.
 
     Args:
         path (str or path object): File path of YAML.
