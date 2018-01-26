@@ -15,6 +15,7 @@ from astropy.coordinates import SkyCoord
 from astropy.coordinates import solar_system_ephemeris
 from astropy.coordinates.name_resolve import NameResolveError
 from astropy.utils.data import Conf
+remote_timeout = Conf.remote_timeout
 
 # module constants
 EPHEMS = solar_system_ephemeris.bodies
@@ -105,68 +106,60 @@ class Objects(dict):
         objects = OrderedDict()
 
         for name in azely.parse_name(names):
-            self._add_object(objects, name)
+            objects.update(self._select_objects(name))
 
-        for name in objects:
-            self._parse_object(objects, name)
+        for item in objects.items():
+            objects.update(self._parse_object(*item))
 
-        self._update_known_objects()
+        self._update_known_objects(objects)
         return objects
 
-    def _add_object(self, objects, name):
+    def _select_objects(self, name):
         if name in self.groups:
-            objects.update(self.groups[name])
+            return self.groups[name]
         elif name in self.flatitems:
-            objects.update({name: self.flatitems[name]})
+            return {name: self.flatitems[name]}
         else:
-            objects.update({name: name})
+            return {name: name}
 
-    def _parse_object(self, objects, name):
-        """This may be a bad implementation ..."""
+    def _parse_object(self, name, object_like):
         # pre-processing
-        if not objects[name]:
-            objects.update({name: name})
+        object_like = object_like or name
 
-        object_like = objects[name]
+        if not isinstance(object_like, (dict, str)):
+            logger.warning(f'invalid object: {object_like}')
+            logger.warning('this will be not plotted')
+            return {name: azely.PASS_FLAG}
 
+        if name in self.known_objects:
+            object_like = self.known_objects[name]
+            return {name: SkyCoord(**object_like)}
+
+        # dict of skycoord information
         if isinstance(object_like, dict):
-            # if object_like is a group of objects
             try:
-                coord = SkyCoord(**object_like)
-                objects.update({name: coord})
+                return {name: SkyCoord(**object_like)}
             except ValueError:
-                print('logging later!')
-                objects.update({name: azely.PASS_FLAG})
-        elif isinstance(object_like, str):
-            # if object_like is a name of object
-            if object_like.lower() in EPHEMS:
-                # solar objects are not processed here
-                # they need date and time for calculation
-                return None
+                logger.warning(f'invalid object: {object_like}')
+                logger.warning('this will be not plotted')
+                return {name: azely.PASS_FLAG}
 
-            if name in self.known_objects:
-                # if name exists in known_objects.yaml
-                coord = SkyCoord(**self.known_objects[name])
-                objects.update({name: coord})
-                return None
+        # solar objects (sun and planets)
+        if object_like.lower() in EPHEMS:
+            return {name: object_like.lower()}
 
-            # otherwise: try to get information from catalogue
-            # and update known_objects.yaml with the result
-            try:
-                Conf.remote_timeout.set(self.timeout)
-                coord = SkyCoord.from_name(object_like, 'icrs')
-                ra, dec = coord.to_string('hmsdms').split()
-                dict_coord = {'ra': ra, 'dec': dec, 'frame': 'icrs'}
-
-                objects.update({name: coord})
-                self.known_objects.update({name: dict_coord})
-            except NameResolveError:
-                print('logging later!')
-                objects.update({name: azely.PASS_FLAG})
-        else:
-            # if object_like has invalid type
-            print('logging later!')
-            objects.update({name: azely.PASS_FLAG})
+        # otherwise: try to get information from catalogue
+        try:
+            with remote_timeout.set_temp(self.timeout):
+                return {name: SkyCoord.from_name(object_like)}
+        except NameResolveError:
+            logger.warning(f'cannot resolve name: {object_like}')
+            logger.warning('this will be not plotted')
+            return {name: azely.PASS_FLAG}
+        except Exception:
+            logger.warning(f'invalid object: {object_like}')
+            logger.warning('this will be not plotted')
+            return {name: azely.PASS_FLAG}
 
     def _load_objects(self):
         """Load YAML files (*.yaml) of astronomical objects."""
@@ -196,8 +189,14 @@ class Objects(dict):
         self.known_objects = azely.read_yaml(azely.KNOWN_OBJS,
                                              encoding=self.encoding)
 
-    def _update_known_objects(self):
+    def _update_known_objects(self, objects):
         """Update ~/known_objects.yaml (`azely.KNOWN_OBJS`)."""
+        for name, obj in objects.items():
+            if isinstance(obj, SkyCoord):
+                ra, dec = obj.to_string('hmsdms').split()
+                coords = {'ra': ra, 'dec': dec, 'frame': 'icrs'}
+                self.known_objects.update({name: coords})
+
         azely.write_yaml(azely.KNOWN_OBJS, self.known_objects,
                                            encoding=self.encoding)
 
