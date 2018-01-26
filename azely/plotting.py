@@ -43,7 +43,7 @@ def dayplot(**kwargs):
     ax_az.set_ylim([0, 360])
     ax_az.set_xticks(np.arange(24+1))
     ax_az.set_yticks(np.arange(0, 360+1, 45))
-    ax_az.set_xlabel(f'{c.timezone["timezone_name"]} (hr)')
+    ax_az.set_xlabel(f'{c.timezone["name"]} (hr)')
     ax_az.set_ylabel('Azimuth (deg)')
     tw_az.set_yticks(np.arange(0, 360+1, 45))
     tw_az.set_yticklabels(list('N E S W N'))
@@ -86,4 +86,4 @@ def dayplot(**kwargs):
     if kwargs['show']:
         plt.show()
     elif kwargs['save']:
-        plt.savefig('azely_dayplot.{kwargs["extension"]}')
+        plt.savefig(f'azely_dayplot.{kwargs["extension"]}')
