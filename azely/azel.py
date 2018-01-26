@@ -147,7 +147,7 @@ class Calculator(object):
     def timezone(self):
         """Dictionary of timezone information."""
         if not self._timezone:
-            return self.location.copy()
+            return self._parse_timezone(self._location)
         else:
             return self._parse_timezone(self._timezone)
 
@@ -187,35 +187,33 @@ class Calculator(object):
         hours = np.asarray(hours) * u.hr
 
         # time in UTC corresponding timezone's 0:00 am
+        # if timezone = LST, timezone of location is used
+        utc_at_tz0am = self.date - self.timezone['hour']*u.hr
+
         if self._islst(self.timezone['name']):
-            # if timezone = LST, timezone of location is used
-            utc_at_tz0am = self.date - self.location['timezone_hour']*u.hr
             lst_at_tz0am = utc_at_tz0am.sidereal_time('mean').value * u.hr
             return utc_at_tz0am + LST_TO_UTC * (hours - lst_at_tz0am)
         else:
-            utc_at_tz0am = self.date - self.timezone['timezone_hour']*u.hr
             return utc_at_tz0am + hours
 
     def _parse_timezone(self, timezone):
         """Parse timezone string and return location-like dict."""
         if self._islst(timezone):
             # timezone = 'LST' or related string
-            return {'name': 'LST',
-                    'timezone_hour': None,
-                    'timezone_name': 'Local Sidereal Time'}
+            return {'name': 'Local Sidereal Time',
+                    'hour': self.location['timezone_hour']}
         elif self._isutc(timezone):
             # timezone = 'UTC' or related string
-            return {'name': 'UTC',
-                    'timezone_hour': 0.0,
-                    'timezone_name': 'UTC'}
+            return {'name': 'UTC+0.0', 'hour': 0.0}
         elif self._isnumber(timezone):
             # timezone = 9.0 or '9.0', for example
-            return {'name': f'UTC{float(timezone):+.1f}',
-                    'timezone_hour': float(timezone),
-                    'timezone_name': f'UTC{float(timezone):+.1f}'}
+            hour = float(timezone)
+            return {'name': f'UTC{hour:+.1f}', 'hour': hour}
         elif isinstance(timezone, str):
             # timezone = 'japan', for example
-            return self._locations[timezone]
+            location = self._locations[timezone]
+            return {'name': location['timezone_name'],
+                    'hour': location['timezone_hour']}
         else:
             logger.error(f'invalid timezone: {timezone}')
             logger.error('calculator object cannot be created')
