@@ -136,7 +136,7 @@ class Calculator(object):
         earthloc = EarthLocation(lon=self.location['longitude']*u.deg,
                                  lat=self.location['latitude']*u.deg)
 
-        return Time(self._date, location=earthloc)
+        return Time(self._date, location=earthloc, out_subfmt='date')
 
     @property
     def location(self):
