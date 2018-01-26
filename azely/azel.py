@@ -29,22 +29,43 @@ LST_TO_UTC = 1 / 1.002_737_909
 
 # classes
 class AzEl(SkyCoord):
-    """Az-el class as a subclass of Astropy's SkyCoord."""
+    """Az-el coordinate class as a subclass of Astropy's SkyCoord.
+
+    In addition to the original attributes, the following ones are supported.
+
+
+    Attributes:
+        ra (Longitude): Right ascention (ICRS) of object.
+        dec (Longitude): Declination (ICRS) of object.
+        el (Latitude): Elevation of object (an alias of `alt`).
+
+    """
     def __init__(self, *args, **kwargs):
+        """Create (initialize) az-el coordinate instance.
+
+        Args:
+            args: Positional arguments. Same as SkyCoord's one.
+            kwargs: Keyword arguments. Same as SkyCoord's one.
+
+        """
         logger.debug(f'args = {args}')
         logger.debug(f'kwargs = {kwargs}')
+
         super().__init__(*args, **kwargs)
 
     @property
     def ra(self):
+        """Right ascention (ICRS) of object."""
         return SkyCoord(self.transform_to('icrs')).ra
 
     @property
     def dec(self):
+        """Declination (ICRS) of object."""
         return SkyCoord(self.transform_to('icrs')).dec
 
     @property
     def el(self):
+        """Elevation of object (an alias of `alt`)."""
         return self.alt
 
     def __repr__(self):
