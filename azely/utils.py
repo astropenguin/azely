@@ -54,13 +54,13 @@ def read_yaml(path, keep_order=False, *, mode='r', encoding='utf-8'):
     with path.open(mode=mode, encoding=encoding) as f:
         try:
             if keep_order:
-                return yaml.load(f) or dict()
+                return yaml.load(f) or OrderedDict()
             else:
                 Loader = yaml.loader.SafeLoader
-                return yaml.load(f, Loader) or OrderedDict()
+                return yaml.load(f, Loader) or dict()
         except Exception:
             logger.warning(f'fail to load {path}')
-            return dict() if not keep_order else OrderedDict()
+            return OrderedDict() if keep_order else dict()
 
 
 def write_yaml(path, data, flow_style=False, *, mode='w', encoding='utf-8'):
