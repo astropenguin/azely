@@ -186,8 +186,8 @@ def open_googlemaps(name):
     """Open Google Maps of given location by a web browser.
 
     Args:
-        name (str): Location name (address) such as `tokyo`,
-            `san pedro de atacama`, or `2-21-1 osawa mitaka`.
+        name (str): Location's name (address) such as 'tokyo',
+            'san pedro de atacama', or '2-21-1 osawa mitaka'.
 
     Returns:
         This function returns nothing.
