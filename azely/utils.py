@@ -11,6 +11,7 @@ import webbrowser
 from collections import OrderedDict
 from datetime import datetime
 from logging import getLogger
+from pathlib import Path
 from urllib.parse import urlencode
 logger = getLogger(__name__)
 
@@ -51,7 +52,7 @@ def read_yaml(path, keep_order=False, *, mode='r', encoding='utf-8'):
     logger.debug(f'mode = {mode}')
     logger.debug(f'encoding = {encoding}')
 
-    with path.open(mode=mode, encoding=encoding) as f:
+    with Path(path).open(mode=mode, encoding=encoding) as f:
         try:
             if keep_order:
                 return yaml.load(f) or OrderedDict()
@@ -96,7 +97,7 @@ def write_yaml(path, data, flow_style=False, *, mode='w', encoding='utf-8'):
         logger.warning('fail to convert data to YAML')
         return None
 
-    with path.open(mode=mode, encoding=encoding) as f:
+    with Path(path).open(mode=mode, encoding=encoding) as f:
         try:
             f.write(stream)
         except Exception:
