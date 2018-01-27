@@ -1,9 +1,2 @@
 default:
-  sun:
-  mercury:
-  venus:
-  mars:
-  jupiter:
-  saturn:
-  uranus:
-  neptune:
+  Sun:
