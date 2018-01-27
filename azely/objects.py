@@ -19,7 +19,10 @@ remote_timeout = Conf.remote_timeout
 
 # module constants
 EPHEMS = solar_system_ephemeris.bodies
-
+NONOBJ_YAMLS = [azely.KNOWN_LOCS.name,
+                azely.KNOWN_OBJS.name,
+                azely.CLI_PARSER.name,
+                azely.USER_CONFIG.name]
 
 # classes
 class Objects(dict):
@@ -165,21 +168,21 @@ class Objects(dict):
         """Load YAML files (*.yaml) of astronomical objects."""
         # azely data directory
         for path in azely.DATA_DIR.glob('*.yaml'):
-            if path.name in (azely.CLI_CONFIG.name,):
+            if path.name in NONOBJ_YAMLS:
                 continue
 
             self.update(azely.read_yaml(path, True, encoding=self.encoding))
 
         # ~/.azely directory (search in subdirectories)
         for path in azely.USER_DIR.glob('**/*.yaml'):
-            if path.name in (azely.KNOWN_LOCS.name, azely.KNOWN_OBJS.name):
+            if path.name in NONOBJ_YAMLS:
                 continue
 
             self.update(azely.read_yaml(path, True, encoding=self.encoding))
 
         # current directory (do not search in subdirectories)
         for path in Path('.').glob('*.yaml'):
-            if path.name in (azely.KNOWN_LOCS.name, azely.KNOWN_OBJS.name):
+            if path.name in NONOBJ_YAMLS:
                 continue
 
             self.update(azely.read_yaml(path, True, encoding=self.encoding))
