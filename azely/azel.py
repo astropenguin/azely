@@ -90,6 +90,35 @@ class Calculator(object):
         location (dict): Dictionary of location information.
         timezone (dict): Dictionary of timezone information.
 
+    Examples:
+        To calculate Sun's azimuth/elevation at Mitaka::
+
+            >>> import azely
+            >>> import numpy as np
+            >>> c = azely.Calculator('Mitaka')
+            >>> t = np.arange(24+1) # [0, 24] hr in JST
+            >>> azel = c('Sun', t, unpack_one=True)
+            >>> azel.az
+            <Longitude [ 15.54934246,  57.27383585,  75.91460181,  87.02248378,
+                         95.56647071, 103.28094924, 111.01491654, 119.3533959 ,
+                        128.8178452 , 139.90588154, 152.97878391, 167.95714675,
+                        183.99626059, 199.66878059, 213.76196278, 225.83142911,
+                        236.06364539, 244.91350713, 252.89454982, 260.54782882,
+                        268.55139407, 278.06678007, 291.90835609, 319.17703863,
+                         15.0002828 ] deg>
+            >>> azel.el
+            <Latitude [-76.94837869,-69.39652495,-58.18051618,-46.14260649,
+                       -33.97655493,-21.96976874,-10.33686226,  0.68394112,
+                        10.77580478, 19.49556842, 26.24707722, 30.33815355,
+                        31.20023124, 28.69493286, 23.20542918, 15.39936451,
+                         5.93769249, -4.65899071,-16.01515708,-27.85870914,
+                       -39.97035455,-52.11635814,-63.8824217 ,-73.92269689,
+                       -76.89451916] deg>
+
+    References:
+        http://docs.astropy.org/en/stable/generated/examples
+        (Determining and plotting the altitude/azimuth of a celestial object)
+
     """
     def __init__(self, location, timezone=None, date=None,
                  *, reload=False, timeout=5, encoding='utf-8'):
@@ -180,7 +209,7 @@ class Calculator(object):
         for item in objects.items():
             azels.update(self._calc_azel(*item, time_utc))
 
-        if squeeze and len(azels) == 1:
+        if unpack_one and len(azels) == 1:
             return azels.popitem()[1]
         else:
             return azels
