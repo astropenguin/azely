@@ -154,8 +154,24 @@ class Calculator(object):
         else:
             return self._parse_timezone(self._timezone)
 
-    def __call__(self, object_names, hours=None, squeeze=True):
-        """Calculate azimuth/elevation of objects at given hour(angle)s."""
+    def __call__(self, object_names, hours=None, unpack_one=True):
+        """Calculate azimuth/elevation of objects at given hour(angle)s.
+
+        Args:
+            object_names (str or tuple of str): Names of astronomical objects.
+            hours (array_like, optional): Hour(angle)s at given timezone or LST.
+            unpack_one (bool, optional): If True and only one object is
+                detected from `object_names`, this method will directly return
+                azimuth/elevation coordinate instance of the object instead of
+                ordered dictionary for reducing redundancy.
+
+        Returns:
+            azels (OrderedDict or AzEl): Ordered dictionary that contains
+                azimuth/elevation coordinate instances (i.e. {name: azel}).
+                If `unpack_one` is True and only one object is detected,
+                its instance will be returned instead of ordered dictionary.
+
+        """
         objects = self._objects[object_names]
         time_utc = self._get_time_utc(hours)
 
