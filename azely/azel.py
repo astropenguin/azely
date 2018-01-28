@@ -29,15 +29,18 @@ LST_TO_UTC = 1 / 1.002_737_909
 
 # classes
 class AzEl(SkyCoord):
-    """Az-el coordinate class as a subclass of Astropy's SkyCoord.
+    """Azimuth/elevation coordinate class as a subclass of astropy's skycoord.
 
+    Its instance is a default object created by azimuth/elevation calculation.
     In addition to the original attributes, the following ones are supported.
-
 
     Attributes:
         ra (Longitude): Right ascention (ICRS) of object.
         dec (Longitude): Declination (ICRS) of object.
         el (Latitude): Elevation of object (an alias of `alt`).
+
+    References
+        http://docs.astropy.org/en/stable/coordinates/
 
     """
     def __init__(self, *args, **kwargs):
