@@ -39,7 +39,7 @@ class AzEl(SkyCoord):
         dec (Longitude): Declination (ICRS) of object.
         el (Latitude): Elevation of object (an alias of `alt`).
 
-    References
+    References:
         http://docs.astropy.org/en/stable/coordinates/
 
     """
