@@ -91,7 +91,7 @@ class Calculator(object):
         timezone (dict): Dictionary of timezone information.
 
     Examples:
-        To calculate Sun's azimuth/elevation at Mitaka::
+        To calculate Sun's azimuth/elevation at Mitaka today::
 
             >>> import azely
             >>> import numpy as np
