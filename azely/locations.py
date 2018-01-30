@@ -72,7 +72,8 @@ class Locations(dict):
         `azely.locations` (not `azely.Locations`) with enabling `reload` option.
 
     References:
-        https://developers.google.com/maps/documentation/geocoding/start https://developers.google.com/maps/documentation/timezone/start
+        https://developers.google.com/maps/documentation/geocoding/start
+        https://developers.google.com/maps/documentation/timezone/start
 
     """
     def __init__(self, *, reload=False, timeout=5, encoding='utf-8'):
