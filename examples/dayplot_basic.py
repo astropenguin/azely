@@ -11,12 +11,12 @@ timezone = 'local sidereal time'
 
 # calculation
 c = azely.Calculator(location, timezone, date)
-t = np.linspace(0, 24, 601)
-azels = c('solar', t) # OrderedDict
+hr = np.linspace(0, 24, 601) # [0, 24] hr
+azels = c('solar', hr) # OrderedDict
 
 # plotting
 for name, azel in azels.items():
-    plt.plot(t, azel.el, label=name)
+    plt.plot(hr, azel.el, label=name)
 
 plt.xlim(0, 24)
 plt.ylim(0, 90)
