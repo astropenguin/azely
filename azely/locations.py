@@ -64,7 +64,7 @@ class Locations(dict):
 
     This means that an instance will try to update timezone information if the
     spacified date is different from that in the cached information. If no
-    internet connection at that time, the instance will return the cached
+    internet connection at that time, then the instance will return the cached
     information, whose timezone information is possible be incorrect, though.
 
     Notes:
