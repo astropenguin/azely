@@ -96,8 +96,8 @@ class Calculator(object):
             >>> import azely
             >>> import numpy as np
             >>> c = azely.Calculator('Mitaka')
-            >>> t = np.arange(24+1) # [0, 24] hr in JST
-            >>> azel = c('Sun', t, unpack_one=True)
+            >>> hr = np.arange(24+1) # [0, 24] hr in JST
+            >>> azel = c('Sun', hr, unpack_one=True)
             >>> azel.az
             <Longitude [ 15.54934246,  57.27383585,  75.91460181,  87.02248378,
                          95.56647071, 103.28094924, 111.01491654, 119.3533959 ,
@@ -114,6 +114,10 @@ class Calculator(object):
                          5.93769249, -4.65899071,-16.01515708,-27.85870914,
                        -39.97035455,-52.11635814,-63.8824217 ,-73.92269689,
                        -76.89451916] deg>
+
+    Notes:
+        Lower-level classes used in it are `azely.Locations`, `azely.Objects`,
+        and `azely.AzEl`. See these docstrings for detailed information.
 
     References:
         http://docs.astropy.org/en/stable/generated/examples
