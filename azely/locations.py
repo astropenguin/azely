@@ -30,13 +30,13 @@ class Locations(dict):
     Its instance is a dictionary equivalent to ~/.azely/known_locations.yaml.
     For the first time user create its intance, dictionary should be empty::
 
-        >>> locs = azely.Locations()
-        >>> locs
+        >>> locations = azely.Locations()
+        >>> locations
         {}
 
     Now user can get and add location information from Google Maps::
 
-        >>> locs['alma observatory'] # like normal dictionary
+        >>> locations['alma observatory'] # like normal dictionary
         {'address': 'San Pedro de Atacama, Antofagasta Region, Chile',
          'latitude': -23.0234342,
          'longitude': -67.7538335,
@@ -52,7 +52,7 @@ class Locations(dict):
     with the obtained information as a cached known information. User can also
     spacify date for requesting timezone information on it::
 
-        >>> locs['alma observatory', '2018-08-01']
+        >>> locations['alma observatory', '2018-08-01']
         {'address': 'San Pedro de Atacama, Antofagasta Region, Chile',
          'latitude': -23.0234342,
          'longitude': -67.7538335,
@@ -69,7 +69,7 @@ class Locations(dict):
 
     Notes:
         For the convenience, Azely provides its instance, by default, as
-        `azely.locations` (not `azely.Locations`) with default paramters.
+        `azely.locations` (not `azely.Locations`) with enabling `reload` option.
 
     References:
         https://developers.google.com/maps/documentation/geocoding/start https://developers.google.com/maps/documentation/timezone/start
