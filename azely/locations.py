@@ -25,7 +25,56 @@ URL_TIMEZONE = f'{URL_API}/timezone/json'
 
 # classes
 class Locations(dict):
-    """Dictionary-like locations class."""
+    """Dictionary-like locations class.
+
+    Its instance is a dictionary equivalent to ~/.azely/known_locations.yaml.
+    For the first time user create its intance, dictionary should be empty::
+
+        >>> locs = azely.Locations()
+        >>> locs
+        {}
+
+    Now user can get and add location information from Google Maps::
+
+        >>> locs['alma observatory'] # like normal dictionary
+        {'address': 'San Pedro de Atacama, Antofagasta Region, Chile',
+         'latitude': -23.0234342,
+         'longitude': -67.7538335,
+         'name': 'San Pedro de Atacama',
+         'query': 'alma observatory',
+         'timezone_date': '2018-01-01',
+         'timezone_hour': -3.0,
+         'timezone_name': 'Chile Summer Time'}
+
+    Internet connection is necessary for the first time user requests a new
+    location information. By default, today's timezone information will be
+    requested and obtained. This will also update ~/.azely/known_locations.yaml
+    with the obtained information as a cached known information. User can also
+    spacify date for requesting timezone information on it::
+
+        >>> locs['alma observatory', '2018-08-01']
+        {'address': 'San Pedro de Atacama, Antofagasta Region, Chile',
+         'latitude': -23.0234342,
+         'longitude': -67.7538335,
+         'name': 'San Pedro de Atacama',
+         'query': 'alma observatory',
+         'timezone_date': '2018-08-01',          # changed
+         'timezone_hour': -4.0,                  # changed
+         'timezone_name': 'Chile Standard Time'} # changed
+
+    This means that an instance will try to update timezone information if the
+    spacified date is different from that in the cached information. If no
+    internet connection at that time, the instance will return the cached
+    information, whose timezone information is possible be incorrect, though.
+
+    Notes:
+        For the convenience, Azely provides its instance, by default, as
+        `azely.locations` (not `azely.Locations`) with default paramters.
+
+    References:
+        https://developers.google.com/maps/documentation/geocoding/start https://developers.google.com/maps/documentation/timezone/start
+
+    """
     def __init__(self, *, reload=False, timeout=5, encoding='utf-8'):
         """Create (initialize) locations instance.
 
@@ -33,13 +82,14 @@ class Locations(dict):
 
         Args:
             reload (bool, optional, keyword-only): If True,
-                ~/known_locations.yaml (`azely.KNOWN_LOCS`) is automatically
-                reloaded every time before trying to get location from self.
+                ~/.azely/known_locations.yaml is automatically reloaded
+                every time before trying to get location from self.
                 Default is False.
             timeout (int, optional, keyword-only): Time to wait for remote
                 data queries in units of second. Default is 5.
             encoding (str, optional, keyword-only): File encoding used for
-                loading and updating ~/known_locations.yaml. Default is 'utf-8'.
+                loading and updating ~/.azely/known_locations.yaml.
+                Default is 'utf-8'.
 
         """
         logger.debug(f'reload = {reload}')
@@ -163,11 +213,11 @@ class Locations(dict):
         return time.mktime(date.utctimetuple())
 
     def _load_known_locations(self):
-        """Load ~/known_locations.yaml (`azely.KNOWN_LOCS`)."""
+        """Load ~/.azely/known_locations.yaml (`azely.KNOWN_LOCS`)."""
         self.update(azely.read_yaml(azely.KNOWN_LOCS, encoding=self.encoding))
 
     def _update_known_locations(self):
-        """Update ~/known_locations.yaml (`azely.KNOWN_LOCS`)."""
+        """Update ~/.azely/known_locations.yaml (`azely.KNOWN_LOCS`)."""
         azely.write_yaml(azely.KNOWN_LOCS, dict(self), encoding=self.encoding)
 
     def __repr__(self):
