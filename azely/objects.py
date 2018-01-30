@@ -188,12 +188,12 @@ class Objects(dict):
             self.update(azely.read_yaml(path, True, encoding=self.encoding))
 
     def _load_known_objects(self):
-        """Load ~/known_objects.yaml (`azely.KNOWN_OBJS`)."""
+        """Load ~/.azely/known_objects.yaml (`azely.KNOWN_OBJS`)."""
         self.known_objects = azely.read_yaml(azely.KNOWN_OBJS,
                                              encoding=self.encoding)
 
     def _update_known_objects(self, objects):
-        """Update ~/known_objects.yaml (`azely.KNOWN_OBJS`)."""
+        """Update ~/.azely/known_objects.yaml (`azely.KNOWN_OBJS`)."""
         for name, obj in objects.items():
             if isinstance(obj, SkyCoord):
                 ra, dec = obj.to_string('hmsdms').split()
