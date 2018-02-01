@@ -28,14 +28,69 @@ NONOBJ_YAMLS = [azely.KNOWN_LOCS.name,
 class Objects(dict):
     """Dictionary-like astronomical objects class.
 
-    YAML files are detected and loaded from (1) package's data directory
-    (`azely.DATA_DIR`), (2) ~/.azely directory (`azely.USER_DIR`), and
-    (3) current directory with this order. If objects of same name are
-    found in later YAML files, the former ones are overwritten by them.
+    Its instance is a dictionary equivalent to YAML files of astronomical
+    objects. YAML files are detected and loaded from (1) package's data
+    directory (`azely.DATA_DIR`), (2) ~/.azely directory (`azely.USER_DIR`),
+    and (3) current directory with this order. If objects of same name are
+    found in latter YAML files, the former ones are overwritten by them.
+    For the first time user create its intance, dictionary should be like::
+
+        >>> objects = azely.Objects()
+        >>> objects
+        {'Galactic center': OrderedDict([('l', '23h59m46.6222s'),
+                                         ('b', '-00d02m46.1843s'),
+                                         ('frame', 'galactic')]),
+         'NGC 1068': OrderedDict([('ra', '02h42m40.711s'),
+                                  ('dec', '-00d00m47.8116s'),
+                                  ('frame', 'icrs')]),
+         'default': OrderedDict([('Sun', None)]),
+         'solar': OrderedDict([('Sun', None),
+                               ('Mercury', None),
+                               ('Venus', None),
+                               ('Mars', None),
+                               ('Jupiter', None),
+                               ('Saturn', None),
+                               ('Uranus', None),
+                               ('Neptune', None)])}
+
+    where Galactic center and NGC 1068 are single objects, and default and
+    solar are grouped objects. User can spacify both names of groups and/or
+    single objects when you select objects::
+
+        >>> objects['solar'] # group
+        OrderedDict([('Sun', 'sun'),
+                     ('Mercury', 'mercury'),
+                     ('Venus', 'venus'),
+                     ('Mars', 'mars'),
+                     ('Jupiter', 'jupiter'),
+                     ('Saturn', 'saturn'),
+                     ('Uranus', 'uranus'),
+                     ('Neptune', 'neptune')])
+
+        >>> objects['default, NGC 1068'] # group and single object
+        OrderedDict([('Sun', 'sun'),
+                     ('NGC 1068', <SkyCoord (ICRS): (ra, dec) ...>)])
+
+    The returned ordered dictionary contains Astropy's skycoords or names of
+    solar system emphemeris which are converted inside the instance. When you
+    spacify object names which are not listed in the instance, then it will
+    try to obtain coordinates of them from web database. Internet connection
+    is thus necessary for the first time user requests a new object name.
+    This will also update ~/.azely/known_objects.yaml with the obtained
+    coordinate as a cached known object.
 
     Attributes:
-        groups (OrderedDict):
-        flatitems (OrderedDict):
+        groups (OrderedDict): Ordered dictionary that has only object groups.
+            It is intended to be used inside an instance.
+        flatitems (OrderedDict): Ordered dictionary of all objects with groups
+            flattened. It is intended to be used inside an instance.
+
+    Notes:
+        For the convenience, Azely provides its instance, by default, as
+        `azely.objects` (not `azely.Objects`) with enabling `reload` option.
+
+    References:
+        http://docs.astropy.org/en/stable/coordinates/skycoord.html
 
     """
     def __init__(self, *, reload=False, timeout=5, encoding='utf-8'):
@@ -102,6 +157,7 @@ class Objects(dict):
         return self._flatitems
 
     def __getitem__(self, names):
+        """Return azimuth/elevation coordinate objects of given names."""
         if self.reload:
             self._load_objects()
             self._load_known_objects()
@@ -118,6 +174,7 @@ class Objects(dict):
         return objects
 
     def _select_objects(self, name):
+        """Return {name: object_like, ...} from name of object or group."""
         if name in self.groups:
             return self.groups[name]
         elif name in self.flatitems:
@@ -126,6 +183,7 @@ class Objects(dict):
             return {name: name}
 
     def _parse_object(self, name, object_like):
+        """Parse {name: object_like} and return {name: skycoord}."""
         # pre-processing
         object_like = object_like or name
 
