@@ -1,3 +1,5 @@
+# cli_parser.yaml
+
 common:
   prog: azely
   description: |
