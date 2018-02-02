@@ -1,5 +1,6 @@
 # public items
-__all__ = ['plot']
+__all__ = ['plot_azel',
+           'list_azel']
 
 # standard library
 from collections import OrderedDict
@@ -14,7 +15,7 @@ from matplotlib.widgets import CheckButtons
 
 
 # functions
-def plot(args):
+def plot_azel(args):
     objects = args.objects
     location = args.location
     timezone = args.timezone
@@ -97,3 +98,7 @@ def plot(args):
         plt.show()
     else:
         plt.savefig(file)
+
+
+def list_azel(args):
+    pass
