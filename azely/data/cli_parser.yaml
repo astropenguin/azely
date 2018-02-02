@@ -44,10 +44,10 @@ subcommand 1:
       metavar: YYYY-mm-dd
       default:
       help: help for date
-    - flags: [-f, --file]
+    - flags: [-f, --filename]
       metavar: file
       default:
-      help: help for file
+      help: help for filename
 
 subcommand 2:
   name: list
