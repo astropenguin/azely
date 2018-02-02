@@ -1,7 +1,15 @@
-"""Azely Command Line Interface"""
+"""Azely Command Line Interface.
+
+This script is independent from the Azely package and
+intended to be executed as `azely` command in a shell::
+
+    $ azely -o sun -l mitaka -d 2018-01-01
+
+"""
 
 # standard library
 import argparse
+import logging
 
 # dependent packages
 import azely
@@ -15,7 +23,7 @@ def create_parser(config=None):
         config = azely.read_yaml(azely.CLI_PARSER)
 
     # main commands
-    main = conf.pop('common')
+    main = config.pop('common')
     desc = main['description']
     prog = main['prog']
 
@@ -27,7 +35,7 @@ def create_parser(config=None):
         parser.add_argument(*flags, **arg)
 
     # subcommands
-    for sub in conf.values():
+    for sub in config.values():
         name = sub['name']
         help = sub['help']
         desc = sub['description']
