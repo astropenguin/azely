@@ -1,5 +1,5 @@
 # public items
-__all__ = ['dayplot']
+__all__ = ['plot']
 
 # standard library
 from collections import OrderedDict
@@ -14,15 +14,21 @@ from matplotlib.widgets import CheckButtons
 
 
 # functions
-def dayplot(**kwargs):
-    # azel calculator
-    c = azely.Calculator(kwargs['location'], kwargs['timezone'], kwargs['date'])
-    t = np.linspace(0, 24, 601)
-    azels = c(kwargs['objects'], t, squeeze=False)
+def plot(args):
+    objects = args.objects
+    location = args.location
+    timezone = args.timezone
+    date = args.date
+    filename = args.filename
+
+    # calculate azimuth/elevation
+    c = azely.Calculator(location, timezone, date)
+    hr = np.linspace(0, 24, 601)
+    azels = c(objects, hr, unpack_one=False)
 
     # figure settings
-    figure, axes = plt.subplots(2, 1, figsize=(10, 5), sharex=True)
-    figure.subplots_adjust(0.1, 0.1, 0.8, 0.9, 0.1, 0.2)
+    fig, axes = plt.subplots(2, 1, figsize=(10, 5), sharex=True)
+    fig.subplots_adjust(0.1, 0.1, 0.8, 0.9, 0.1, 0.2)
 
     # el-axis settings
     ax_el = axes[0]
@@ -49,19 +55,23 @@ def dayplot(**kwargs):
     tw_az.set_yticklabels(list('N E S W N'))
     tw_az.grid(False)
 
-    # plot az & el
-    ls_az = OrderedDict()
-    ls_el = OrderedDict()
+    # plot azimuth/elevation
+    lp_az = OrderedDict() # for azimuth line plots
+    lp_el = OrderedDict() # for elevation line plots
+
     for name, azel in azels.items():
-        az, el = azel.az.value, azel.el.value
-        ma_az = np.hstack([np.abs(np.diff(az))>180, False]) | (el < 0)
+        az = azel.az.value
+        el = azel.el.value
         ma_el = (el < 0)
-        ls_el[name], = ax_el.plot(t, np.ma.array(el, mask=ma_el), label=name)
-        ls_az[name], = ax_az.plot(t, np.ma.array(az, mask=ma_az), label=name)
+        ma_az = np.hstack([np.abs(np.diff(az))>180, False])
+        az = np.ma.array(az, mask=ma_az|ma_el)
+        el = np.ma.array(el, mask=ma_el)
+        lp_az[name], = ax_az.plot(hr, az, label=name)
+        lp_el[name], = ax_el.plot(hr, el, label=name)
 
     # check-buttons settings
     ax_cb = plt.axes([0.85, 0.1, 0.1, 0.8])
-    cb = CheckButtons(ax_cb, list(ls_el.keys()), [True]*len(ls_el))
+    cb = CheckButtons(ax_cb, list(lp_el), [True]*len(lp_el))
     cc = plt.rcParams['axes.prop_cycle']()
 
     for line in cb.lines:
@@ -72,18 +82,18 @@ def dayplot(**kwargs):
         rec.set_facecolor(c['color'])
         rec.set_edgecolor('none')
 
-    def toggle(label):
-        index = list(ls_el.keys()).index(label)
-        visible = ls_el[label].get_visible()
-        ls_el[label].set_visible(not visible)
-        ls_az[label].set_visible(not visible)
-        cb.rectangles[index].set_alpha(not visible)
+    def toggle(name):
+        index = list(lp_el.keys()).index(name)
+        visible = lp_el[name].get_visible()
+        lp_el[name].set_visible(not visible)
+        lp_az[name].set_visible(not visible)
+        cb.rectangles[name].set_alpha(not visible)
         plt.draw()
 
     cb.on_clicked(toggle)
 
     # show or save plot
-    if kwargs['show']:
+    if filename is None:
         plt.show()
-    elif kwargs['save']:
-        plt.savefig(f'azely_dayplot.{kwargs["extension"]}')
+    else:
+        plt.savefig(file)
