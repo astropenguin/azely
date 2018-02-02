@@ -1,6 +1,6 @@
 # cli_parser.yaml
 
-common:
+main:
   prog: azely
   description: |
     Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
