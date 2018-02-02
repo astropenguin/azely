@@ -1,49 +1,55 @@
-"""Azely: plot azimuth and elevation of astronomical objects.
-
-Usage:
-    azely show [-d <keyword>] [-l <keyword>] [-o <keyword>] [-t <keyword>]
-    azely save [-d <keyword>] [-l <keyword>] [-o <keyword>] [-t <keyword>] [-e <keyword>]
-    azely (-h | --help)
-    azely (-v | --version)
-
-Options:
-    -h --help                 Show the help and exit.
-    -v --version              Show the version and exit.
-    -d --date <keyword>       Keyword of date [default: {date}].
-    -l --location <keyword>   Keyword of location [default: {location}].
-    -o --objects <keyword>    Keyword of objects [default: {objects}].
-    -t --timezone <keyword>   Keyword of timezone [default: {timezone}].
-    -e --extension <keyword>  Keyword of file extension [default: {extension}].
-
-"""
+"""Azely Command Line Interface"""
 
 # standard library
-from logging import getLogger
-logger = getLogger(__name__)
+import argparse
 
 # dependent packages
 import azely
-from docopt import docopt
-
-# module constants
-DEFAULTS = {
-    'date': azely.parse_date(),
-    'location': 'mitaka',
-    'objects': 'default',
-    'timezone': '',
-    'extension': 'pdf',
-}
+import yaml
 
 
 # functions
+def create_parser(config=None):
+    """Create an argument parser based on config."""
+    if config is None:
+        config = azely.read_yaml(azely.CLI_PARSER)
+
+    # main commands
+    main = conf.pop('common')
+    desc = main['description']
+    prog = main['prog']
+
+    parser = argparse.ArgumentParser(prog=prog, description=desc)
+    subparsers = parser.add_subparsers()
+
+    for arg in main['args']:
+        flags = arg.pop('flags')
+        parser.add_argument(*flags, **arg)
+
+    # subcommands
+    for sub in conf.values():
+        name = sub['name']
+        help = sub['help']
+        desc = sub['description']
+
+        subparser = subparsers.add_parser(name, help=help,
+                                          description=desc)
+        for arg in sub['args']:
+            flags = arg.pop('flags')
+            subparser.add_argument(*flags, **arg)
+
+        func = getattr(azely, f'{name}_azel')
+        subparser.set_defaults(func=func)
+
+    return parser
+
+
 def main():
-    args = docopt(__doc__.format(**DEFAULTS), version=azely.__version__)
-    kwargs = {k.lstrip('-'):v for k,v in args.items()}
+    """Main function."""
+    parser = create_parser()
+    args = parser.parse_args()
+    args.func(args)
 
-    if kwargs['show'] or kwargs['save']:
-        azely.dayplot(**kwargs)
 
-
-# main
 if __name__ == '__main__':
     main()
