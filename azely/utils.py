@@ -3,6 +3,7 @@ __all__ = ['read_yaml',
            'write_yaml',
            'parse_date',
            'parse_name',
+           'parse_keyword',
            'open_googlemaps']
 
 # standard library
@@ -10,6 +11,7 @@ import re
 import webbrowser
 from collections import OrderedDict
 from datetime import datetime
+from itertools import chain
 from logging import getLogger
 from pathlib import Path
 from urllib.parse import urlencode
@@ -102,6 +104,39 @@ def write_yaml(path, data, flow_style=False, *, mode='w', encoding='utf-8'):
             f.write(stream)
         except Exception:
             logger.warning(f'fail to write data to {path}')
+
+
+def parse_keyword(kwd_like, seps=','):
+    """Parse keyword-like object and return iterator that yields keywords.
+
+    For example, the following objects will be interpreted as
+    iter(['a', 'b', 'c']) by this function if `seps` is comma (,)::
+
+        >>> parse_keyword('a, b, c')
+        >>> parse_keyword(['a, b, c'])
+        >>> parse_keyword(['a', 'b, c'])
+        >>> parse_keyword(['a', 'b', 'c'])
+
+    Args:
+        kwd_like (str or sequence of str): Keyword-like object.
+        seps (str, optional): Separators for `kwd_like`. Default is comma (,).
+
+    Returns:
+        kwds (iterator): Iterator that yields keywords.
+
+    """
+    logger.debug(f'kwd_like = {kwd_like}')
+    logger.debug(f'seps = {seps}')
+
+    if isinstance(kwd_like, (list, tuple)):
+        return chain(*(parse_keyword(kwd) for kwd in kwd_like))
+    elif isinstance(kwd_like, str):
+        replaced = re.sub(f'[{seps}]+', seps[0], kwd_like)
+        splitted = replaced.split(seps[0])
+        return (s.strip() for s in splitted if s.strip())
+    else:
+        logger.error(f'ValueError: {kwd_like}')
+        raise ValueError(kwd_like)
 
 
 def parse_name(name_like, seps=','):
