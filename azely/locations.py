@@ -129,7 +129,7 @@ class Locations(dict):
     def _add_location(self, name, date):
         """Request whole information of location on given date."""
         try:
-            query = ' '.join(azely.parse_name(name))
+            query = ' '.join(azely.parse_keyword(name))
             date = azely.parse_date(date)
             location = self._request_location(query, date)
             super().__setitem__(name, location)

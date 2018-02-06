@@ -193,7 +193,7 @@ def parse_date(date_like=None, seps='/\.\-'):
     elif isinstance(date_like, datetime):
         return date_like.strftime(azely.DATE_FORMAT)
     elif isinstance(date_like, str):
-        string = ''.join(azely.parse_name(date_like, seps))
+        string = ''.join(azely.parse_keyword(date_like, seps))
         try:
             dt = datetime.strptime(string, '%m%d')
             dt = dt.replace(year=dt_now.year)

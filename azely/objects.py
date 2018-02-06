@@ -164,7 +164,7 @@ class Objects(dict):
 
         objects = OrderedDict()
 
-        for name in azely.parse_name(names):
+        for name in azely.parse_keyword(names):
             objects.update(self._select_objects(name))
 
         for item in objects.items():
