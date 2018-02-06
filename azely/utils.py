@@ -2,7 +2,6 @@
 __all__ = ['read_yaml',
            'write_yaml',
            'parse_date',
-           'parse_name',
            'parse_keyword',
            'open_googlemaps']
 
@@ -137,35 +136,6 @@ def parse_keyword(kwd_like, seps=','):
     else:
         logger.error(f'ValueError: {kwd_like}')
         raise ValueError(kwd_like)
-
-
-def parse_name(name_like, seps=','):
-    """Parse name-like object and return tuple of names.
-
-    For example, a string 'NGC 1068, M82, Sun' will be converted
-    to a tuple of strings, ('NGC 1068', 'M82', 'Sun') if `seps=','`.
-
-    Args:
-        name_like (str or tuple of str): Name-like object.
-            If type is string, it is split into several strings by `seps`.
-        seps (str, optional): Separators for `name_like`. Default is comma (,).
-
-    Returns:
-        names (tuple of str): Parsed strings of names.
-            If `name_like` is tuple of string, the same object is returned.
-
-    """
-    logger.debug(f'name_like = {name_like}')
-    logger.debug(f'seps = {seps}')
-
-    if isinstance(name_like, (list, tuple)):
-        return tuple(name_like)
-    elif isinstance(name_like, str):
-        replaced = re.sub(f'[{seps}]+', seps[0], name_like)
-        return tuple(s.strip() for s in replaced.split(seps[0]))
-    else:
-        logger.error(f'ValueError: {name_like}')
-        raise ValueError(name_like)
 
 
 def parse_date(date_like=None, seps='/\.\-'):
