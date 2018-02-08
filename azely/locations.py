@@ -101,8 +101,6 @@ class Locations(dict):
         self.reload = reload
         self.timeout = timeout
         self.encoding = encoding
-
-        # initial loading
         self._reload_yamls(force=True)
 
     def __getitem__(self, name):
