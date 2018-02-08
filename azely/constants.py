@@ -1,12 +1,12 @@
 # public items
-__all__ = ['DATA_DIR',
+__all__ = ['DATE',
+           'DATA_DIR',
            'USER_DIR',
            'KNOWN_LOCS',
            'KNOWN_OBJS',
            'CLI_PARSER',
-           'USER_CONFIG',
-           'DATE_FORMAT',
            'PASS_FLAG']
+           'USER_CONFIG']
 
 # standard library
 from logging import getLogger
@@ -19,6 +19,7 @@ import azely
 import yaml
 
 # module constants
+PKG = Path(azely.__path__[0])
 HOME = Path('~').expanduser()
 LOCS = 'known_locations.yaml'
 OBJS = 'known_objects.yaml'
@@ -28,13 +29,13 @@ SAMPLE = 'sample_objects.yaml'
 
 
 # package constants
-DATA_DIR = Path(azely.__path__[0]) / 'data'
+DATE = azely.parse_date()
+DATA_DIR = PKG / 'data'
 USER_DIR = HOME / '.azely'
 KNOWN_LOCS = USER_DIR / LOCS
 KNOWN_OBJS = USER_DIR / OBJS
 CLI_PARSER = DATA_DIR / PARSER
 USER_CONFIG = USER_DIR / CONFIG
-DATE_FORMAT = '%Y-%m-%d'
 PASS_FLAG = '<PASS>'
 
 

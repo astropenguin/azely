@@ -1,5 +1,6 @@
 # public items
-__all__ = ['read_yaml',
+__all__ = ['set_date',
+           'read_yaml',
            'write_yaml',
            'parse_date',
            'parse_keyword',
@@ -8,7 +9,9 @@ __all__ = ['read_yaml',
 # standard library
 import re
 import webbrowser
+from contextlib import contextmanager
 from collections import OrderedDict
+from copy import copy
 from datetime import datetime
 from itertools import chain
 from logging import getLogger
@@ -28,7 +31,79 @@ URL_GOOGLEMAPS = 'https://www.google.com/maps'
 yaml.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
                      lambda loader, node: OrderedDict(loader.construct_pairs(node)))
 
+
+# classes
+class DateManager(object):
+    """Context manager class for global date, `azely.DATE`.
+
+    This class is intended to be used internally.
+    Its instance is only used in `azely.set_date`.
+
+    """
+    def __init__(self, date_like=None):
+        """Create (initialize) date manager instance.
+
+        Its instance immediately changes `azely.DATE` with given date
+        with this initialization. If it is used as context manager,
+        `azely.DATE` reverts to old value outside a with block.
+
+        Args:
+            date_like (str or datetime object): Date-like object. Acceptable
+                values are same as those for `azely.parse_date` (see its help).
+
+        """
+        logger.debug(f'date_like = {date_like}')
+
+        self.date_old = copy(azely.DATE)
+        self.date_new = azely.parse_date(date_like)
+
+        logger.debug(f'{self.date_old} -> {self.date_new}')
+        azely.DATE = self.date_new
+
+    def __enter__(self):
+        pass
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        logger.debug(f'{self.date_new} -> {self.date_old}')
+        azely.DATE = self.date_old
+
+
 # functions
+def set_date(date_like=None):
+    """Set global date used for Azely's calculations.
+
+    This function changes `azely.DATE` with given date, whose value is used
+    for calulating azimuth/elevation of astronomical objects as well as
+    requesting timezone information of a location::
+
+        >>> azely.set_date('2018-01-01')
+        >>> print(azely.DATE)
+        2018-01-01
+
+    It also works as context manager for a temporal change of `azely.DATE`::
+
+        >>> print(azely.DATE)
+        2018-01-01
+
+        >>> with azely.set_date('2018-07-31'):
+        ...     print(azely.DATE)
+        2018-07-31
+
+        >>> print(azely.DATE)
+        2018-01-01
+
+    Args:
+        date_like (str or datetime object): Date-like object. Acceptable
+            values are same as those for `azely.parse_date` (see its help).
+
+    Returns:
+        This function returns nothing.
+
+    """
+    logger.debug(f'date_like = {date_like}')
+    return DateManager(date_like)
+
+
 def read_yaml(path, keep_order=False, *, mode='r', encoding='utf-8'):
     """Read YAML file safely and return (ordered) dictionary.
 
