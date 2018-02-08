@@ -267,3 +267,51 @@ class Objects(dict):
             self._load_known_objects()
 
         return pformat(dict(self))
+
+
+class KnownObjects(dict):
+    def __init__(self, *, reload=False, timeout=5, encoding='utf-8'):
+        logger.debug(f'reload = {reload}')
+        logger.debug(f'timeout = {timeout}')
+        logger.debug(f'encoding = {encoding}')
+
+        super().__init__()
+        self.reload = reload
+        self.timeout = timeout
+        self.encoding = encoding
+
+        # initial loading
+        self._load_known_objects()
+
+    def __getitem__(self, name):
+        if self.reload:
+            self._load_known_objects()
+
+        if name not in self:
+            self._add_object(name)
+            self._update_known_objects()
+
+        return super().__getitem__(name)
+
+    def _add_object(self, name, frame='icrs'):
+        with remote_timeout.set_temp(self.timeout):
+            skycoord = SkyCoord.from_name(name, frame)
+
+        ra, dec = skycoord.to_string('hmsdms').split()
+        obj = {'ra': ra, 'dec': dec, 'frame': frame}
+        super().__setitem__(name, obj)
+
+
+    def _load_known_objects(self):
+        """Load ~/.azely/known_objects.yaml (`azely.KNOWN_OBJS`)."""
+        self.update(azely.read_yaml(azely.KNOWN_OBJS, encoding=self.encoding))
+
+    def _update_known_objects(self):
+        """Update ~/.azely/known_objects.yaml (`azely.KNOWN_OBJS`)."""
+        azely.write_yaml(azely.KNOWN_OBJS, dict(self), encoding=self.encoding)
+
+    def __repr__(self):
+        if self.reload:
+            self._load_known_objects()
+
+        return pformat(dict(self))
