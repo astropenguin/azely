@@ -103,7 +103,7 @@ class Locations(dict):
         self.encoding = encoding
 
         # initial loading
-        self._reload_yamls()
+        self._reload_yamls(force=True)
 
     def __getitem__(self, name):
         """Return location information of given name."""
@@ -208,7 +208,7 @@ class Locations(dict):
         else:
             raise ValueError(result['error_message'])
 
-    def _reload_yamls(self, force=False):
+    def _reload_yamls(self, *, force=False):
         """(Re)load YAML file(s) if reload option is activated."""
         if self.reload or force:
             self._load_known_locations()

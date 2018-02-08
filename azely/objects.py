@@ -264,7 +264,7 @@ class KnownObjects(dict):
         self.encoding = encoding
 
         # initial loading
-        self._reload_yamls()
+        self._reload_yamls(force=True)
 
     def __getitem__(self, name):
         self._reload_yamls()
@@ -283,7 +283,7 @@ class KnownObjects(dict):
         obj = {'ra': ra, 'dec': dec, 'frame': frame}
         super().__setitem__(name, obj)
 
-    def _reload_yamls(self, force=False):
+    def _reload_yamls(self, *, force=False):
         """(Re)load YAML file(s) if reload option is activated."""
         if self.reload or force:
             self._load_known_objects()
