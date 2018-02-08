@@ -105,11 +105,11 @@ def write_yaml(path, data, flow_style=False, *, mode='w', encoding='utf-8'):
             logger.warning(f'fail to write data to {path}')
 
 
-def parse_keyword(kwd_like, seps=','):
+def parse_keyword(keyword_like, seps=','):
     """Parse keyword-like object and return iterator that yields keywords.
 
     For example, the following objects will be interpreted as
-    iter(['a', 'b', 'c']) by this function if `seps` is comma (,)::
+    iter(['a', 'b', 'c']) by this function if `seps` is comma::
 
         >>> parse_keyword('a, b, c')
         >>> parse_keyword(['a, b, c'])
@@ -117,25 +117,25 @@ def parse_keyword(kwd_like, seps=','):
         >>> parse_keyword(['a', 'b', 'c'])
 
     Args:
-        kwd_like (str or sequence of str): Keyword-like object.
-        seps (str, optional): Separators for `kwd_like`. Default is comma (,).
+        keyword_like (str or sequence of str): Keyword-like object.
+        seps (str, optional): Separators for `keyword_like`. Default is ','.
 
     Returns:
-        kwds (iterator): Iterator that yields keywords.
+        keywords (iterator): Iterator that yields keywords.
 
     """
-    logger.debug(f'kwd_like = {kwd_like}')
+    logger.debug(f'keyword_like = {keyword_like}')
     logger.debug(f'seps = {seps}')
 
-    if isinstance(kwd_like, (list, tuple)):
-        return chain(*(parse_keyword(kwd) for kwd in kwd_like))
-    elif isinstance(kwd_like, str):
-        replaced = re.sub(f'[{seps}]+', seps[0], kwd_like)
+    if isinstance(keyword_like, (list, tuple)):
+        return chain(*(parse_keyword(kwd) for kwd in keyword_like))
+    elif isinstance(keyword_like, str):
+        replaced = re.sub(f'[{seps}]+', seps[0], keyword_like)
         splitted = replaced.split(seps[0])
         return (s.strip() for s in splitted if s.strip())
     else:
-        logger.error(f'ValueError: {kwd_like}')
-        raise ValueError(kwd_like)
+        logger.error(f'ValueError: {keyword_like}')
+        raise ValueError(keyword_like)
 
 
 def parse_date(date_like=None, seps='/\.\-'):
