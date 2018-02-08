@@ -118,49 +118,10 @@ class Objects(dict):
         self.encoding = encoding
 
         # initial loading
-        self._load_objects()
-        self._load_known_objects()
-
-    @property
-    def groups(self):
-        """Ordered dictionary that has only object groups."""
-        if hasattr(self, '_groups') and not self.reload:
-            return self._groups
-
-        self._groups = OrderedDict()
-
-        for name, object_like in self.items():
-            if not isinstance(object_like, dict):
-                continue
-
-            try:
-                SkyCoord(**object_like)
-            except:
-                self._groups.update({name: object_like})
-
-        return self._groups
-
-    @property
-    def flatitems(self):
-        """Ordered dictionary of all objects with groups flattened."""
-        if hasattr(self, '_flatitems') and not self.reload:
-            return self._flatitems
-
-        self._flatitems = OrderedDict()
-
-        for name, object_like in self.items():
-            if name in self.groups:
-                self._flatitems.update(object_like)
-            else:
-                self._flatitems.update({name: object_like})
-
-        return self._flatitems
+        self._reload_yamls()
 
     def __getitem__(self, names):
         """Return azimuth/elevation coordinate objects of given names."""
-        if self.reload:
-            self._load_objects()
-            self._load_known_objects()
 
         objects = OrderedDict()
 
@@ -169,6 +130,7 @@ class Objects(dict):
 
         for item in objects.items():
             objects.update(self._parse_object(*item))
+        self._reload_yamls()
 
         self._update_known_objects(objects)
         return objects
@@ -222,6 +184,30 @@ class Objects(dict):
             logger.warning('this will be not plotted')
             return {name: azely.PASS_FLAG}
 
+    def _reload_yamls(self, force=False):
+        """(Re)load YAML file(s) if reload option is activated."""
+        if self.reload or force:
+            self._load_objects()
+
+        self.groups = OrderedDict()
+
+        for name, object_like in self.items():
+            if not isinstance(object_like, dict):
+                continue
+
+            try:
+                SkyCoord(**object_like)
+            except:
+                self.groups.update({name: object_like})
+
+        self.flatitems = OrderedDict()
+
+        for name, object_like in self.items():
+            if name in self.groups:
+                self.flatitems.update(object_like)
+            else:
+                self.flatitems.update({name: object_like})
+
     def _load_objects(self):
         """Load YAML files (*.yaml) of astronomical objects."""
         # azely data directory
@@ -262,10 +248,7 @@ class Objects(dict):
                                            encoding=self.encoding)
 
     def __repr__(self):
-        if self.reload:
-            self._load_objects()
-            self._load_known_objects()
-
+        self._reload_yamls()
         return pformat(dict(self))
 
 
@@ -281,11 +264,10 @@ class KnownObjects(dict):
         self.encoding = encoding
 
         # initial loading
-        self._load_known_objects()
+        self._reload_yamls()
 
     def __getitem__(self, name):
-        if self.reload:
-            self._load_known_objects()
+        self._reload_yamls()
 
         if name not in self:
             self._add_object(name)
@@ -301,6 +283,10 @@ class KnownObjects(dict):
         obj = {'ra': ra, 'dec': dec, 'frame': frame}
         super().__setitem__(name, obj)
 
+    def _reload_yamls(self, force=False):
+        """(Re)load YAML file(s) if reload option is activated."""
+        if self.reload or force:
+            self._load_known_objects()
 
     def _load_known_objects(self):
         """Load ~/.azely/known_objects.yaml (`azely.KNOWN_OBJS`)."""
@@ -311,7 +297,5 @@ class KnownObjects(dict):
         azely.write_yaml(azely.KNOWN_OBJS, dict(self), encoding=self.encoding)
 
     def __repr__(self):
-        if self.reload:
-            self._load_known_objects()
-
+        self._reload_yamls()
         return pformat(dict(self))

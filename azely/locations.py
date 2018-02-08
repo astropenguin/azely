@@ -103,12 +103,11 @@ class Locations(dict):
         self.encoding = encoding
 
         # initial loading
-        self._load_known_locations()
+        self.reload_yamls()
 
     def __getitem__(self, name):
         """Return location information of given name."""
-        if self.reload:
-            self._load_known_locations()
+        self._reload_yamls()
 
         if isinstance(name, tuple):
             name, date = name
@@ -213,6 +212,11 @@ class Locations(dict):
         date = datetime.strptime(date, azely.DATE_FORMAT)
         return time.mktime(date.utctimetuple())
 
+    def _reload_yamls(self, force=False):
+        """(Re)load YAML file(s) if reload option is activated."""
+        if self.reload or force:
+            self._load_known_locations()
+
     def _load_known_locations(self):
         """Load ~/.azely/known_locations.yaml (`azely.KNOWN_LOCS`)."""
         self.update(azely.read_yaml(azely.KNOWN_LOCS, encoding=self.encoding))
@@ -222,7 +226,5 @@ class Locations(dict):
         azely.write_yaml(azely.KNOWN_LOCS, dict(self), encoding=self.encoding)
 
     def __repr__(self):
-        if self.reload:
-            self._load_known_locations()
-
+        self._reload_yamls()
         return pformat(dict(self))
