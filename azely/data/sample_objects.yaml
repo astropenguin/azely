@@ -14,12 +14,14 @@ solar:
   Neptune:
 
 # single objects
-NGC 1068:
+1068:
+  name: NGC 1068
   ra: 02h42m40.711s
   dec: -00d00m47.8116s
   frame: icrs
 
-Galactic center:
+GC:
+  name: Galactic center
   l: 23h59m46.6222s
   b: -00d02m46.1843s
   frame: galactic
