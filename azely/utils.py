@@ -21,6 +21,7 @@ import azely
 import yaml
 
 # module constants
+DATE_FORMAT = '%Y-%m-%d'
 URL_GOOGLEMAPS = 'https://www.google.com/maps'
 
 # use OrderedDict in PyYAML by default
@@ -138,51 +139,52 @@ def parse_keyword(keyword_like, seps=','):
         raise ValueError(keyword_like)
 
 
-def parse_date(date_like=None, seps='/\.\-'):
+def parse_date(date_like=None, *, return_datetime=False):
     """Parse date-like object and return formatted string.
 
     Args:
         date_like (str or datetime object): Date-like object such as
-            '2018-01-23', '180123', '1/23', or datetime.datetime.now().
+            '2018-01-23', '18.01.23', '1/23', or datetime.datetime.now().
             If `date_like` has no year info, then current year is used.
-            If not spacified, then current local date is used.
-        seps (str, optional): Separators for `date_like`.
-            Default is either hyphen (-), slash (/), or dot (.).
+            If not spacified, then current local date is used. supported
+            separators for `date_like` are hyphen (-), slash (/), or dot (.).
+        return_datetime (bool, optional, keyword-only): If True, this function
+            will return datetime object (datetime.datetime) instead of
+            formatted string. Default is False.
 
     Returns:
-        date (str): Formatted date string (YYYY-mm-dd).
+        date (str): Formatted date string (YYYY-mm-dd). If `return_datetime`
+            is True, datetime object (midnight of given date) will be returned.
 
     """
     logger.debug(f'date_like = {date_like}')
-    logger.debug(f'seps = {seps}')
+    logger.debug(f'return_datetime = {return_datetime}')
 
-    dt_now = datetime.now()
+    now = datetime.now()
+    now = now.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    def postproc(dt):
+        return dt if return_datetime else dt.strftime(DATE_FORMAT)
 
     if not date_like:
-        return dt_now.strftime(azely.DATE_FORMAT)
+        return postproc(now)
     elif isinstance(date_like, datetime):
-        return date_like.strftime(azely.DATE_FORMAT)
+        return postproc(date_like)
     elif isinstance(date_like, str):
-        string = ''.join(azely.parse_keyword(date_like, seps))
-        try:
-            dt = datetime.strptime(string, '%m%d')
-            dt = dt.replace(year=dt_now.year)
-            return dt.strftime(azely.DATE_FORMAT)
-        except ValueError:
-            pass
+        date = ''.join(azely.parse_keyword(date_like, '/\.\-'))
 
         try:
-            dt = datetime.strptime(string, '%y%m%d')
-            return dt.strftime(azely.DATE_FORMAT)
+            dt = datetime.strptime(date, '%m%d')
+            return postproc(dt.replace(year=now.year))
         except ValueError:
-            pass
-
-        try:
-            dt = datetime.strptime(string, '%Y%m%d')
-            return dt.strftime(azely.DATE_FORMAT)
-        except ValueError:
-            logger.error(f'ValueError: {date_like}')
-            raise ValueError(string)
+            for fmt in ('%y%m%d', '%Y%m%d'):
+                try:
+                    return postproc(datetime.strptime(date, fmt))
+                except ValueError:
+                    pass
+            else:
+                logger.error(f'ValueError: {date_like}')
+                raise ValueError(date_like)
     else:
         logger.error(f'ValueError: {date_like}')
         raise ValueError(date_like)
