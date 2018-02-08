@@ -103,7 +103,7 @@ class Locations(dict):
         self.encoding = encoding
 
         # initial loading
-        self.reload_yamls()
+        self._reload_yamls()
 
     def __getitem__(self, name):
         """Return location information of given name."""
