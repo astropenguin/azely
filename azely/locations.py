@@ -4,7 +4,6 @@ __all__ = ['Locations']
 # standard library
 import re
 import time
-from datetime import datetime
 from logging import getLogger
 from pprint import pformat
 from urllib.error import URLError
@@ -50,9 +49,10 @@ class Locations(dict):
     location information. By default, today's timezone information will be
     requested and obtained. This will also update ~/.azely/known_locations.yaml
     with the obtained information as a cached known information. User can also
-    spacify date for requesting timezone information on it::
+    spacify date for requesting timezone information on it like::
 
-        >>> locations['alma observatory', '2018-08-01']
+        >>> with azely.set_date('2018-08-01'):
+        ...     locations['alma observatory']
         {'address': 'San Pedro de Atacama, Antofagasta Region, Chile',
          'latitude': -23.0234342,
          'longitude': -67.7538335,
@@ -107,28 +107,19 @@ class Locations(dict):
         """Return location information of given name."""
         self._reload_yamls()
 
-        if isinstance(name, tuple):
-            name, date = name
-        elif isinstance(name, str):
-            name, date = name, None
-        else:
-            logger.error(f'ValueError: {name}')
-            raise ValueError(name)
-
         if name in self:
-            self._update_location(name, date)
+            self._update_location(name)
         else:
-            self._add_location(name, date)
+            self._add_location(name)
 
         self._update_known_locations()
         return super().__getitem__(name)
 
-    def _add_location(self, name, date):
-        """Request whole information of location on given date."""
+    def _add_location(self, name):
+        """Request whole information of location."""
         try:
             query = ' '.join(azely.parse_keyword(name))
-            date = azely.parse_date(date)
-            location = self._request_location(query, date)
+            location = self._request_location(query)
             super().__setitem__(name, location)
         except URLError as err:
             logger.error('no internet connection')
@@ -143,12 +134,11 @@ class Locations(dict):
             logger.error('location imformation could not be obtained')
             raise err
 
-    def _update_location(self, name, date):
-        """Update only information of timezone on given date."""
+    def _update_location(self, name):
+        """Update only information of timezone."""
         location_old = super().__getitem__(name)
-        date = azely.parse_date(date)
 
-        if location_old[f'{TZ}_date'] == date:
+        if location_old[f'{TZ}_date'] == azely.DATE:
             # timezone name/hour should be unchanged
             return None
 
@@ -158,7 +148,7 @@ class Locations(dict):
 
         try:
             query = location_old['query']
-            location_new = self._request_location(query, date)
+            location_new = self._request_location(query)
             tz_info = {k:v for k,v in location_new.items() if TZ in k}
             location_old.update(tz_info)
         except URLError:
@@ -171,7 +161,7 @@ class Locations(dict):
             logger.warning(err)
             logger.warning('timezone information was not updated')
 
-    def _request_location(self, query, date):
+    def _request_location(self, query):
         """Request result for Google Maps API with parameters"""
         # get geocode from google maps api
         params = {'address': query}
@@ -183,8 +173,9 @@ class Locations(dict):
         lon = result['geometry']['location']['lng']
 
         # get timezone from google maps api
-        dt = datetime.strptime(date, azely.DATE_FORMAT)
-        unixtime = time.mktime(dt.utctimetuple())
+        date = azely.parse_date(azely.DATE)
+        dt_obj = azely.parse_date(date, return_datetime=True)
+        unixtime = time.mktime(dt_obj.utctimetuple())
         params = {'location': f'{lat}, {lon}', 'timestamp': unixtime}
         result = self._request_api(URL_TIMEZONE, params)
 
