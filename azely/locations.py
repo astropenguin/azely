@@ -185,7 +185,8 @@ class Locations(dict):
         lon = result['geometry']['location']['lng']
 
         # get timezone from google maps api
-        unixtime = self._get_unixtime(date)
+        dt = datetime.strptime(date, azely.DATE_FORMAT)
+        unixtime = time.mktime(dt.utctimetuple())
         params = {'location': f'{lat}, {lon}', 'timestamp': unixtime}
         result = self._request_api(URL_TIMEZONE, params)
 
@@ -206,11 +207,6 @@ class Locations(dict):
             return result
         else:
             raise ValueError(result['error_message'])
-
-    def _get_unixtime(self, date):
-        """Get unix time of given date (midnight) in units of second."""
-        date = datetime.strptime(date, azely.DATE_FORMAT)
-        return time.mktime(date.utctimetuple())
 
     def _reload_yamls(self, force=False):
         """(Re)load YAML file(s) if reload option is activated."""
