@@ -107,10 +107,10 @@ class Locations(dict):
         """Return location information of given name."""
         self._reload_yamls()
 
-        if name in self:
-            self._update_location(name)
-        else:
+        if name not in self:
             self._add_location(name)
+        else:
+            self._update_location(name)
 
         self._update_known_locations()
         return super().__getitem__(name)
