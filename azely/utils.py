@@ -62,7 +62,7 @@ class DateManager(object):
         azely.DATE = self.date_new
 
     def __enter__(self):
-        pass
+        return self
 
     def __exit__(self, exc_type, exc_value, traceback):
         logger.debug(f'{self.date_new} -> {self.date_old}')
