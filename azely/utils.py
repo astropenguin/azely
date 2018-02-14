@@ -36,7 +36,7 @@ yaml.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
 
 # classes
 class DateManager(object):
-    """Context manager class for global date, `azely.DATE`.
+    """Util: context manager class for global date, `azely.DATE`.
 
     This class is intended to be used internally.
     Its instance is only used in `azely.set_date`.
@@ -72,7 +72,7 @@ class DateManager(object):
 
 # functions
 def set_date(date_like=None):
-    """Set global date used for Azely's calculations.
+    """Util: set global date used for Azely's calculations.
 
     This function changes `azely.DATE` with given date, whose value is used
     for calulating azimuth/elevation of astronomical objects as well as
@@ -107,7 +107,7 @@ def set_date(date_like=None):
 
 
 def read_yaml(path, keep_order=False, *, mode='r', encoding='utf-8'):
-    """Read YAML file safely and return (ordered) dictionary.
+    """Util: read YAML file safely and return (ordered) dictionary.
 
     User can choose whether keeping order of items in mappings
     when loading a YAML file (see `keep_order` argument).
@@ -144,7 +144,7 @@ def read_yaml(path, keep_order=False, *, mode='r', encoding='utf-8'):
 
 
 def write_yaml(path, data, flow_style=False, *, mode='w', encoding='utf-8'):
-    """Write dictionary data safely to YAML file.
+    """Util: write dictionary data safely to YAML file.
 
     User can choose style of YAML (flow or block style).
     If data is invalid (e.g. incompatible with YAML format),
@@ -220,7 +220,7 @@ def flatten(sequence, depth=None, classes=None):
 
 
 def parse_keyword(keyword_like, seps=','):
-    """Parse keyword-like object and return iterator that yields keywords.
+    """Util: parse keyword-like object and return iterator that yields keywords.
 
     For example, the following objects will be interpreted as
     iter(['a', 'b', 'c']) by this function if `seps` is comma::
@@ -251,7 +251,7 @@ def parse_keyword(keyword_like, seps=','):
     return (s.strip() for s in splitted if s.strip())
 
 def parse_date(date_like=None, *, return_datetime=False):
-    """Parse date-like object and return formatted string.
+    """Util: parse date-like object and return formatted string.
 
     Args:
         date_like (str or datetime object): Date-like object such as
@@ -302,7 +302,7 @@ def parse_date(date_like=None, *, return_datetime=False):
 
 
 def open_googlemaps(name):
-    """Open Google Maps of given location by a web browser.
+    """Util: open Google Maps of given location by a web browser.
 
     Args:
         name (str): Location's name (address) such as 'tokyo',
