@@ -2,7 +2,6 @@
 __all__ = ['Locations']
 
 # standard library
-import re
 import time
 from logging import getLogger
 from pprint import pformat
