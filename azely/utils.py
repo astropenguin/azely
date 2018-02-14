@@ -250,6 +250,7 @@ def parse_keyword(keyword_like, seps=','):
     splitted = replaced.split(seps[0])
     return (s.strip() for s in splitted if s.strip())
 
+
 def parse_date(date_like=None, *, return_datetime=False):
     """Util: parse date-like object and return formatted string.
 
