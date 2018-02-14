@@ -182,18 +182,18 @@ def write_yaml(path, data, flow_style=False, *, mode='w', encoding='utf-8'):
             logger.warning(f'fail to write data to {path}')
 
 
-def flatten(sequence, depth=None, exclude_classes=(str, dict)):
+def flatten(sequence, depth=None, *, exclude_classes=(str, dict)):
     """Util: flatten a sequence object of specific type.
 
     For example, [1,2,3, [4,5,[6]]] will be interpreted as
-    iter([1, 2, 3, 4, 5, 6]) if `classes` is (list, tuple).
+    iter([1, 2, 3, 4, 5, 6]) with defualt optional arguments.
 
     Args:
         sequence (sequence): Sequence object to be flattened.
         depth (int, optional): Maximum depth of flattening.
             Default is None (recursively flatten with unlimited depth).
-        exclude_classes (class or tuple of class, optional): Class(es)
-            whose instance(s) is(are) not flattened. Default is dict and str.
+        exclude_classes (class or tuple of class, optional, keyword-only):
+        Classes whose instances are not flattened. Default is (dict, str).
 
     Returns:
         flattened (iterator): Iterator that yields flattened elements.
@@ -214,7 +214,7 @@ def flatten(sequence, depth=None, exclude_classes=(str, dict)):
         yield sequence
 
 
-def parse_keyword(keyword_like, seps=','):
+def parse_keyword(keyword_like, *, seps=','):
     """Util: parse keyword-like object and return iterator that yields keywords.
 
     For example, the following objects will be interpreted as
@@ -227,7 +227,9 @@ def parse_keyword(keyword_like, seps=','):
 
     Args:
         keyword_like (str or sequence of str): Keyword-like object.
-        seps (str, optional): Separators for `keyword_like`. Default is ','.
+        seps (str, optional, keyword-only): Separator(s) for `keyword_like`.
+            Default is ',' (comma). Note that `seps` is used as a reqular
+            expression patterns like '[seps]+'.
 
     Returns:
         keywords (iterator): Iterator that yields keywords.
@@ -278,7 +280,7 @@ def parse_date(date_like=None, *, return_datetime=False):
     elif isinstance(date_like, datetime):
         return postproc(date_like)
     elif isinstance(date_like, str):
-        date = ''.join(azely.parse_keyword(date_like, '/\.\-'))
+        date = ''.join(azely.parse_keyword(date_like, seps='/\.\-'))
 
         try:
             dt = datetime.strptime(date, '%m%d')
