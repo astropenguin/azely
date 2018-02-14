@@ -270,20 +270,18 @@ class KnownObjects(OrderedDict):
         self._reload_yamls()
 
         if name not in self:
-            self._add_object(name, 'icrs')
+            self._add_object(name, frame='icrs')
             self._update_known_objects()
 
         return super().__getitem__(name)
 
-    def _add_object(self, name, frame='icrs'):
+    def _add_object(self, name, *, frame='icrs'):
         with remote_timeout.set_temp(self.timeout):
             skycoord = SkyCoord.from_name(name, frame)
             ra, dec = skycoord.to_string('hmsdms').split()
 
-        super().__setitem__(name, {'name': name,
-                                   'ra': ra,
-                                   'dec': dec,
-                                   'frame': frame})
+        super().__setitem__(name, {'name': name, 'ra': ra,
+                                   'dec': dec, 'frame': frame})
 
     def _reload_yamls(self, *, force=False):
         """(Re)load YAML file(s) if reload option is activated."""
