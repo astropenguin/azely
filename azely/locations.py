@@ -203,11 +203,11 @@ class Locations(dict):
             self._load_known_locations()
 
     def _load_known_locations(self):
-        """Load ~/.azely/known_locations.yaml (`azely.KNOWN_LOCS`)."""
+        """Load known_locations.yaml (`azely.KNOWN_LOCS`)."""
         self.update(azely.read_yaml(azely.KNOWN_LOCS, encoding=self.encoding))
 
     def _update_known_locations(self):
-        """Update ~/.azely/known_locations.yaml (`azely.KNOWN_LOCS`)."""
+        """Update known_locations.yaml (`azely.KNOWN_LOCS`)."""
         azely.write_yaml(azely.KNOWN_LOCS, dict(self), encoding=self.encoding)
 
     def __repr__(self):
