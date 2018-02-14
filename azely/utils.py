@@ -275,6 +275,16 @@ def parse_date(date_like=None, *, return_datetime=False):
     def postproc(dt):
         return dt if return_datetime else dt.strftime(DATE_FORMAT)
 
+    def datetime_from(*formats):
+        for fmt in formats:
+            try:
+                return datetime.strptime(date, fmt)
+            except ValueError:
+                continue
+
+        logger.error(f'ValueError: {date_like}')
+        raise ValueError(date_like)
+
     if not date_like:
         return postproc(now)
     elif isinstance(date_like, datetime):
@@ -286,14 +296,8 @@ def parse_date(date_like=None, *, return_datetime=False):
             dt = datetime.strptime(date, '%m%d')
             return postproc(dt.replace(year=now.year))
         except ValueError:
-            for fmt in ('%y%m%d', '%Y%m%d'):
-                try:
-                    return postproc(datetime.strptime(date, fmt))
-                except ValueError:
-                    pass
-            else:
-                logger.error(f'ValueError: {date_like}')
-                raise ValueError(date_like)
+            dt = datetime_from('%y%m%d', '%Y%m%d')
+            return postproc(dt)
     else:
         logger.error(f'ValueError: {date_like}')
         raise ValueError(date_like)
