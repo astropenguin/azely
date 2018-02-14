@@ -5,7 +5,6 @@ __all__ = ['DATE',
            'KNOWN_LOCS',
            'KNOWN_OBJS',
            'CLI_PARSER',
-           'PASS_FLAG']
            'USER_CONFIG']
 
 # standard library
@@ -36,7 +35,6 @@ KNOWN_LOCS = USER_DIR / LOCS
 KNOWN_OBJS = USER_DIR / OBJS
 CLI_PARSER = DATA_DIR / PARSER
 USER_CONFIG = USER_DIR / CONFIG
-PASS_FLAG = '<PASS>'
 
 
 # create directory and file (if not existing)
