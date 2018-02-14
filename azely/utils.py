@@ -275,7 +275,7 @@ def parse_date(date_like=None, *, return_datetime=False):
     def postproc(dt):
         return dt if return_datetime else dt.strftime(DATE_FORMAT)
 
-    def datetime_from(*formats):
+    def datetime_from(date, formats):
         for fmt in formats:
             try:
                 return datetime.strptime(date, fmt)
@@ -290,13 +290,14 @@ def parse_date(date_like=None, *, return_datetime=False):
     elif isinstance(date_like, datetime):
         return postproc(date_like)
     elif isinstance(date_like, str):
-        date = ''.join(azely.parse_keyword(date_like, seps='/\.\-'))
-
+        seps = '/\.\-' # hyphen, slash, and dot
+        date = ''.join(azely.parse_keyword(date_like, seps=seps))
         try:
+            # if year is not spacified
             dt = datetime.strptime(date, '%m%d')
             return postproc(dt.replace(year=now.year))
         except ValueError:
-            dt = datetime_from('%y%m%d', '%Y%m%d')
+            dt = datetime_from(date, ('%y%m%d', '%Y%m%d'))
             return postproc(dt)
     else:
         logger.error(f'ValueError: {date_like}')
