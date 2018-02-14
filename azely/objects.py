@@ -270,7 +270,7 @@ class KnownObjects(dict):
         self._reload_yamls()
 
         if name not in self:
-            self._add_object(name)
+            self._add_object(name, 'icrs')
             self._update_known_objects()
 
         return super().__getitem__(name)
@@ -278,10 +278,12 @@ class KnownObjects(dict):
     def _add_object(self, name, frame='icrs'):
         with remote_timeout.set_temp(self.timeout):
             skycoord = SkyCoord.from_name(name, frame)
+            ra, dec = skycoord.to_string('hmsdms').split()
 
-        ra, dec = skycoord.to_string('hmsdms').split()
-        obj = {'ra': ra, 'dec': dec, 'frame': frame}
-        super().__setitem__(name, obj)
+        super().__setitem__(name, {'name': name,
+                                   'ra': ra,
+                                   'dec': dec,
+                                   'frame': frame})
 
     def _reload_yamls(self, *, force=False):
         """(Re)load YAML file(s) if reload option is activated."""
@@ -289,11 +291,11 @@ class KnownObjects(dict):
             self._load_known_objects()
 
     def _load_known_objects(self):
-        """Load ~/.azely/known_objects.yaml (`azely.KNOWN_OBJS`)."""
+        """Load known_objects.yaml (`azely.KNOWN_OBJS`)."""
         self.update(azely.read_yaml(azely.KNOWN_OBJS, encoding=self.encoding))
 
     def _update_known_objects(self):
-        """Update ~/.azely/known_objects.yaml (`azely.KNOWN_OBJS`)."""
+        """Update known_objects.yaml (`azely.KNOWN_OBJS`)."""
         azely.write_yaml(azely.KNOWN_OBJS, dict(self), encoding=self.encoding)
 
     def __repr__(self):
