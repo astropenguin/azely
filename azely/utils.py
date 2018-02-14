@@ -182,7 +182,7 @@ def write_yaml(path, data, flow_style=False, *, mode='w', encoding='utf-8'):
             logger.warning(f'fail to write data to {path}')
 
 
-def flatten(sequence, depth=None, exclude_classes=dict):
+def flatten(sequence, depth=None, exclude_classes=(str, dict)):
     """Util: flatten a sequence object of specific type.
 
     For example, [1,2,3, [4,5,[6]]] will be interpreted as
@@ -193,7 +193,7 @@ def flatten(sequence, depth=None, exclude_classes=dict):
         depth (int, optional): Maximum depth of flattening.
             Default is None (recursively flatten with unlimited depth).
         exclude_classes (class or tuple of class, optional): Class(es)
-            whose instance(s) is(are) not to be flattened. Default is dict.
+            whose instance(s) is(are) not flattened. Default is dict and str.
 
     Returns:
         flattened (iterator): Iterator that yields flattened elements.
