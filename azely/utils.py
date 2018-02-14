@@ -15,7 +15,6 @@ from contextlib import contextmanager
 from collections import OrderedDict
 from copy import copy
 from datetime import datetime
-from itertools import chain
 from logging import getLogger
 from pathlib import Path
 from urllib.parse import urlencode
@@ -183,20 +182,18 @@ def write_yaml(path, data, flow_style=False, *, mode='w', encoding='utf-8'):
             logger.warning(f'fail to write data to {path}')
 
 
-def flatten(sequence, depth=None, classes=None):
+def flatten(sequence, depth=None, exclude_classes=dict):
     """Util: flatten a sequence object of specific type.
 
     For example, [1,2,3, [4,5,[6]]] will be interpreted as
     iter([1, 2, 3, 4, 5, 6]) if `classes` is (list, tuple).
-    User can specify maximum depth and class(es) to be flattened.
 
     Args:
         sequence (sequence): Sequence object to be flattened.
         depth (int, optional): Maximum depth of flattening.
             Default is None (recursively flatten with unlimited depth).
-        classes (tuple or class, optional): Class(es) to be flattened.
-            For example, if `classes` = (list,), then only list objects
-            will be flattened. Default is None (list and tuple).
+        exclude_classes (class or tuple of class, optional): Class(es)
+            whose instance(s) is(are) not to be flattened. Default is dict.
 
     Returns:
         flattened (iterator): Iterator that yields flattened elements.
@@ -204,17 +201,15 @@ def flatten(sequence, depth=None, classes=None):
     """
     logger.debug(f'sequence = {sequence}')
     logger.debug(f'depth = {depth}')
-    logger.debug(f'classes = {classes}')
-
-    if classes is None:
-        classes = (list, tuple)
+    logger.debug(f'exclude_classes = {exclude_classes}')
 
     if depth is None:
         depth = sys.getrecursionlimit()
 
-    if isinstance(sequence, classes) and depth+1:
+    if (not isinstance(sequence, exclude_classes)
+            and hasattr(sequence, '__iter__') and depth+1):
         for element in sequence:
-            yield from flatten(element, depth-1, classes)
+            yield from flatten(element, depth-1, exclude_classes)
     else:
         yield sequence
 
