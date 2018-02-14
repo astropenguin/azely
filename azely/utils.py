@@ -2,12 +2,14 @@
 __all__ = ['set_date',
            'read_yaml',
            'write_yaml',
+           'flatten',
            'parse_date',
            'parse_keyword',
            'open_googlemaps']
 
 # standard library
 import re
+import sys
 import webbrowser
 from contextlib import contextmanager
 from collections import OrderedDict
@@ -181,6 +183,42 @@ def write_yaml(path, data, flow_style=False, *, mode='w', encoding='utf-8'):
             logger.warning(f'fail to write data to {path}')
 
 
+def flatten(sequence, depth=None, classes=None):
+    """Util: flatten a sequence object of specific type.
+
+    For example, [1,2,3, [4,5,[6]]] will be interpreted as
+    iter([1, 2, 3, 4, 5, 6]) if `classes` is (list, tuple).
+    User can specify maximum depth and class(es) to be flattened.
+
+    Args:
+        sequence (sequence): Sequence object to be flattened.
+        depth (int, optional): Maximum depth of flattening.
+            Default is None (recursively flatten with unlimited depth).
+        classes (tuple or class, optional): Class(es) to be flattened.
+            For example, if `classes` = (list,), then only list objects
+            will be flattened. Default is None (list and tuple).
+
+    Returns:
+        flattened (iterator): Iterator that yields flattened elements.
+
+    """
+    logger.debug(f'sequence = {sequence}')
+    logger.debug(f'depth = {depth}')
+    logger.debug(f'classes = {classes}')
+
+    if classes is None:
+        classes = (list, tuple)
+
+    if depth is None:
+        depth = sys.getrecursionlimit()
+
+    if isinstance(sequence, classes) and depth+1:
+        for element in sequence:
+            yield from flatten(element, depth-1, classes)
+    else:
+        yield sequence
+
+
 def parse_keyword(keyword_like, seps=','):
     """Parse keyword-like object and return iterator that yields keywords.
 
@@ -203,16 +241,14 @@ def parse_keyword(keyword_like, seps=','):
     logger.debug(f'keyword_like = {keyword_like}')
     logger.debug(f'seps = {seps}')
 
-    if isinstance(keyword_like, (list, tuple)):
-        return chain(*(parse_keyword(kwd) for kwd in keyword_like))
-    elif isinstance(keyword_like, str):
-        replaced = re.sub(f'[{seps}]+', seps[0], keyword_like)
-        splitted = replaced.split(seps[0])
-        return (s.strip() for s in splitted if s.strip())
-    else:
+    if not isinstance(keyword_like, (list, tuple, str)):
         logger.error(f'ValueError: {keyword_like}')
         raise ValueError(keyword_like)
 
+    joined = seps[0].join(azely.flatten(keyword_like))
+    replaced = re.sub(f'[{seps}]+', seps[0], joined)
+    splitted = replaced.split(seps[0])
+    return (s.strip() for s in splitted if s.strip())
 
 def parse_date(date_like=None, *, return_datetime=False):
     """Parse date-like object and return formatted string.
