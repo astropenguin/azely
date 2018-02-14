@@ -209,7 +209,8 @@ def flatten(sequence, depth=None, *, exclude_classes=(str, dict)):
     if (not isinstance(sequence, exclude_classes)
             and hasattr(sequence, '__iter__') and depth+1):
         for element in sequence:
-            yield from flatten(element, depth-1, exclude_classes)
+            yield from flatten(element, depth-1,
+                               exclude_classes=exclude_classes)
     else:
         yield sequence
 
