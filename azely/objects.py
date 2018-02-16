@@ -2,8 +2,8 @@
 __all__ = ['Objects']
 
 # standard library
-import re
 from collections import OrderedDict
+from copy import copy
 from logging import getLogger
 from pathlib import Path
 from pprint import pformat
@@ -25,7 +25,7 @@ NONOBJ_YAMLS = [azely.KNOWN_LOCS.name,
                 azely.USER_CONFIG.name]
 
 # classes
-class Objects(dict):
+class Objects(OrderedDict):
     """Dictionary-like astronomical objects class.
 
     Its instance is a dictionary equivalent to YAML files of astronomical
@@ -116,97 +116,70 @@ class Objects(dict):
         self.reload = reload
         self.timeout = timeout
         self.encoding = encoding
+        self.known = KnownObjects(reload=reload,
+                                  timeout=timeout,
+                                  encoding=encoding)
 
-        # initial loading
-        self._reload_yamls()
+        # initial loading of YAMLs
+        # groups and flattened are created herein
+        self._reload_yamls(force=True)
 
-    def __getitem__(self, names):
+    def __getitem__(self, keyword_like):
         """Return azimuth/elevation coordinate objects of given names."""
-
-        objects = OrderedDict()
-
-        for name in azely.parse_keyword(names):
-            objects.update(self._select_objects(name))
-
-        for item in objects.items():
-            objects.update(self._parse_object(*item))
         self._reload_yamls()
 
-        self._update_known_objects(objects)
-        return objects
+        keywords = azely.parse_keyword(keyword_like, seps=',')
+        values = azely.flatten(self._values_from(kwd) for kwd in keywords)
+        objects = (self._object_from(val) for val in values)
+        return list(filter(None, objects))
 
-    def _select_objects(self, name):
-        """Return {name: object_like, ...} from name of object or group."""
-        if name in self.groups:
-            return self.groups[name]
-        elif name in self.flatitems:
-            return {name: self.flatitems[name]}
-        else:
-            return {name: name}
+    def _values_from(self, keyword):
+        """Parse keyword and return values."""
+        if keyword in self.groups:
+            group = self.groups[keyword]
+            return (val or key for key, val in group.items())
 
-    def _parse_object(self, name, object_like):
-        """Parse {name: object_like} and return {name: skycoord}."""
-        # pre-processing
-        object_like = object_like or name
+        return self.flattened.get(keyword) or keyword
 
-        if not isinstance(object_like, (dict, str)):
-            logger.warning(f'invalid object: {object_like}')
-            logger.warning('this will be not plotted')
-            return {name: azely.PASS_FLAG}
+    def _object_from(self, value):
+        """Convert value to coordinate object (if necessary)."""
+        if isinstance(value, dict):
+            return value
 
-        if name in self.known_objects:
-            object_like = self.known_objects[name]
-            return {name: SkyCoord(**object_like)}
+        if isinstance(value, str):
+            if value.lower() in EPHEMS:
+                return value.lower()
 
-        # dict of skycoord information
-        if isinstance(object_like, dict):
-            try:
-                return {name: SkyCoord(**object_like)}
-            except ValueError:
-                logger.warning(f'invalid object: {object_like}')
-                logger.warning('this will be not plotted')
-                return {name: azely.PASS_FLAG}
-
-        # solar objects (sun and planets)
-        if object_like.lower() in EPHEMS:
-            return {name: object_like.lower()}
-
-        # otherwise: try to get information from catalogue
         try:
-            with remote_timeout.set_temp(self.timeout):
-                return {name: SkyCoord.from_name(object_like)}
-        except NameResolveError:
-            logger.warning(f'cannot resolve name: {object_like}')
-            logger.warning('this will be not plotted')
-            return {name: azely.PASS_FLAG}
-        except Exception:
-            logger.warning(f'invalid object: {object_like}')
-            logger.warning('this will be not plotted')
-            return {name: azely.PASS_FLAG}
+            return self.known[value]
+        except NameResolveError as error:
+            logger.warning(error)
+            return None
 
-    def _reload_yamls(self, force=False):
+    def _reload_yamls(self, *, force=False):
         """(Re)load YAML file(s) if reload option is activated."""
-        if self.reload or force:
-            self._load_objects()
+        if not (self.reload or force):
+            return None
 
+        self._load_objects()
         self.groups = OrderedDict()
+        self.flattened = OrderedDict()
 
-        for name, object_like in self.items():
-            if not isinstance(object_like, dict):
-                continue
-
+        # update dict of groups
+        for name, obj in self.items():
             try:
-                SkyCoord(**object_like)
-            except:
-                self.groups.update({name: object_like})
+                _obj = copy(obj)
+                _obj.pop('name')
+                SkyCoord(**_obj)
+            except Exception:
+                self.groups.update({name: obj})
 
-        self.flatitems = OrderedDict()
-
-        for name, object_like in self.items():
+        # update dict of flattened
+        for name, obj in self.items():
             if name in self.groups:
-                self.flatitems.update(object_like)
+                self.flattened.update(obj)
             else:
-                self.flatitems.update({name: object_like})
+                self.flattened.update({name: obj})
 
     def _load_objects(self):
         """Load YAML files (*.yaml) of astronomical objects."""
@@ -231,22 +204,6 @@ class Objects(dict):
 
             self.update(azely.read_yaml(path, True, encoding=self.encoding))
 
-    def _load_known_objects(self):
-        """Load ~/.azely/known_objects.yaml (`azely.KNOWN_OBJS`)."""
-        self.known_objects = azely.read_yaml(azely.KNOWN_OBJS,
-                                             encoding=self.encoding)
-
-    def _update_known_objects(self, objects):
-        """Update ~/.azely/known_objects.yaml (`azely.KNOWN_OBJS`)."""
-        for name, obj in objects.items():
-            if isinstance(obj, SkyCoord):
-                ra, dec = obj.to_string('hmsdms').split()
-                coords = {'ra': ra, 'dec': dec, 'frame': 'icrs'}
-                self.known_objects.update({name: coords})
-
-        azely.write_yaml(azely.KNOWN_OBJS, self.known_objects,
-                                           encoding=self.encoding)
-
     def __repr__(self):
         self._reload_yamls()
         return pformat(dict(self))
@@ -263,7 +220,7 @@ class KnownObjects(OrderedDict):
         self.timeout = timeout
         self.encoding = encoding
 
-        # initial loading
+        # initial loading of YAMLs
         self._reload_yamls(force=True)
 
     def __getitem__(self, name):
