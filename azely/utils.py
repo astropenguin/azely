@@ -318,7 +318,7 @@ def open_googlemaps(name):
     """
     logger.debug(f'name = {name}')
 
-    query = ' '.join(azely.parse_name(name))
+    query = ' '.join(azely.parse_keyword(name))
     location = azely.Locations()._request_location(query)
     params = {'q': f'{location["latitude"]}, {location["longitude"]}'}
     webbrowser.open(f'{URL_GOOGLEMAPS}?{urlencode(params)}')
