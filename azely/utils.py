@@ -180,10 +180,7 @@ def write_yaml(path, data, flow_style=False, *, mode='w', encoding='utf-8'):
     logger.debug(f'encoding = {encoding}')
 
     try:
-        if flow_style:
-            stream = yaml.dump(data, default_flow_style=True)
-        else:
-            stream = yaml.dump(data, default_flow_style=False)
+        stream = yaml.dump(data, default_flow_style=flow_style)
     except Exception:
         logger.warning('fail to convert data to YAML')
         return None
@@ -206,7 +203,7 @@ def flatten(sequence, depth=None, *, exclude_classes=(str, dict)):
         depth (int, optional): Maximum depth of flattening.
             Default is None (recursively flatten with unlimited depth).
         exclude_classes (class or tuple of class, optional, keyword-only):
-        Classes whose instances are not flattened. Default is (dict, str).
+            Classes whose instances are not flattened. Default is (dict, str).
 
     Returns:
         flattened (iterator): Iterator that yields flattened elements.
