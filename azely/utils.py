@@ -28,12 +28,26 @@ import yaml
 DATE_FORMAT = '%Y-%m-%d'
 URL_GOOGLEMAPS = 'https://www.google.com/maps'
 
-# use OrderedDict in PyYAML by default
-yaml.add_constructor(yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
-                     lambda loader, node: OrderedDict(loader.construct_pairs(node)))
-
 
 # classes
+class OrderedLoader(yaml.Loader):
+    """Util: YAML loader for keeping order of items.
+
+    This class is intended to be used internally.
+    Its instance is only used in `azely.read_yaml`.
+
+    """
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        tag = yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG
+
+        def constructor(loader, node):
+            return OrderedDict(loader.construct_pairs(node))
+
+        self.add_constructor(tag, constructor)
+
+
 class DateManager(object):
     """Util: context manager class for global date, `azely.DATE`.
 
@@ -130,16 +144,15 @@ def read_yaml(path, keep_order=False, *, mode='r', encoding='utf-8'):
     logger.debug(f'mode = {mode}')
     logger.debug(f'encoding = {encoding}')
 
+    emptydict = OrderedDict() if keep_order else dict()
+    Loader = OrderedLoader if keep_order else yaml.Loader
+
     with Path(path).open(mode=mode, encoding=encoding) as f:
         try:
-            if keep_order:
-                return yaml.load(f) or OrderedDict()
-            else:
-                Loader = yaml.loader.SafeLoader
-                return yaml.load(f, Loader) or dict()
+            return yaml.load(f, Loader) or emptydict
         except Exception:
             logger.warning(f'fail to load {path}')
-            return OrderedDict() if keep_order else dict()
+            return emptydict
 
 
 def write_yaml(path, data, flow_style=False, *, mode='w', encoding='utf-8'):
