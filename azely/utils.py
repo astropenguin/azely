@@ -216,8 +216,10 @@ def flatten(sequence, depth=None, *, exclude_classes=(str, dict)):
     if depth is None:
         depth = sys.getrecursionlimit()
 
-    if (not isinstance(sequence, exclude_classes)
-            and hasattr(sequence, '__iter__') and depth+1):
+    if (depth+1
+        and hasattr(sequence, '__iter__')
+        and not isinstance(sequence, exclude_classes):
+        # recursively flatten each element
         for element in sequence:
             yield from flatten(element, depth-1,
                                exclude_classes=exclude_classes)
