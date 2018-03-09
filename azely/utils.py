@@ -282,39 +282,41 @@ def parse_date(date_like=None, *, return_datetime=False):
     logger.debug(f'date_like = {date_like}')
     logger.debug(f'return_datetime = {return_datetime}')
 
-    now = datetime.now()
-    now = now.replace(hour=0, minute=0, second=0, microsecond=0)
-
-    def postproc(dt):
+    def convert(dt):
         return dt if return_datetime else dt.strftime(DATE_FORMAT)
 
-    def datetime_from(date, formats):
+    def parse(date, formats):
         for fmt in formats:
             try:
                 return datetime.strptime(date, fmt)
             except ValueError:
                 continue
 
-        logger.error(f'ValueError: {date_like}')
         raise ValueError(date_like)
 
-    if not date_like:
-        return postproc(now)
-    elif isinstance(date_like, datetime):
-        return postproc(date_like)
-    elif isinstance(date_like, str):
-        seps = '/\.\-' # hyphen, slash, and dot
-        date = ''.join(azely.parse_keyword(date_like, seps=seps))
+    now = datetime.now()
+    now = now.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    if date_like is None:
+        return convert(now)
+
+    if isinstance(date_like, datetime):
+        return convert(date_like)
+
+    if isinstance(date_like, str):
+        seps = '/\.\-' # slash or dot or hyphen
+        date = '-'.join(azely.parse_keyword(date_like, seps=seps))
         try:
             # if year is not spacified
-            dt = datetime.strptime(date, '%m%d')
-            return postproc(dt.replace(year=now.year))
+            dt = parse(date, ('%m%d', '%m-%d'))
+            return convert(dt.replace(year=now.year))
         except ValueError:
-            dt = datetime_from(date, ('%y%m%d', '%Y%m%d'))
-            return postproc(dt)
-    else:
-        logger.error(f'ValueError: {date_like}')
-        raise ValueError(date_like)
+            dt = parse(date, ('%y%m%d', '%Y%m%d',
+                              '%y-%m-%d', '%Y-%m-%d'))
+            return convert(dt)
+
+    logger.error(f'ValueError: {date_like}')
+    raise ValueError(date_like)
 
 
 def open_googlemaps(name):
