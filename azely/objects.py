@@ -37,52 +37,58 @@ class Objects(OrderedDict):
 
         >>> objects = azely.Objects()
         >>> objects
-        {'Galactic center': OrderedDict([('l', '23h59m46.6222s'),
-                                         ('b', '-00d02m46.1843s'),
-                                         ('frame', 'galactic')]),
-         'NGC 1068': OrderedDict([('ra', '02h42m40.711s'),
-                                  ('dec', '-00d00m47.8116s'),
-                                  ('frame', 'icrs')]),
-         'default': OrderedDict([('Sun', None)]),
-         'solar': OrderedDict([('Sun', None),
+        Objects([('default', OrderedDict([('Sun', None)])),
+                 ('solar',
+                  OrderedDict([('Sun', None),
                                ('Mercury', None),
                                ('Venus', None),
                                ('Mars', None),
                                ('Jupiter', None),
                                ('Saturn', None),
                                ('Uranus', None),
-                               ('Neptune', None)])}
+                               ('Neptune', None)])),
+                 ('NGC 1068',
+                  OrderedDict([('name', 'NGC 1068'),
+                               ('ra', '02h42m40.711s'),
+                               ('dec', '-00d00m47.8116s'),
+                               ('frame', 'icrs')])),
+                 ('GC',
+                  OrderedDict([('name', 'Galactic center'),
+                               ('l', '23h59m46.6222s'),
+                               ('b', '-00d02m46.1843s'),
+                               ('frame', 'galactic')]))])
 
     where Galactic center and NGC 1068 are single objects, and default and
     solar are grouped objects. User can spacify both names of groups and/or
     single objects when you select objects::
 
         >>> objects['solar'] # group
-        OrderedDict([('Sun', 'sun'),
-                     ('Mercury', 'mercury'),
-                     ('Venus', 'venus'),
-                     ('Mars', 'mars'),
-                     ('Jupiter', 'jupiter'),
-                     ('Saturn', 'saturn'),
-                     ('Uranus', 'uranus'),
-                     ('Neptune', 'neptune')])
+        [{'name': 'sun'},
+         {'name': 'mercury'},
+         {'name': 'venus'},
+         {'name': 'mars'},
+         {'name': 'jupiter'},
+         {'name': 'saturn'},
+         {'name': 'uranus'},
+         {'name': 'neptune'}]
 
         >>> objects['default, NGC 1068'] # group and single object
-        OrderedDict([('Sun', 'sun'),
-                     ('NGC 1068', <SkyCoord (ICRS): (ra, dec) ...>)])
+        [{'name': 'sun'},
+         OrderedDict([('name', 'NGC 1068'),
+                      ('ra', '02h42m40.711s'),
+                      ('dec', '-00d00m47.8116s'),
+                      ('frame', 'icrs')])]
 
-    The returned ordered dictionary contains Astropy's skycoords or names of
-    solar system emphemeris which are converted inside the instance. When you
-    spacify object names which are not listed in the instance, then it will
-    try to obtain coordinates of them from web database. Internet connection
-    is thus necessary for the first time user requests a new object name.
-    This will also update ~/.azely/known_objects.yaml with the obtained
-    coordinate as a cached known object.
+    The returned list contains coordinates of objects. When you spacify object
+    names which are not listed in the instance, then it will try to obtain
+    coordinates of them from web database. Internet connection is thus necessary
+    for the first time user requests a new object name. This will also update
+    ~/.azely/known_objects.yaml with the obtained coordinate as a cached object.
 
     Attributes:
         groups (OrderedDict): Ordered dictionary that has only object groups.
             It is intended to be used inside an instance.
-        flatitems (OrderedDict): Ordered dictionary of all objects with groups
+        flattened (OrderedDict): Ordered dictionary of all objects with groups
             flattened. It is intended to be used inside an instance.
 
     Notes:
