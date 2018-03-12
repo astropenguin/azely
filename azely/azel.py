@@ -200,13 +200,12 @@ class Calculator(object):
             unpack_one (bool, optional): If True and only one object is
                 detected from `object_names`, this method will directly return
                 azimuth/elevation coordinate instance of the object instead of
-                ordered dictionary for reducing redundancy.
+                a list for reducing redundancy.
 
         Returns:
-            azels (OrderedDict or AzEl): Ordered dictionary that contains
-                azimuth/elevation coordinate instances (i.e. {name: azel}).
-                If `unpack_one` is True and only one object is detected,
-                its instance will be returned instead of ordered dictionary.
+            azels (list of AzEl): List that contains azimuth/elevation
+                coordinate instances. If `unpack_one` is True and only one
+                object is detected, its instance will be directly returned.
 
         """
         objects = self._objects[object_names]
