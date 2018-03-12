@@ -144,10 +144,10 @@ class Objects(OrderedDict):
     def _object_from(self, value):
         """Convert value to coordinate object (if necessary)."""
         if isinstance(value, dict):
-            return value
+            return dict(value)
 
         if value.lower() in SOLAR_SYSTEM_OBJECTS:
-            return value
+            return {'name': value}
 
         try:
             return self.known[value]
