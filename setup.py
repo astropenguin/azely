@@ -10,4 +10,4 @@ setup(name = 'azely',
       packages = ['azely'],
       package_data = {'azely': ['data/*.yaml']},
       entry_points = {'console_scripts': ['azely=azely.cli:main']},
-      install_requires = ['astropy', 'numpy', 'pyyaml'])
+      install_requires = ['astropy', 'matplotlib', 'numpy', 'pyyaml'])
