@@ -223,7 +223,7 @@ class Calculator(object):
             coord = SkyCoord(obstime=time_utc, **obj)
         except ValueError:
             # object of solar sysyem
-            coord = get_body(obj, time=time_utc)
+            coord = get_body(name, time=time_utc)
 
         altaz = AltAz(location=self._earthlocation)
         azel = AzEl(coord.transform_to(altaz))
