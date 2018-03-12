@@ -70,7 +70,7 @@ class AzEl(SkyCoord):
         return self.alt
 
     def __repr__(self):
-        return '<SkyCoord (AzEl): (az, el) in deg>'
+        return f'<SkyCoord {self.info.name} (AzEl): (az, el) in deg>'
 
 
 class Calculator(object):
@@ -212,28 +212,24 @@ class Calculator(object):
         objects = self._objects[object_names]
         time_utc = self._get_time_utc(hours)
 
-        azels = OrderedDict()
+        azels = [self._calc_azel(obj, time_utc) for obj in objects]
+        return azels[0] if (unpack_one and len(azels) == 1) else azels
 
-        for item in objects.items():
-            azels.update(self._calc_azel(*item, time_utc))
-
-        if unpack_one and len(azels) == 1:
-            return azels.popitem()[1]
-        else:
-            return azels
-
-    def _calc_azel(self, name, obj, time_utc):
+    def _calc_azel(self, obj, time_utc):
         """Calculate azimuth/elevation of given object and time in UTC."""
-        if obj == azely.PASS_FLAG:
-            return dict()
+        name = obj.pop('name')
 
-        if isinstance(obj, SkyCoord):
-            obj.obstime = time_utc
-        elif isinstance(obj, str):
-            obj = get_body(obj, time=time_utc)
+        try:
+            # object with coordinates
+            coord = SkyCoord(obstime=time_utc, **obj)
+        except ValueError:
+            # object of solar sysyem
+            coord = get_body(obj, time=time_utc)
 
-        altaz = AltAz(location=time_utc.location)
-        return {name: azely.AzEl(obj.transform_to(altaz))}
+        altaz = AltAz(location=self._earthlocation)
+        azel = AzEl(coord.transform_to(altaz))
+        azel.info.name = name
+        return azel
 
     def _get_time_utc(self, hours=None):
         """Get time in UTC from hour(angle)s of given timezone."""
