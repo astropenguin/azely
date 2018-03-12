@@ -27,17 +27,17 @@ subcommand 1:
   args:
     - flags: [-o, --objects]
       metavar: kwd
-      nargs: '*'
+      nargs: '+'
       default: default
       help: help for objects
     - flags: [-l, --location]
       metavar: kwd
-      nargs: '*'
+      nargs: '+'
       default: mitaka
       help: help for location
     - flags: [-t, --timezone]
       metavar: kwd
-      nargs: '*'
+      nargs: '+'
       default:
       help: help for timezone
     - flags: [-d, --date]
@@ -62,11 +62,11 @@ subcommand 2:
   args:
     - flags: [-o, --objects]
       metavar: kwd
-      nargs: '*'
+      nargs: '+'
       default: default
       help: help for objects
     - flags: [-l, --location]
       metavar: kwd
-      nargs: '*'
+      nargs: '+'
       default: mitaka
       help: help for location
