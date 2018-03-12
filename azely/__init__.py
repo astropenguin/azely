@@ -1,6 +1,6 @@
 # information
 __version__ = '0.2'
-__author__  = 'snoopython'
+__author__  = 'astropenguin'
 
 # submodules
 from .utils import *
