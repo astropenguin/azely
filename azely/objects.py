@@ -208,7 +208,7 @@ class Objects(OrderedDict):
         return pformat(dict(self))
 
 
-class KnownObjects(OrderedDict):
+class KnownObjects(dict):
     def __init__(self, *, reload=False, timeout=5, encoding='utf-8'):
         logger.debug(f'reload = {reload}')
         logger.debug(f'timeout = {timeout}')
