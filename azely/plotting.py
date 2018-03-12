@@ -16,6 +16,15 @@ from matplotlib.widgets import CheckButtons
 
 # functions
 def plot_azel(args):
+    if isinstance(args.objects, list):
+        args.objects = ' '.join(args.objects)
+
+    if isinstance(args.location, list):
+        args.location = ' '.join(args.location)
+
+    if isinstance(args.timezone, list):
+        args.timezone = ' '.join(args.timezone)
+
     objects = args.objects
     location = args.location
     timezone = args.timezone
@@ -23,9 +32,9 @@ def plot_azel(args):
     filename = args.filename
 
     # calculate azimuth/elevation
-    c = azely.Calculator(location, timezone, date)
+    calc = azely.Calculator(location, timezone, date)
     hr = np.linspace(0, 24, 601)
-    azels = c(objects, hr, unpack_one=False)
+    azels = calc(objects, hr, unpack_one=False)
 
     # figure settings
     fig, axes = plt.subplots(2, 1, figsize=(10, 5), sharex=True)
@@ -38,7 +47,7 @@ def plot_azel(args):
     ax_el.set_ylim([0, 90])
     ax_el.set_xticks(np.arange(24+1))
     ax_el.set_yticks(np.arange(0, 90+1, 10))
-    ax_el.set_title(f'{c.location["name"]} / {c.date}')
+    ax_el.set_title(f'{calc._location["name"]} / {calc._date}')
     ax_el.set_ylabel('Elevation (deg)')
     tw_el.set_yticks(np.arange(0, 90+1, 30))
     tw_el.grid(False)
@@ -50,7 +59,7 @@ def plot_azel(args):
     ax_az.set_ylim([0, 360])
     ax_az.set_xticks(np.arange(24+1))
     ax_az.set_yticks(np.arange(0, 360+1, 45))
-    ax_az.set_xlabel(f'{c.timezone["name"]} (hr)')
+    ax_az.set_xlabel(f'{calc._timezone["name"]} (hr)')
     ax_az.set_ylabel('Azimuth (deg)')
     tw_az.set_yticks(np.arange(0, 360+1, 45))
     tw_az.set_yticklabels(list('N E S W N'))
@@ -60,7 +69,8 @@ def plot_azel(args):
     lp_az = OrderedDict() # for azimuth line plots
     lp_el = OrderedDict() # for elevation line plots
 
-    for name, azel in azels.items():
+    for azel in azels:
+        name = azel.info.name
         az = azel.az.value
         el = azel.el.value
         ma_el = (el < 0)
@@ -97,7 +107,7 @@ def plot_azel(args):
     if filename is None:
         plt.show()
     else:
-        plt.savefig(file)
+        plt.savefig(filename)
 
 
 def list_azel(args):
