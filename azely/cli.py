@@ -23,12 +23,12 @@ def create_parser(config=None):
         config = azely.read_yaml(azely.CLI_PARSER)
 
     # main commands
-    main = config.pop('common')
+    main = config.pop('main')
     desc = main['description']
     prog = main['prog']
 
     parser = argparse.ArgumentParser(prog=prog, description=desc)
-    subparsers = parser.add_subparsers()
+    subparsers = parser.add_subparsers(dest='subcommand')
 
     for arg in main['args']:
         flags = arg.pop('flags')
@@ -56,8 +56,13 @@ def main():
     """Main function."""
     parser = create_parser()
     args = parser.parse_args()
-    args.func(args)
+
+    if args.subcommand is None:
+        parser.print_help()
+    else:
+        args.func(args)
 
 
+# main program
 if __name__ == '__main__':
     main()
