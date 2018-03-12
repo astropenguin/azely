@@ -18,7 +18,7 @@ from astropy.utils.data import Conf
 remote_timeout = Conf.remote_timeout
 
 # module constants
-EPHEMS = solar_system_ephemeris.bodies
+SOLAR_SYSTEM_OBJECTS = solar_system_ephemeris.bodies
 NONOBJ_YAMLS = [azely.KNOWN_LOCS.name,
                 azely.KNOWN_OBJS.name,
                 azely.CLI_PARSER.name,
@@ -146,9 +146,8 @@ class Objects(OrderedDict):
         if isinstance(value, dict):
             return value
 
-        if isinstance(value, str):
-            if value.lower() in EPHEMS:
-                return value.lower()
+        if value.lower() in SOLAR_SYSTEM_OBJECTS:
+            return value
 
         try:
             return self.known[value]
