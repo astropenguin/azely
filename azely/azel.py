@@ -153,9 +153,9 @@ class Calculator(object):
         logger.debug(f'timeout = {timeout}')
         logger.debug(f'encoding = {encoding}')
 
-        self._location = location
-        self._timezone = timezone
-        self._date = azely.parse_date(date)
+        self.location = location
+        self.timezone = timezone
+        self.date = date
 
         self._locations = azely.Locations(reload=reload,
                                           timeout=timeout,
@@ -165,25 +165,31 @@ class Calculator(object):
                                       encoding=encoding)
 
     @property
-    def date(self):
+    def _date(self):
         """Astropy's time object of date."""
-        earthloc = EarthLocation(lon=self.location['longitude']*u.deg,
-                                 lat=self.location['latitude']*u.deg)
-
-        return Time(self._date, location=earthloc, out_subfmt='date')
+        return Time(azely.parse_date(self.date),
+                    location=self._earthlocation, out_subfmt='date')
 
     @property
-    def location(self):
+    def _location(self):
         """Dictionary of location information."""
-        return self._locations[self._location, self._date]
+        with azely.set_date(self.date):
+            return self._locations[self.location]
 
     @property
-    def timezone(self):
+    def _timezone(self):
         """Dictionary of timezone information."""
-        if not self._timezone:
-            return self._parse_timezone(self._location)
+        if not self.timezone:
+            return self._parse_timezone(self.location)
         else:
-            return self._parse_timezone(self._timezone)
+            return self._parse_timezone(self.timezone)
+
+    @property
+    def _earthlocation(self):
+        """Astropy's earth location object."""
+        return EarthLocation(lon=self._location['longitude']*u.deg,
+                             lat=self._location['latitude']*u.deg)
+
 
     def __call__(self, object_names, hours=None, unpack_one=True):
         """Calculate azimuth/elevation of objects at given hour(angle)s.
@@ -232,15 +238,15 @@ class Calculator(object):
     def _get_time_utc(self, hours=None):
         """Get time in UTC from hour(angle)s of given timezone."""
         if hours is None:
-            return Time(datetime.utcnow(), location=self.date.location)
+            return Time(datetime.utcnow(), location=self._earthlocation)
 
         hours = np.asarray(hours) * u.hr
 
         # time in UTC corresponding timezone's 0:00 am
         # if timezone = LST, timezone of location is used
-        utc_at_tz0am = self.date - self.timezone['hour']*u.hr
+        utc_at_tz0am = self._date - self._timezone['hour']*u.hr
 
-        if self._islst(self.timezone['name']):
+        if self._islst(self._timezone['name']):
             lst_at_tz0am = utc_at_tz0am.sidereal_time('mean').value * u.hr
             return utc_at_tz0am + LST_TO_UTC * (hours - lst_at_tz0am)
         else:
@@ -251,7 +257,7 @@ class Calculator(object):
         if self._islst(timezone):
             # timezone = 'LST' or related string
             return {'name': 'Local Sidereal Time',
-                    'hour': self.location['timezone_hour']}
+                    'hour': self._location['timezone_hour']}
         elif self._isutc(timezone):
             # timezone = 'UTC' or related string
             return {'name': 'UTC+0.0', 'hour': 0.0}
@@ -261,7 +267,9 @@ class Calculator(object):
             return {'name': f'UTC{hour:+.1f}', 'hour': hour}
         elif isinstance(timezone, str):
             # timezone = 'japan', for example
-            location = self._locations[timezone]
+            with azely.set_date(self.date):
+                location = self._locations[timezone]
+
             return {'name': location['timezone_name'],
                     'hour': location['timezone_hour']}
         else:
@@ -294,5 +302,6 @@ class Calculator(object):
             return False
 
     def __repr__(self):
-        loc, tz = self.location['name'], self.timezone['name']
-        return f'Calculator(location:{loc}, timezone:{tz}, date:{self._date})'
+        date = azely.parse_date(self.date)
+        loc, tz = self._location['name'], self._timezone['name']
+        return f'Calculator(location:{loc}, timezone:{tz}, date:{date})'
