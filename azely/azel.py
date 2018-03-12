@@ -22,8 +22,6 @@ except ImportError:
     solar_system_ephemeris.set('builtin')
 
 # module constants
-UTC = ('UTC', 'COORDINATED UNIVERSAL TIME')
-LST = ('LST', 'LOCAL SIDEREAL TIME')
 LST_TO_UTC = 1 / 1.002_737_909
 
 
@@ -276,14 +274,16 @@ class Calculator(object):
         if not isinstance(string, str):
             return False
 
-        return ' '.join(azely.parse_name(string)).upper() in LST
+        string = ' '.join(azely.parse_keyword(string))
+        return string.upper() in ('LST', 'LOCAL SIDEREAL TIME')
 
     def _isutc(self, string):
         """Whether string can be interpreted as coordinated universal time."""
         if not isinstance(string, str):
             return False
 
-        return ' '.join(azely.parse_name(string)).upper() in UTC
+        string = ' '.join(azely.parse_keyword(string))
+        return string.upper() in ('UTC', 'UNIVERSAL COORDINATED TIME')
 
     def _isnumber(self, string):
         """Whether string can be converted to number or not."""
