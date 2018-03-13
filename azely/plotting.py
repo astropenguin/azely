@@ -1,6 +1,6 @@
 # public items
-__all__ = ['plot_azel',
-           'list_azel']
+__all__ = ['cli_plot',
+           'cli_list']
 
 # standard library
 from collections import OrderedDict
@@ -15,7 +15,7 @@ from matplotlib.widgets import CheckButtons
 
 
 # functions
-def plot_azel(args):
+def cli_plot(args):
     if isinstance(args.objects, list):
         args.objects = ' '.join(args.objects)
 
@@ -110,5 +110,5 @@ def plot_azel(args):
         plt.savefig(filename)
 
 
-def list_azel(args):
+def cli_list(args):
     pass

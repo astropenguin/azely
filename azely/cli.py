@@ -46,7 +46,7 @@ def create_parser(config=None):
             flags = arg.pop('flags')
             subparser.add_argument(*flags, **arg)
 
-        func = getattr(azely, f'{name}_azel')
+        func = getattr(azely, f'cli_{name}')
         subparser.set_defaults(func=func)
 
     return parser
