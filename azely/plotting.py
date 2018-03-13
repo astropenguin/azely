@@ -98,7 +98,7 @@ def plot_azel(args):
         visible = lp_el[name].get_visible()
         lp_el[name].set_visible(not visible)
         lp_az[name].set_visible(not visible)
-        cb.rectangles[name].set_alpha(not visible)
+        cb.rectangles[index].set_alpha(not visible)
         plt.draw()
 
     cb.on_clicked(toggle)
