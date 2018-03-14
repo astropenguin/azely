@@ -10,18 +10,18 @@ location = 'alma observatory'
 timezone = 'local sidereal time'
 
 # calculation
-c = azely.Calculator(location, timezone, date)
-hr = np.linspace(0, 24, 601) # [0, 24] hr
-azels = c('solar', hr) # OrderedDict
+calc = azely.Calculator(location, timezone, date)
+hr = np.linspace(0, 24, 601)
+azels = calc('solar', hr)
 
 # plotting
-for name, azel in azels.items():
-    plt.plot(hr, azel.el, label=name)
+for azel in azels:
+    plt.plot(hr, azel.el, label=azel.info.name)
 
 plt.xlim(0, 24)
 plt.ylim(0, 90)
-plt.title(f'{c.location["name"]} / {c.date}')
-plt.xlabel(f'{c.timezone["name"]} (hr)')
+plt.title(f'{calc._location["name"]} / {calc._date}')
+plt.xlabel(f'{calc._timezone["name"]} (hr)')
 plt.ylabel('Elevation (deg)')
 plt.legend()
 plt.show()
