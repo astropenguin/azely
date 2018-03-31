@@ -5,6 +5,7 @@ __author__  = 'astropenguin'
 # submodules
 from .utils import *
 from .azel import *
+from .config import *
 from .constants import *
 from .locations import *
 from .objects import *
