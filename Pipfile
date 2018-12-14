@@ -1,0 +1,26 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+numpy = "*"
+astropy = "*"
+requests = "*"
+pyyaml = "*"
+matplotlib = "*"
+geocoder = "*"
+python-dateutil = "*"
+toml = "*"
+googlemaps = "*"
+
+[dev-packages]
+ipython = "*"
+jupyter = "*"
+pylint = "*"
+
+[requires]
+python_version = "3.6"
+
+[scripts]
+jupyter = "jupyter notebook"

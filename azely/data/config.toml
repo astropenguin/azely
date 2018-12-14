@@ -1,0 +1,9 @@
+["locations"]
+key = ""
+timeout = 5
+
+["objects"]
+
+["caches"]
+objects = "~/.azely/known_objects.toml"
+locations = "~/.azely/known_locations.toml"
