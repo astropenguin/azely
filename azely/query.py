@@ -19,7 +19,7 @@ def get_location(query=None, date=None, **kwargs):
     geo = get_geometry(query, **kwargs)
 
     try:
-        tz  = get_timezone(query, date, **kwargs)
+        tz = get_timezone(query, date, **kwargs)
         return {**geo, **tz}
     except:
         return geo
@@ -69,7 +69,7 @@ def get_timezone(query=None, date=None, **kwargs):
     client = googlemaps.Client(**kwargs)
 
     geo = get_geometry(query, **kwargs)
-    lat, lng = basic['lat'], basic['lng']
+    lat, lng = geo['latitude'], geo['longitude']
 
     ts = mktime(azely.parse_date(date).timetuple())
     result = client.timezone((lat, lng), ts)
