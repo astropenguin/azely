@@ -23,9 +23,9 @@ from requests.utils import CaseInsensitiveDict
 
 
 class cache_to:
-    def __init__(self, path, key_query='query'):
+    def __init__(self, path, key='query'):
         self.path = Path(path).expanduser()
-        self.key_query = key_query
+        self.key = key
 
     def __call__(self, func):
         sig = signature(func)
@@ -36,6 +36,7 @@ class cache_to:
                 self.path.touch()
 
             bound = sig.bind(*args, **kwargs)
+            query = str(bound.arguments[self.key])
             config = azely.read_toml(self.path)
 
             if query not in config:
