@@ -1,7 +1,7 @@
 __all__ = ['cache_to',
            'default_kwargs',
-           'read_config',
-           'write_config',
+           'read_toml',
+           'write_toml',
            'parse_date']
 
 
@@ -36,13 +36,12 @@ class cache_to:
                 self.path.touch()
 
             bound = sig.bind(*args, **kwargs)
-            query = bound.arguments[self.key_query]
-            config = azely.read_config(self.path)
+            config = azely.read_toml(self.path)
 
             if query not in config:
                 result = func(*args, **kwargs)
                 config.update({query: result})
-                azely.write_config(self.path, config)
+                azely.write_toml(self.path, config)
 
             return config[query]
 
@@ -64,7 +63,7 @@ class default_kwargs:
         return wrapper
 
 
-def read_config(path, *, mode='r', encoding='utf-8'):
+def read_toml(path, *, mode='r', encoding='utf-8'):
     with Path(path).open(mode, encoding=encoding) as f:
         try:
             return CaseInsensitiveDict(toml.load(f))
@@ -74,9 +73,9 @@ def read_config(path, *, mode='r', encoding='utf-8'):
             return CaseInsensitiveDict()
 
 
-def write_config(path, config, *, mode='w', encoding='utf-8'):
+def write_toml(path, data, *, mode='w', encoding='utf-8'):
     try:
-        string = toml.dumps(dict(config))
+        string = toml.dumps(dict(data))
     except:
         logger.warning('fail to convert data to TOML')
         logger.warning(f'fail to write data to {path}')
