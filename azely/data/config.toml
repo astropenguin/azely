@@ -1,9 +1,14 @@
-["locations"]
+["location"]
 key = ""
 timeout = 5
 
-["objects"]
+["object"]
+frame = "icrs"
+timeout = 5
+pattern = "*.toml"
+searchdirs = [".", "~/.azely"]
 
-["caches"]
-objects = "~/.azely/known_objects.toml"
-locations = "~/.azely/known_locations.toml"
+["cache"]
+enable = true
+object = "~/.azely/known_objects.toml"
+location = "~/.azely/known_locations.toml"
