@@ -16,6 +16,7 @@ import googlemaps
 
 
 # main query functions
+@azely.default_kwargs(azely.config['location'])
 def get_location(query=None, date=None, **kwargs):
     geo = get_geometry(query, **kwargs)
 
@@ -38,6 +39,8 @@ def get_object(query, **kwargs):
 
 
 # sub query functions
+@azely.cache_to(azely.config['cache']['location'],
+                azely.config['cache']['enable'])
 def get_geometry(query=None, **kwargs):
     client = googlemaps.Client(**kwargs)
 
@@ -45,7 +48,7 @@ def get_geometry(query=None, **kwargs):
     if query is None:
         result = client.geolocate()
 
-        name = 'Current location'
+        name = 'Current Location'
         addr = ''
         pid  = ''
         lat  = result['location']['lat']
@@ -75,7 +78,6 @@ def get_geometry(query=None, **kwargs):
             'timezone_name': tz_name, 'timezone_hour': tz_hour}
 
 
-@azely.default_kwargs(azely.config['locations'])
 def get_timezone(query=None, date=None, **kwargs):
     client = googlemaps.Client(**kwargs)
 
