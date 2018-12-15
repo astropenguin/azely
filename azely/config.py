@@ -27,4 +27,4 @@ if not config_file.exists():
 
 
 # package config
-config = azely.read_config(config_file)
+config = azely.read_toml(config_file)
