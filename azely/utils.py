@@ -1,5 +1,6 @@
 __all__ = ['cache_to',
            'default_kwargs',
+           'temp_cache',
            'read_toml',
            'write_toml',
            'parse_date',
@@ -7,12 +8,11 @@ __all__ = ['cache_to',
 
 
 # standard library
-from datetime import date
-from datetime import datetime
+from datetime import date, datetime
 from functools import wraps
-from inspect import signature
-from pathlib import Path
+from inspect import signature, getmodule
 from logging import getLogger
+from pathlib import Path
 logger = getLogger(__name__)
 
 
@@ -68,6 +68,25 @@ class default_kwargs:
             return func(*args, **kwargs_)
 
         return wrapper
+
+
+class temp_cache:
+    def __init__(self, func, module=None):
+        self.func = func
+        self.module = module or getmodule(func)
+
+    def temp(self, *args, **kwargs):
+        if hasattr(self, 'cache'):
+            return self.cache
+
+        self.cache = self.func(*args, **kwargs)
+        return self.cache
+
+    def __enter__(self):
+        setattr(self.module, self.func.__name__, self.temp)
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        setattr(self.module, self.func.__name__, self.func)
 
 
 def read_toml(path, *, mode='r', encoding='utf-8'):
