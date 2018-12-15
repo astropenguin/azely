@@ -23,8 +23,9 @@ from requests.utils import CaseInsensitiveDict
 
 
 class cache_to:
-    def __init__(self, path, key='query'):
+    def __init__(self, path, enable=True, key='query'):
         self.path = Path(path).expanduser()
+        self.enable = enable
         self.key = key
 
     def __call__(self, func):
@@ -32,6 +33,9 @@ class cache_to:
 
         @wraps(func)
         def wrapper(*args, **kwargs):
+            if not self.enable:
+                return func(*args, **kwargs)
+
             if not self.path.exists():
                 self.path.touch()
 
