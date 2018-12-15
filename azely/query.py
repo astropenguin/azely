@@ -11,6 +11,7 @@ logger = getLogger(__name__)
 
 
 # dependent packages
+# note: astropy is imported within functions
 import azely
 import googlemaps
 
