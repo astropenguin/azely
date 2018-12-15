@@ -2,7 +2,8 @@ __all__ = ['cache_to',
            'default_kwargs',
            'read_toml',
            'write_toml',
-           'parse_date']
+           'parse_date',
+           'is_solar']
 
 
 # standard library
@@ -105,3 +106,7 @@ def parse_date(date_like=None):
         logger.warning('Today is returned instead')
         return date.today()
 
+
+def is_solar(name):
+    from astropy.coordinates import solar_system_ephemeris
+    return str(name).lower() in solar_system_ephemeris.bodies
