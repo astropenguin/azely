@@ -16,9 +16,13 @@ googlemaps = "*"
 ipython = "*"
 jupyter = "*"
 pylint = "*"
+twine = "*"
 
 [requires]
 python_version = "3.6"
 
 [scripts]
-jupyter = "jupyter notebook"
+ipython = "ipython"
+jupyter = "jupyter notebook ${HOME}"
+sdist = "python setup.py sdist"
+configure = "etc/configure"
