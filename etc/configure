@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Write environment variables to .env
+PYTHONPATH=`pwd`
+IPYTHONDIR=`pwd`/.ipython
+echo PYTHONPATH=${PYTHONPATH} >> .env
+echo IPYTHONDIR=${IPYTHONDIR} >> .env
+
+# Create IPython profile
+export IPYTHONDIR=${IPYTHONDIR}
+mkdir -p .ipython
+ipython profile create default
+
+# Create Jupyter kernel
+ipython kernel install --sys-prefix --profile default --display-name Default
