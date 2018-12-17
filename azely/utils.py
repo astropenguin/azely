@@ -1,6 +1,6 @@
 __all__ = ['cache_to',
            'default_kwargs',
-           'temp_cache',
+           'freeze',
            'read_toml',
            'write_toml',
            'parse_date',
@@ -70,12 +70,12 @@ class default_kwargs:
         return wrapper
 
 
-class temp_cache:
+class freeze:
     def __init__(self, func, module=None):
         self.func = func
         self.module = module or getmodule(func)
 
-    def temp(self, *args, **kwargs):
+    def frozen(self, *args, **kwargs):
         if hasattr(self, 'cache'):
             return self.cache
 
@@ -83,7 +83,7 @@ class temp_cache:
         return self.cache
 
     def __enter__(self):
-        setattr(self.module, self.func.__name__, self.temp)
+        setattr(self.module, self.func.__name__, self.frozen)
 
     def __exit__(self, exc_type, exc_value, traceback):
         setattr(self.module, self.func.__name__, self.func)
