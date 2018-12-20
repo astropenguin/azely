@@ -11,9 +11,11 @@ logger = getLogger(__name__)
 
 
 # dependent packages
-# note: astropy is imported within functions
 import azely
 import googlemaps
+from astropy.utils.data import Conf
+from astropy.coordinates import SkyCoord
+from astropy.coordinates.name_resolve import NameResolveError
 
 
 # main query functions
@@ -96,10 +98,6 @@ def get_timezone(query=None, date=None, **kwargs):
 @azely.cache_to(azely.config['cache']['object'],
                 azely.config['cache']['enable'])
 def get_remote(query, frame='icrs', timeout=5, **kwargs):
-    from astropy.utils.data import Conf
-    from astropy.coordinates import SkyCoord
-    from astropy.coordinates.name_resolve import NameResolveError
-
     try:
         with Conf.remote_timeout.set_temp(timeout):
             coord = SkyCoord.from_name(query, frame)
@@ -112,8 +110,6 @@ def get_remote(query, frame='icrs', timeout=5, **kwargs):
 
 
 def get_local(query, pattern='*.toml', searchdirs=['.'], **kwargs):
-    from astropy.coordinates import SkyCoord
-
     for searchdir in (Path(d).expanduser() for d in searchdirs):
         for path in searchdir.glob(pattern):
             data = azely.read_toml(path)
