@@ -17,11 +17,11 @@ logger = getLogger(__name__)
 
 
 # dependent packages
-# note: astropy is imported within functions
 import toml
 import azely
 from dateutil.parser import parse
 from requests.utils import CaseInsensitiveDict
+from astropy.coordinates import solar_system_ephemeris
 
 
 class cache_to:
@@ -128,5 +128,4 @@ def parse_date(date_like=None):
 
 
 def is_solar(name):
-    from astropy.coordinates import solar_system_ephemeris
     return str(name).lower() in solar_system_ephemeris.bodies
