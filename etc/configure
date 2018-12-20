@@ -1,15 +1,14 @@
 #!/bin/bash
 
+PROJ=`pipenv --where`
+
 # Write environment variables to .env
-PYTHONPATH=`pwd`
-IPYTHONDIR=`pwd`/.ipython
-echo PYTHONPATH=${PYTHONPATH} >> .env
-echo IPYTHONDIR=${IPYTHONDIR} >> .env
+echo PYTHONPATH=${PROJ} >> .env
+echo IPYTHONDIR=${PROJ}/.ipython >> .env
 
 # Create IPython profile
-export IPYTHONDIR=${IPYTHONDIR}
 mkdir -p .ipython
-ipython profile create default
+ipython profile create default --ipython-dir .ipython
 
 # Create Jupyter kernel
 ipython kernel install --sys-prefix --profile default --display-name Default
