@@ -3,7 +3,6 @@ __all__ = ['get_location',
 
 
 # standard library
-from copy import deepcopy
 from time import mktime
 from pathlib import Path
 from logging import getLogger
@@ -118,7 +117,7 @@ def get_local(query, pattern='*.toml', searchdirs=['.'], **kwargs):
                 continue
 
             try:
-                obj = deepcopy(data[query])
+                obj = data[query].copy()
                 obj.pop('name', None)
                 obj.pop('solar', None)
                 SkyCoord(**obj)
