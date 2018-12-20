@@ -90,7 +90,9 @@ def get_timezone(query=None, date=None, **kwargs):
     tz_name = result['timeZoneName']
     tz_hour = (result['rawOffset']+result['dstOffset']) / 3600
 
-    return {'timezone_name': tz_name, 'timezone_hour': tz_hour}
+    return {'timezone_name': tz_name,
+            'timezone_hour': tz_hour,
+            'timezone_date': tz_date}
 
 
 @azely.cache_to(azely.config['cache']['object'],
