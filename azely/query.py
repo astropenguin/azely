@@ -50,7 +50,6 @@ def get_geometry(query=None, **kwargs):
     # coordinates
     if query is None:
         result = client.geolocate()
-
         name = 'Current Location'
         addr = ''
         pid  = ''
@@ -58,7 +57,6 @@ def get_geometry(query=None, **kwargs):
         lng  = result['location']['lng']
     else:
         result = client.places(query)['results'][0]
-
         name = result['name']
         addr = result['formatted_address']
         pid  = result['place_id']
@@ -70,9 +68,8 @@ def get_geometry(query=None, **kwargs):
     alt = result['elevation']
 
     # timezone (DST is not considered)
-    ts = mktime(azely.parse_date().timetuple())
-
-    result = client.timezone((lat, lng), ts)
+    t_unix = mktime(azely.parse_date().timetuple())
+    result = client.timezone((lat, lng), t_unix)
     tz_name = result['timeZoneId']
     tz_hour = result['rawOffset'] / 3600
 
@@ -87,8 +84,9 @@ def get_timezone(query=None, date=None, **kwargs):
     geo = get_geometry(query, **kwargs)
     lat, lng = geo['latitude'], geo['longitude']
 
-    ts = mktime(azely.parse_date(date).timetuple())
-    result = client.timezone((lat, lng), ts)
+    tz_date = azely.parse_date(date)
+    t_unix = mktime(tz_date.timetuple())
+    result = client.timezone((lat, lng), t_unix)
     tz_name = result['timeZoneName']
     tz_hour = (result['rawOffset']+result['dstOffset']) / 3600
 
