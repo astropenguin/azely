@@ -117,10 +117,10 @@ def get_local(query, pattern='*.toml', searchdirs=['.'], **kwargs):
                 continue
 
             try:
-                obj = data[query].copy()
-                obj.pop('name', None)
-                obj.pop('solar', None)
-                SkyCoord(**obj)
+                kwargs = data[query].copy()
+                kwargs.pop('name', None)
+                kwargs.pop('solar', None)
+                SkyCoord(**kwargs)
             except:
                 continue
 
