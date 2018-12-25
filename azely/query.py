@@ -32,7 +32,7 @@ def get_location(query=None, date=None, **kwargs):
 @azely.default_kwargs(azely.config['object'])
 def get_object(query, **kwargs):
     if azely.is_solar(query):
-        return {'name': query, 'solar': True}
+        return {'name': query}
 
     try:
         return get_local(query, **kwargs)
@@ -104,11 +104,10 @@ def get_remote(query, frame='icrs', timeout=5, **kwargs):
     except NameResolveError:
         raise ValueError(query)
 
-    return {'name': query, 'solar': False,
-            'ra': ra, 'dec': dec, 'frame': frame}
+    return {'name': query, 'ra': ra, 'dec': dec, 'frame': frame}
 
 
-def get_local(query, pattern='*.toml', searchdirs=['.'], **kwargs):
+def get_local(query, pattern='*.toml', searchdirs=('.',), **kwargs):
     for searchdir in (Path(d).expanduser() for d in searchdirs):
         for path in searchdir.glob(pattern):
             data = azely.read_toml(path)
@@ -117,13 +116,14 @@ def get_local(query, pattern='*.toml', searchdirs=['.'], **kwargs):
                 continue
 
             try:
-                kwargs = data[query].copy()
-                kwargs.pop('name', None)
-                kwargs.pop('solar', None)
-                SkyCoord(**kwargs)
+                obj = data[query].copy()
+                obj.pop('name', None)
+                SkyCoord(**obj)
             except:
                 continue
 
-            return data[query]
-
-    raise ValueError(query)
+            obj = data[query].copy()
+            obj.setdefault('name', query)
+            return obj
+    else:
+        raise ValueError(query)
