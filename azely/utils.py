@@ -2,13 +2,10 @@ __all__ = ['cache_to',
            'default_kwargs',
            'freeze',
            'read_toml',
-           'write_toml',
-           'parse_date',
-           'is_solar']
+           'write_toml']
 
 
 # standard library
-from datetime import date, datetime
 from functools import wraps
 from inspect import signature, getmodule
 from logging import getLogger
@@ -19,9 +16,7 @@ logger = getLogger(__name__)
 # dependent packages
 import toml
 import azely
-from dateutil.parser import parse
 from requests.utils import CaseInsensitiveDict
-from astropy.coordinates import solar_system_ephemeris
 
 
 class cache_to:
@@ -112,20 +107,3 @@ def write_toml(path, data, *, mode='w', encoding='utf-8'):
             f.write(string)
         except:
             logger.warning(f'fail to write data to {path}')
-
-
-def parse_date(date_like=None):
-    if date_like is None:
-        return date.today()
-
-    try:
-        dt = parse(str(date_like), yearfirst=True)
-        return date.fromtimestamp(dt.timestamp())
-    except (ValueError, TypeError):
-        logger.warning(f'Invalid format: {date_like}')
-        logger.warning('Today is returned instead')
-        return date.today()
-
-
-def is_solar(name):
-    return str(name).lower() in solar_system_ephemeris.bodies
