@@ -1,8 +1,10 @@
 __all__ = ['get_location',
-           'get_object']
+           'get_object',
+           'get_time']
 
 
 # standard library
+from functools import partial
 from pathlib import Path
 from logging import getLogger
 logger = getLogger(__name__)
@@ -11,9 +13,10 @@ logger = getLogger(__name__)
 # dependent packages
 import azely
 import googlemaps
+import pytz
+import pandas as pd
 from astropy.utils.data import Conf
-from astropy.coordinates import SkyCoord
-from astropy.coordinates import name_resolve
+from dateutil.parser import parse
 
 
 # main query functions
@@ -36,7 +39,14 @@ def get_object(query, **kwargs):
         return from_remote(query, **kwargs)
 
 
-# sub query functions
+@azely.default_kwargs(azely.config['time'])
+def get_time(query=None, **kwargs):
+    if query is None:
+        return parse_time()
+
+    return parse_time(*query.split(','), **kwargs)
+
+
 def geolocate(**kwargs):
     client = googlemaps.Client(**kwargs)
 
@@ -116,3 +126,18 @@ def from_local(query, pattern='*.toml', searchdirs=('.',), **kwargs):
             return obj
     else:
         raise ValueError(query)
+
+
+def parse_time(start=None, end=None, periods=None, freq='1h',
+               dayfirst=False, yearfirst=False, **kwargs):
+    f = partial(parse, dayfirst=dayfirst, yearfirst=yearfirst)
+
+    if (start is None) and (end is None):
+        start = end = pd.Timestamp('now', tz=pytz.UTC)
+    elif (start is not None) and (end is None):
+        start = f(start).date()
+        end = start + pd.offsets.Day()
+    else:
+        start, end = f(start), f(end)
+
+    return pd.date_range(start, end, periods, freq)
