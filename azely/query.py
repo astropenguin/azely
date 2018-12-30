@@ -1,6 +1,7 @@
 __all__ = ['get_location',
            'get_object',
-           'get_time']
+           'get_time',
+           'get_timezone']
 
 
 # standard library
@@ -45,6 +46,17 @@ def get_time(query=None, **kwargs):
         return parse_time()
 
     return parse_time(*query.split(','), **kwargs)
+
+
+@azely.default_kwargs(azely.config['timezone'])
+def get_timezone(query=None, **kwargs):
+    if query is None:
+        return pytz.UTC
+
+    try:
+        return from_number(query)
+    except ValueError:
+        return pytz.timezone(query)
 
 
 def geolocate(**kwargs):
@@ -141,3 +153,11 @@ def parse_time(start=None, end=None, periods=None, freq='1h',
         start, end = f(start), f(end)
 
     return pd.date_range(start, end, periods, freq)
+
+
+def from_number(number):
+    try:
+        zone = f'Etc/GMT{int(number):+d}'
+        return pytz.timezone(zone)
+    except pytz.UnknownTimeZoneError:
+        raise ValueError(number)
