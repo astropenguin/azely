@@ -87,7 +87,7 @@ class freeze:
 def read_toml(path, *, mode='r', encoding='utf-8'):
     with Path(path).open(mode, encoding=encoding) as f:
         try:
-            return CaseInsensitiveDict(toml.load(f))
+            return toml.load(f, CaseInsensitiveDict)
         except:
             logger.warning(f'fail to load {path}')
             logger.warning('empty dict is returned instead')
@@ -96,7 +96,7 @@ def read_toml(path, *, mode='r', encoding='utf-8'):
 
 def write_toml(path, data, *, mode='w', encoding='utf-8'):
     try:
-        string = toml.dumps(dict(data))
+        string = toml.dumps(data)
     except:
         logger.warning('fail to convert data to TOML')
         logger.warning(f'fail to write data to {path}')
