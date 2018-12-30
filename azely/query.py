@@ -16,6 +16,7 @@ import azely
 import googlemaps
 import pytz
 import pandas as pd
+from astropy.coordinates import SkyCoord, name_resolve
 from astropy.utils.data import Conf
 from dateutil.parser import parse
 
@@ -59,6 +60,7 @@ def get_timezone(query=None, **kwargs):
         return pytz.timezone(query)
 
 
+# subfunctions for location
 def geolocate(**kwargs):
     client = googlemaps.Client(**kwargs)
 
@@ -105,6 +107,7 @@ def find_place(query, **kwargs):
             'latitude': lat, 'longitude': lng, 'altitude': alt}
 
 
+# subfunctions for object
 @azely.cache_to(azely.config['cache']['object'],
                 azely.config['cache']['enable'])
 def from_remote(query, frame='icrs', timeout=5, **kwargs):
@@ -140,6 +143,7 @@ def from_local(query, pattern='*.toml', searchdirs=('.',), **kwargs):
         raise ValueError(query)
 
 
+# subfunctions for time
 def parse_time(start=None, end=None, periods=None, freq='1h',
                dayfirst=False, yearfirst=False, **kwargs):
     f = partial(parse, dayfirst=dayfirst, yearfirst=yearfirst)
@@ -155,6 +159,7 @@ def parse_time(start=None, end=None, periods=None, freq='1h',
     return pd.date_range(start, end, periods, freq)
 
 
+# subfunctions for timezone
 def from_number(number):
     try:
         zone = f'Etc/GMT{int(number):+d}'
