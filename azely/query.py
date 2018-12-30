@@ -17,6 +17,7 @@ import googlemaps
 import pytz
 import pandas as pd
 from astropy.coordinates import SkyCoord, name_resolve
+from astropy.coordinates import solar_system_ephemeris
 from astropy.utils.data import Conf
 from dateutil.parser import parse
 
@@ -32,7 +33,7 @@ def get_location(query=None, **kwargs):
 
 @azely.default_kwargs(azely.config['object'])
 def get_object(query, **kwargs):
-    if azely.is_solar(query):
+    if is_solar(query):
         return {'name': query}
 
     try:
@@ -61,6 +62,10 @@ def get_timezone(query=None, **kwargs):
 
 
 # subfunctions for location
+def is_solar(query):
+    return query.lower() in solar_system_ephemeris.bodies
+
+
 def geolocate(**kwargs):
     client = googlemaps.Client(**kwargs)
 
