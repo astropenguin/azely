@@ -51,10 +51,7 @@ def get_time(query=None, **kwargs):
 
 
 @azely.default_kwargs(azely.config['timezone'])
-def get_timezone(query=None, **kwargs):
-    if query is None:
-        return pytz.UTC
-
+def get_timezone(query, **kwargs):
     try:
         return from_number(query)
     except ValueError:
