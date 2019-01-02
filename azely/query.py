@@ -7,7 +7,6 @@ __all__ = ['get_location',
 # standard library
 from functools import partial
 from logging import getLogger
-from pathlib import Path
 logger = getLogger(__name__)
 
 
@@ -126,7 +125,7 @@ def from_remote(query, frame='icrs', timeout=5, **kwargs):
 
 
 def from_local(query, pattern='*.toml', searchdirs=('.',), **kwargs):
-    for searchdir in (Path(d).expanduser() for d in searchdirs):
+    for searchdir in utils.get_abspaths(*searchdirs):
         for path in searchdir.glob(pattern):
             data = utils.read_toml(path)
 

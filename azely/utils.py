@@ -1,6 +1,7 @@
 __all__ = ['cache_to',
            'default_kwargs',
            'freeze',
+           'get_abspaths'
            'read_toml',
            'write_toml']
 
@@ -84,6 +85,10 @@ class freeze:
 
     def __exit__(self, exc_type, exc_value, traceback):
         setattr(self.module, self.func.__name__, self.func)
+
+
+def get_abspaths(*paths):
+    yield from (Path(p).expanduser() for p in paths)
 
 
 def read_toml(path, Class=CaseInsensitiveDict, encoding='utf-8'):
