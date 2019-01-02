@@ -6,8 +6,8 @@ __all__ = ['get_location',
 
 # standard library
 from functools import partial
-from pathlib import Path
 from logging import getLogger
+from pathlib import Path
 logger = getLogger(__name__)
 
 

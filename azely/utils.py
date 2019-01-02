@@ -14,8 +14,8 @@ logger = getLogger(__name__)
 
 
 # dependent packages
-import toml
 import azely
+import toml
 from requests.utils import CaseInsensitiveDict
 
 
