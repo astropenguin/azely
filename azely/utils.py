@@ -1,7 +1,7 @@
 __all__ = ['cache_to',
            'default_kwargs',
            'freeze',
-           'get_abspaths'
+           'to_abspath',
            'read_toml',
            'write_toml']
 
@@ -87,7 +87,7 @@ class freeze:
         setattr(self.module, self.func.__name__, self.func)
 
 
-def get_abspaths(*paths):
+def to_abspath(*paths):
     yield from (Path(p).expanduser() for p in paths)
 
 
