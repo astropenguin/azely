@@ -27,7 +27,7 @@ import azely.utils as utils
 
 
 # main query functions
-@utils.default_kwargs(config['location'])
+@utils.default_kwargs(**config['location'])
 def get_location(query=None, **kwargs):
     if query is None:
         return geolocate(**kwargs)
@@ -35,7 +35,7 @@ def get_location(query=None, **kwargs):
         return find_place(query, **kwargs)
 
 
-@utils.default_kwargs(config['object'])
+@utils.default_kwargs(**config['object'])
 def get_object(query, **kwargs):
     if is_solar(query):
         return {'name': query}
@@ -46,7 +46,7 @@ def get_object(query, **kwargs):
         return from_remote(query, **kwargs)
 
 
-@utils.default_kwargs(config['time'])
+@utils.default_kwargs(**config['time'])
 def get_time(query=None, **kwargs):
     if query is None:
         return parse_time()
@@ -54,7 +54,7 @@ def get_time(query=None, **kwargs):
     return parse_time(*query.split(','), **kwargs)
 
 
-@utils.default_kwargs(config['timezone'])
+@utils.default_kwargs(**config['timezone'])
 def get_timezone(query, **kwargs):
     try:
         return from_number(query)
