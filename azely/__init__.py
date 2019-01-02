@@ -3,7 +3,7 @@ __author__  = 'astropenguin'
 
 
 # submodules
-from .utils import *
+from . import utils
 from .config import *
 from .query import *
 from .azel import *

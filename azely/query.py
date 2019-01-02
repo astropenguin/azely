@@ -12,7 +12,6 @@ logger = getLogger(__name__)
 
 
 # dependent packages
-import azely
 import googlemaps
 import pytz
 import pandas as pd
@@ -22,8 +21,13 @@ from astropy.utils.data import Conf
 from dateutil.parser import parse
 
 
+# azely submodules
+import azely.config as config
+import azely.utils as utils
+
+
 # main query functions
-@azely.default_kwargs(azely.config['location'])
+@utils.default_kwargs(config['location'])
 def get_location(query=None, **kwargs):
     if query is None:
         return geolocate(**kwargs)
@@ -31,7 +35,7 @@ def get_location(query=None, **kwargs):
         return find_place(query, **kwargs)
 
 
-@azely.default_kwargs(azely.config['object'])
+@utils.default_kwargs(config['object'])
 def get_object(query, **kwargs):
     if is_solar(query):
         return {'name': query}
@@ -42,7 +46,7 @@ def get_object(query, **kwargs):
         return from_remote(query, **kwargs)
 
 
-@azely.default_kwargs(azely.config['time'])
+@utils.default_kwargs(config['time'])
 def get_time(query=None, **kwargs):
     if query is None:
         return parse_time()
@@ -50,7 +54,7 @@ def get_time(query=None, **kwargs):
     return parse_time(*query.split(','), **kwargs)
 
 
-@azely.default_kwargs(azely.config['timezone'])
+@utils.default_kwargs(config['timezone'])
 def get_timezone(query, **kwargs):
     try:
         return from_number(query)
@@ -85,8 +89,7 @@ def geolocate(**kwargs):
             'latitude': lat, 'longitude': lng, 'altitude': alt}
 
 
-@azely.cache_to(azely.config['cache']['location'],
-                azely.config['cache']['enable'])
+@utils.cache_to(config['cache']['location'], config['cache']['enable'])
 def find_place(query, **kwargs):
     client = googlemaps.Client(**kwargs)
 
@@ -110,8 +113,7 @@ def find_place(query, **kwargs):
 
 
 # subfunctions for object
-@azely.cache_to(azely.config['cache']['object'],
-                azely.config['cache']['enable'])
+@utils.cache_to(config['cache']['object'], config['cache']['enable'])
 def from_remote(query, frame='icrs', timeout=5, **kwargs):
     try:
         with Conf.remote_timeout.set_temp(timeout):
@@ -126,7 +128,7 @@ def from_remote(query, frame='icrs', timeout=5, **kwargs):
 def from_local(query, pattern='*.toml', searchdirs=('.',), **kwargs):
     for searchdir in (Path(d).expanduser() for d in searchdirs):
         for path in searchdir.glob(pattern):
-            data = azely.read_toml(path)
+            data = utils.read_toml(path)
 
             if query not in data:
                 continue
