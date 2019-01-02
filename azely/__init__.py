@@ -6,3 +6,4 @@ __author__  = 'astropenguin'
 from .utils import *
 from .config import *
 from .query import *
+from .azel import *
