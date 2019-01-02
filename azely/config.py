@@ -2,14 +2,16 @@ __all__ = ['config']
 
 
 # standard library
+from collections import defaultdict
 from logging import getLogger
 from shutil import copy
 from pathlib import Path
 logger = getLogger(__name__)
 
 
-# depndent packages
+# azely submodules
 import azely
+import azely.utils as utils
 
 
 # initial settings
@@ -27,4 +29,5 @@ if not config_file.exists():
 
 
 # package config
-config = azely.read_toml(config_file)
+Class = lambda data: defaultdict(dict, data)
+config = utils.read_toml(config_file, Class)
