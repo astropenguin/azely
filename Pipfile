@@ -11,6 +11,8 @@ matplotlib = "*"
 python-dateutil = "*"
 toml = "*"
 googlemaps = "*"
+pandas = "*"
+pyqt5 = "*"
 
 [dev-packages]
 ipython = "*"
