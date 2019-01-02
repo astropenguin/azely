@@ -53,16 +53,16 @@ class cache_to:
 
 
 class default_kwargs:
-    def __init__(self, kwargs):
+    def __init__(self, **kwargs):
         self.kwargs = kwargs
 
     def __call__(self, func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            kwargs_ = self.kwargs.copy()
-            kwargs_.update(kwargs)
+            _kwargs = self.kwargs.copy()
+            _kwargs.update(kwargs)
 
-            return func(*args, **kwargs_)
+            return func(*args, **_kwargs)
 
         return wrapper
 
