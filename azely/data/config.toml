@@ -8,6 +8,11 @@ timeout = 5
 pattern = "*.toml"
 searchdirs = [".", "~/.azely"]
 
+["time"]
+yearfirst = true
+dayfirst = false
+freq = "10min"
+
 ["cache"]
 enable = true
 object = "~/.azely/known_objects.toml"
