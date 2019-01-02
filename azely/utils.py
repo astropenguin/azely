@@ -14,16 +14,15 @@ logger = getLogger(__name__)
 
 
 # dependent packages
-import azely
 import toml
 from requests.utils import CaseInsensitiveDict
 
 
 class cache_to:
-    def __init__(self, path, enable=True, key='query'):
+    def __init__(self, path, enable=True, query_arg='query'):
         self.path = Path(path).expanduser()
         self.enable = enable
-        self.key = key
+        self.query_arg = query_arg
 
     def __call__(self, func):
         sig = signature(func)
@@ -33,17 +32,20 @@ class cache_to:
             if not self.enable:
                 return func(*args, **kwargs)
 
+            # read config
             if not self.path.exists():
                 self.path.touch()
 
+            config = read_toml(self.path)
+
+            # query check and update
             bound = sig.bind(*args, **kwargs)
-            query = str(bound.arguments[self.key])
-            config = azely.read_toml(self.path)
+            query = bound.arguments[self.query_arg]
 
             if query not in config:
                 result = func(*args, **kwargs)
                 config.update({query: result})
-                azely.write_toml(self.path, config)
+                write_toml(self.path, config)
 
             return config[query]
 
@@ -84,17 +86,17 @@ class freeze:
         setattr(self.module, self.func.__name__, self.func)
 
 
-def read_toml(path, *, mode='r', encoding='utf-8'):
-    with Path(path).open(mode, encoding=encoding) as f:
+def read_toml(path, Class=CaseInsensitiveDict, encoding='utf-8'):
+    with Path(path).open('r', encoding=encoding) as f:
         try:
-            return CaseInsensitiveDict(toml.load(f))
+            return Class(toml.load(f))
         except:
             logger.warning(f'fail to load {path}')
             logger.warning('empty dict is returned instead')
-            return CaseInsensitiveDict()
+            return Class()
 
 
-def write_toml(path, data, *, mode='w', encoding='utf-8'):
+def write_toml(path, data, encoding='utf-8'):
     try:
         string = toml.dumps(dict(data))
     except:
@@ -102,7 +104,7 @@ def write_toml(path, data, *, mode='w', encoding='utf-8'):
         logger.warning(f'fail to write data to {path}')
         return None
 
-    with Path(path).open(mode, encoding=encoding) as f:
+    with Path(path).open('w', encoding=encoding) as f:
         try:
             f.write(string)
         except:

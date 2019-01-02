@@ -7,11 +7,14 @@ from logging import getLogger
 logger = getLogger(__name__)
 
 # dependent packages
-import azely
 import pandas as pd
 from astropy.coordinates import get_body
 from astropy.coordinates import SkyCoord, EarthLocation
 from astropy.time import Time
+
+
+# azely submodules
+import azely.query as query
 
 
 # Azely's azel class
@@ -84,19 +87,19 @@ class AzEl(SkyCoord):
 # function for azel computation
 def compute_azel(object_, location=None, time=None, timezone=None):
     if isinstance(object_, str):
-        object_ = azely.get_object(object_)
+        object_ = query.get_object(object_)
 
     if isinstance(location, str) or (location is None):
-        location = azely.get_location(location)
+        location = query.get_location(location)
 
     if isinstance(time, str) or (time is None):
-        time = azely.get_time(time)
+        time = query.get_time(time)
 
     if isinstance(timezone, (str, int, float)):
-        timezone = azely.get_timezone(timezone)
+        timezone = query.get_timezone(timezone)
 
     if timezone is None:
-        timezone = azely.get_timezone(location['timezone'])
+        timezone = query.get_timezone(location['timezone'])
 
     # create astropy's time
     obstime = create_obstime(location, time, timezone)
