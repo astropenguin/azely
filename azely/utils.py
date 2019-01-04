@@ -2,6 +2,7 @@ __all__ = ['cache_to',
            'default_kwargs',
            'freeze',
            'abspath',
+           'split',
            'read_toml',
            'write_toml']
 
@@ -89,6 +90,10 @@ class freeze:
 
 def abspath(*paths):
     return (Path(p).expanduser() for p in paths)
+
+
+def split(string, sep=','):
+    return (s.strip() for s in string.split(sep))
 
 
 def read_toml(path, Class=CaseInsensitiveDict, encoding='utf-8'):
