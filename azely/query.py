@@ -125,7 +125,7 @@ def from_remote(query, frame='icrs', timeout=5, **kwargs):
 
 
 def from_local(query, pattern='*.toml', searchdirs=('.',), **kwargs):
-    for searchdir in utils.to_abspath(*searchdirs):
+    for searchdir in utils.abspath(*searchdirs):
         for path in searchdir.glob(pattern):
             data = utils.read_toml(path)
 
