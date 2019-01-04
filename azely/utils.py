@@ -1,7 +1,7 @@
 __all__ = ['cache_to',
            'default_kwargs',
            'freeze',
-           'to_abspath',
+           'abspath',
            'read_toml',
            'write_toml']
 
@@ -87,8 +87,8 @@ class freeze:
         setattr(self.module, self.func.__name__, self.func)
 
 
-def to_abspath(*paths):
-    yield from (Path(p).expanduser() for p in paths)
+def abspath(*paths):
+    return (Path(p).expanduser() for p in paths)
 
 
 def read_toml(path, Class=CaseInsensitiveDict, encoding='utf-8'):
