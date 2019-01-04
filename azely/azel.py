@@ -29,59 +29,53 @@ class AzEl(SkyCoord):
         return compute_azel(object_, location, time, timezone)
 
     @property
-    def time_index(self):
+    def az(self):
+        return self._df(SkyCoord(self).az)
+
+    @property
+    def el(self):
+        return self._df(SkyCoord(self).alt)
+
+    @property
+    def ra(self):
+        return self._df(SkyCoord(self.icrs).ra)
+
+    @property
+    def dec(self):
+        return self._df(SkyCoord(self.icrs).dec)
+
+    @property
+    def l(self):
+        return self._df(SkyCoord(self.galactic).l)
+
+    @property
+    def b(self):
+        return self._df(SkyCoord(self.galactic).b)
+
+    @property
+    def utc(self):
+        return self._df(self.obstime.utc)
+
+    @property
+    def lst(self):
+        return self._df(self.obstime.sidereal_time('mean'))
+
+    def _df(self, data):
+        name = self.info.meta['object']['name']
+        return pd.DataFrame({name: data}, self._df_index())
+
+    def _df_index(self):
         utc = self.obstime.to_datetime()
         timezone = self.info.meta['timezone']
 
         index = pd.Index(utc, name=timezone.zone)
         return index.tz_localize('UTC').tz_convert(timezone)
 
-    @property
-    def az(self):
-        data = {'Az (deg)': SkyCoord(self).az}
-        return pd.DataFrame(data, self.time_index)
-
-    @property
-    def el(self):
-        data = {'El (deg)': SkyCoord(self).alt}
-        return pd.DataFrame(data, self.time_index)
-
-    @property
-    def ra(self):
-        data = {'R.A. (deg)': SkyCoord(self.icrs).ra}
-        return pd.DataFrame(data, self.time_index)
-
-    @property
-    def dec(self):
-        data = {'Dec. (deg)': SkyCoord(self.icrs).dec}
-        return pd.DataFrame(data, self.time_index)
-
-    @property
-    def l(self):
-        data = {'l (deg)': SkyCoord(self.galactic).l}
-        return pd.DataFrame(data, self.time_index)
-
-    @property
-    def b(self):
-        data = {'l (deg)': SkyCoord(self.galactic).b}
-        return pd.DataFrame(data, self.time_index)
-
-    @property
-    def lst(self):
-        data = {'LST (hourangle)': self.obstime.sidereal_time('mean')}
-        return pd.DataFrame(data, self.time_index)
-
-    @property
-    def utc(self):
-        data = {'UTC': self.obstime.utc}
-        return pd.DataFrame(data, self.time_index)
-
     def __repr__(self):
-        obj = self.info.meta['object']['name']
-        loc = self.info.meta['location']['name']
-        tz  = self.info.meta['timezone'].zone
+        object_ = self.info.meta['object']['name']
+        location = self.info.meta['location']['name']
 
-        return f'AzEl({obj} / {loc} / {tz})'
+        return f'AzEl({object_} / {location})'
 
 
 # function for azel computation
