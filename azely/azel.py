@@ -96,6 +96,9 @@ def compute_azel(object_, location=None, time=None, timezone=None):
     if isinstance(timezone, (str, int, float)):
         timezone = query.get_timezone(timezone)
 
+    if timezone is None:
+        timezone = query.get_timezone(location['timezone'])
+
     # create astropy's time
     obstime = create_obstime(location, time, timezone)
 
@@ -129,9 +132,6 @@ def compute_azels(objects, location=None, time=None, timezone=None):
 
 # subfunctions for azel computation
 def create_obstime(location, time, timezone):
-    if timezone is None:
-        timezone = location['timezone']
-
     if time.tzinfo is None:
         time = time.tz_localize(timezone).tz_convert('UTC')
 
