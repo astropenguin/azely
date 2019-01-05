@@ -150,7 +150,7 @@ def from_local(query, pattern='*.toml', searchdirs=('.',), **kwargs):
 
 
 # subfunctions for time
-def parse_time(start=None, end=None, periods=None, freq='1h',
+def parse_time(start=None, end=None, freq='10min', periods=None,
                dayfirst=False, yearfirst=False, **kwargs):
     f = partial(parse, dayfirst=dayfirst, yearfirst=yearfirst)
 
