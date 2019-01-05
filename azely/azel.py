@@ -1,8 +1,10 @@
 __all__ = ['AzEl',
-           'compute_azel']
+           'compute_azel',
+           'compute_azels']
 
 
 # standard library
+from itertools import chain
 from logging import getLogger
 logger = getLogger(__name__)
 
@@ -14,7 +16,9 @@ from astropy.time import Time
 
 
 # azely submodules
+import azely.config as config
 import azely.query as query
+import azely.utils as utils
 
 
 # Azely's azel class
@@ -106,6 +110,23 @@ def compute_azel(object_, location=None, time=None, timezone=None):
     return AzEl(coord)
 
 
+def compute_azels(objects, location=None, time=None, timezone=None):
+    location = query.get_location(location)
+    time     = query.get_time(time)
+    timezone = query.get_timezone(timezone)
+
+    all_objects = []
+
+    for obj_or_tag in utils.split(objects):
+        if obj_or_tag.startswith('#'):
+            all_objects.append(get_objects(obj_or_tag))
+        else:
+            all_objects.append([query.get_object(obj_or_tag)])
+
+    for object_ in chain(*all_objects):
+        yield compute_azel(object_, location, time, timezone)
+
+
 # subfunctions for azel computation
 def create_obstime(location, time, timezone):
     if timezone is None:
@@ -133,3 +154,22 @@ def create_skycoord(object_, obstime):
         coord.location = obstime.location
 
     return coord
+
+
+@utils.default_kwargs(**config['object'])
+def get_objects(tag, searchdirs=('.',), **kwargs):
+    filename = tag.lstrip('#') + '.toml'
+
+    for searchdir in utils.abspath(*searchdirs):
+        path = searchdir / filename
+
+        if path.exists():
+            break
+    else:
+        raise FileNotFoundError(filename)
+
+    kwargs = {'pattern': path.name,
+              'searchdirs': (path.parent,)}
+
+    for object_ in utils.read_toml(path):
+        yield query.get_object(object_, **kwargs)
