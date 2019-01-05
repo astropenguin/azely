@@ -40,9 +40,9 @@ def get_object(query, **kwargs):
         return {'name': query}
 
     try:
-        return from_local(query, **kwargs)
+        return object_offline(query, **kwargs)
     except ValueError:
-        return from_remote(query, **kwargs)
+        return object_online(query, **kwargs)
 
 
 @utils.default_kwargs(**config['time'])
@@ -116,7 +116,7 @@ def find_place(query, **kwargs):
 
 # subfunctions for object
 @utils.cache_to(config['cache']['object'], config['cache']['enable'])
-def from_remote(query, frame='icrs', timeout=5, **kwargs):
+def object_online(query, frame='icrs', timeout=5, **kwargs):
     try:
         with Conf.remote_timeout.set_temp(timeout):
             coord = SkyCoord.from_name(query, frame)
@@ -127,7 +127,7 @@ def from_remote(query, frame='icrs', timeout=5, **kwargs):
     return {'name': query, 'ra': ra, 'dec': dec, 'frame': frame}
 
 
-def from_local(query, pattern='*.toml', searchdirs=('.',), **kwargs):
+def object_offline(query, pattern='*.toml', searchdirs=('.',), **kwargs):
     for searchdir in utils.abspath(*searchdirs):
         for path in searchdir.glob(pattern):
             data = utils.read_toml(path)
@@ -135,16 +135,17 @@ def from_local(query, pattern='*.toml', searchdirs=('.',), **kwargs):
             if query not in data:
                 continue
 
+            object_ = data[query].copy()
+            object_.pop('name', None)
+
             try:
-                obj = data[query].copy()
-                obj.pop('name', None)
-                SkyCoord(**obj)
+                SkyCoord(**object_)
             except:
                 continue
 
-            obj = data[query].copy()
-            obj.setdefault('name', query)
-            return obj
+            object_ = data[query]
+            object_.setdefault('name', query)
+            return object_
     else:
         raise ValueError(query)
 
