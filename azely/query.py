@@ -25,13 +25,21 @@ import azely.config as config
 import azely.utils as utils
 
 
+# module constants
+LOCATION_KEYS = {'address', 'timezone',
+                 'latitude', 'longitude', 'altitude'}
+
+
 # main query functions
 @utils.default_kwargs(**config['location'])
 def get_location(query=None, **kwargs):
     if query is None:
-        return geolocate(**kwargs)
-    else:
-        return find_place(query, **kwargs)
+        return location_here(**kwargs)
+
+    try:
+        return location_offline(query, **kwargs)
+    except ValueError:
+        return location_online(query, **kwargs)
 
 
 @utils.default_kwargs(**config['object'])
@@ -69,8 +77,8 @@ def is_solar(query):
     return query.lower() in solar_system_ephemeris.bodies
 
 
-def geolocate(**kwargs):
-    client = googlemaps.Client(**kwargs)
+def location_here(key, timeout=5, **kwargs):
+    client = googlemaps.Client(key, timeout=timeout)
 
     # coordinates
     result = client.geolocate()
@@ -92,8 +100,8 @@ def geolocate(**kwargs):
 
 
 @utils.cache_to(config['cache']['location'], config['cache']['enable'])
-def find_place(query, **kwargs):
-    client = googlemaps.Client(**kwargs)
+def location_online(query, key, timeout=5, **kwargs):
+    client = googlemaps.Client(key, timeout=timeout)
 
     # coordinates
     result = client.places(query)['results'][0]
@@ -112,6 +120,27 @@ def find_place(query, **kwargs):
 
     return {'name': name, 'address': addr, 'timezone': tz,
             'latitude': lat, 'longitude': lng, 'altitude': alt}
+
+
+def location_offline(query, pattern='*.toml', searchdirs=('.',), **kwargs):
+    for searchdir in utils.abspath(*searchdirs):
+        for path in searchdir.glob(pattern):
+            data = utils.read_toml(path)
+
+            if query not in data:
+                continue
+
+            location = data[query].copy()
+            location.pop('name', None)
+
+            if location.keys() < LOCATION_KEYS:
+                continue
+
+            location = data[query]
+            location.setdefault('name', query)
+            return location
+    else:
+        raise ValueError(query)
 
 
 # subfunctions for object

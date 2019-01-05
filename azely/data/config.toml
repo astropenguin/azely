@@ -1,6 +1,8 @@
 ["location"]
 key = ""
 timeout = 5
+pattern = "*.toml"
+searchdirs = [".", "~/.azely"]
 
 ["object"]
 frame = "icrs"
