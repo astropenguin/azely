@@ -55,8 +55,11 @@ def get_time(query=None, **kwargs):
 
 @utils.default_kwargs(**config['timezone'])
 def get_timezone(query, **kwargs):
+    if query is None:
+        return None
+
     try:
-        return from_number(query)
+        return parse_number(query)
     except ValueError:
         return pytz.timezone(query)
 
@@ -163,7 +166,7 @@ def parse_time(start=None, end=None, periods=None, freq='1h',
 
 
 # subfunctions for timezone
-def from_number(number):
+def parse_number(number):
     try:
         zone = f'Etc/GMT{int(number):+d}'
         return pytz.timezone(zone)
