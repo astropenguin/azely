@@ -30,11 +30,11 @@ class AzEl(SkyCoord):
 
     @property
     def az(self):
-        return self._df(SkyCoord(self).az)
+        return self._df(SkyCoord(self.altaz).az)
 
     @property
     def el(self):
-        return self._df(SkyCoord(self).alt)
+        return self._df(SkyCoord(self.altaz).alt)
 
     @property
     def ra(self):
@@ -78,7 +78,7 @@ class AzEl(SkyCoord):
         return f'AzEl({object_} / {location})'
 
 
-# function for azel computation
+# functions for azel computation
 def compute_azel(object_, location=None, time=None, timezone=None):
     if isinstance(object_, str):
         object_ = query.get_object(object_)
@@ -92,25 +92,25 @@ def compute_azel(object_, location=None, time=None, timezone=None):
     if isinstance(timezone, (str, int, float)):
         timezone = query.get_timezone(timezone)
 
-    if timezone is None:
-        timezone = query.get_timezone(location['timezone'])
-
     # create astropy's time
     obstime = create_obstime(location, time, timezone)
 
     # create astropy's skycoord
-    altaz = create_altaz(object_, obstime)
+    coord = create_skycoord(object_, obstime)
 
     # update skycoord's information
-    altaz.info.meta = {'object': object_,
+    coord.info.meta = {'object': object_,
                        'location': location,
                        'timezone': timezone}
 
-    return AzEl(altaz)
+    return AzEl(coord)
 
 
 # subfunctions for azel computation
 def create_obstime(location, time, timezone):
+    if timezone is None:
+        timezone = location['timezone']
+
     if time.tzinfo is None:
         time = time.tz_localize(timezone).tz_convert('UTC')
 
@@ -121,7 +121,7 @@ def create_obstime(location, time, timezone):
     return Time(time, location=location)
 
 
-def create_altaz(object_, obstime):
+def create_skycoord(object_, obstime):
     object_ = object_.copy()
     name = object_.pop('name')
 
@@ -132,4 +132,4 @@ def create_altaz(object_, obstime):
     finally:
         coord.location = obstime.location
 
-    return coord.altaz
+    return coord
