@@ -2,13 +2,13 @@
 key = ""
 timeout = 5
 pattern = "*.toml"
-searchdirs = [".", "~/.azely"]
+searchdirs = ["~/.azely"]
 
 ["object"]
 frame = "icrs"
 timeout = 5
 pattern = "*.toml"
-searchdirs = [".", "~/.azely"]
+searchdirs = ["~/.azely"]
 
 ["time"]
 yearfirst = true

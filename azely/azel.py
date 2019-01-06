@@ -16,9 +16,13 @@ from astropy.time import Time
 
 
 # azely submodules
-import azely.config as config
+import azely
 import azely.query as query
 import azely.utils as utils
+
+
+# module constants
+CONFIG = azely.config
 
 
 # Azely's azel class
@@ -156,7 +160,7 @@ def create_skycoord(object_, obstime):
     return coord
 
 
-@utils.default_kwargs(**config['object'])
+@utils.default_kwargs(**CONFIG['object'])
 def get_objects(tag, searchdirs=('.',), **kwargs):
     filename = tag.lstrip('#') + '.toml'
 
