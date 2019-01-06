@@ -149,11 +149,13 @@ def object_online(query, frame='icrs', timeout=5, **kwargs):
     try:
         with Conf.remote_timeout.set_temp(timeout):
             coord = SkyCoord.from_name(query, frame)
-            ra, dec = coord.to_string('hmsdms').split()
     except name_resolve.NameResolveError:
         raise ValueError(query)
 
-    return {'name': query, 'ra': ra, 'dec': dec, 'frame': frame}
+    keys = list(coord.get_representation_component_names())[:2]
+    values = coord.to_string('hmsdms').split()
+
+    return dict(name=query, frame=frame, **dict(zip(keys, values)))
 
 
 def object_offline(query, pattern='*.toml', searchdirs=('.',), **kwargs):
