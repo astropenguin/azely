@@ -21,17 +21,18 @@ from dateutil.parser import parse
 
 
 # azely submodules
-import azely.config as config
+import azely
 import azely.utils as utils
 
 
 # module constants
+CONFIG = azely.config
 LOCATION_KEYS = {'address', 'timezone',
                  'latitude', 'longitude', 'altitude'}
 
 
 # main query functions
-@utils.default_kwargs(**config['location'])
+@utils.default_kwargs(**CONFIG['location'])
 def get_location(query=None, **kwargs):
     if query is None:
         return location_here(**kwargs)
@@ -42,7 +43,7 @@ def get_location(query=None, **kwargs):
         return location_online(query, **kwargs)
 
 
-@utils.default_kwargs(**config['object'])
+@utils.default_kwargs(**CONFIG['object'])
 def get_object(query, **kwargs):
     if is_solar(query):
         return {'name': query}
@@ -53,7 +54,7 @@ def get_object(query, **kwargs):
         return object_online(query, **kwargs)
 
 
-@utils.default_kwargs(**config['time'])
+@utils.default_kwargs(**CONFIG['time'])
 def get_time(query=None, **kwargs):
     if query is None:
         return parse_time()
@@ -61,7 +62,7 @@ def get_time(query=None, **kwargs):
     return parse_time(*query.split(','), **kwargs)
 
 
-@utils.default_kwargs(**config['timezone'])
+@utils.default_kwargs(**CONFIG['timezone'])
 def get_timezone(query, **kwargs):
     if query is None:
         return None
@@ -99,7 +100,7 @@ def location_here(key, timeout=5, **kwargs):
             'latitude': lat, 'longitude': lng, 'altitude': alt}
 
 
-@utils.cache_to(config['cache']['location'], config['cache']['enable'])
+@utils.cache_to(CONFIG['cache']['location'], CONFIG['cache']['enable'])
 def location_online(query, key, timeout=5, **kwargs):
     client = googlemaps.Client(key, timeout=timeout)
 
@@ -144,7 +145,7 @@ def location_offline(query, pattern='*.toml', searchdirs=('.',), **kwargs):
 
 
 # subfunctions for object
-@utils.cache_to(config['cache']['object'], config['cache']['enable'])
+@utils.cache_to(CONFIG['cache']['object'], CONFIG['cache']['enable'])
 def object_online(query, frame='icrs', timeout=5, **kwargs):
     try:
         with Conf.remote_timeout.set_temp(timeout):
