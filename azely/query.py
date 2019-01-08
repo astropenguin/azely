@@ -20,7 +20,7 @@ from astropy.utils.data import Conf
 from dateutil.parser import parse
 
 
-# azely submodules
+# azely modules
 import azely
 import azely.utils as utils
 
