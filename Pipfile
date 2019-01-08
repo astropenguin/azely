@@ -13,6 +13,7 @@ toml = "*"
 googlemaps = "*"
 pandas = "*"
 pyqt5 = "*"
+pyyaml = "*"
 
 [dev-packages]
 ipython = "*"
