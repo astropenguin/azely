@@ -2,7 +2,7 @@ __version__ = '0.3'
 __author__  = 'astropenguin'
 
 
-def _load_config(config='config.toml'):
+def _load_config():
     # standard library
     from collections import defaultdict
     from logging import getLogger
@@ -14,6 +14,7 @@ def _load_config(config='config.toml'):
 
     data = Path(__path__[0]) / 'data'
     user = Path.home() / '.azely'
+    config = 'config.toml'
 
     if not user.exists():
         logger.info(f'creating {user}')
