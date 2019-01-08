@@ -124,8 +124,8 @@ def compute_azels(objects, location=None, time=None, timezone=None):
 
     all_objects = []
 
-    for obj_or_tag in utils.split(objects):
-        if obj_or_tag.startswith('#'):
+    for obj_or_tag in objects:
+        if obj_or_tag.startswith('@'):
             all_objects.append(get_objects(obj_or_tag))
         else:
             all_objects.append([query.get_object(obj_or_tag)])
@@ -162,7 +162,7 @@ def create_skycoord(object_, obstime):
 
 @utils.default_kwargs(**CONFIG['object'])
 def get_objects(tag, searchdirs=('.',), **kwargs):
-    filename = tag.lstrip('#') + '.toml'
+    filename = tag.lstrip('@') + '.toml'
 
     for searchdir in utils.abspath(*searchdirs):
         path = searchdir / filename
