@@ -15,7 +15,7 @@ from astropy.coordinates import SkyCoord, EarthLocation
 from astropy.time import Time
 
 
-# azely submodules
+# azely modules
 import azely
 import azely.query as query
 import azely.utils as utils
