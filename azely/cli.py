@@ -46,10 +46,13 @@ def create_parser():
 def main():
     """Main function."""
     parser = create_parser()
-    args = parser.parse_args()
+    args = vars(parser.parse_args())
+    cmd = args.pop('cmds')
 
-    func = getattr(plot, args.cmds)
-    func(**vars(args))
+    if cmd is not None:
+        getattr(plot, cmd)(**args)
+    else:
+        parser.print_help()
 
 
 # main program
