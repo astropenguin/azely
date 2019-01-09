@@ -1,8 +1,6 @@
 __all__ = ['cache_to',
            'default_kwargs',
-           'freeze',
            'abspath',
-           'split',
            'read_toml',
            'write_toml']
 
@@ -69,31 +67,8 @@ class default_kwargs:
         return wrapper
 
 
-class freeze:
-    def __init__(self, func, module=None):
-        self.func = func
-        self.module = module or getmodule(func)
-
-    def frozen(self, *args, **kwargs):
-        if hasattr(self, 'cache'):
-            return self.cache
-
-        self.cache = self.func(*args, **kwargs)
-        return self.cache
-
-    def __enter__(self):
-        setattr(self.module, self.func.__name__, self.frozen)
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        setattr(self.module, self.func.__name__, self.func)
-
-
 def abspath(*paths):
     return (Path(p).expanduser() for p in paths)
-
-
-def split(string, sep=','):
-    return (s.strip() for s in string.split(sep))
 
 
 def read_toml(path, Class=CaseInsensitiveDict, encoding='utf-8'):
