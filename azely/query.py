@@ -1,6 +1,6 @@
 __all__ = ['get_location',
            'get_object',
-           'get_time',
+           'get_datetime',
            'get_timezone']
 
 
@@ -54,12 +54,12 @@ def get_object(query, **kwargs):
         return object_online(query, **kwargs)
 
 
-@utils.default_kwargs(**CONFIG['time'])
-def get_time(query=None, **kwargs):
+@utils.default_kwargs(**CONFIG['datetime'])
+def get_datetime(query=None, **kwargs):
     if query is None:
-        return parse_time()
+        return parse_datetime()
 
-    return parse_time(*query.split(','), **kwargs)
+    return parse_datetime(*query.split(','), **kwargs)
 
 
 @utils.default_kwargs(**CONFIG['timezone'])
@@ -182,9 +182,9 @@ def object_offline(query, pattern='*.toml', searchdirs=('.',), **kwargs):
         raise ValueError(query)
 
 
-# subfunctions for time
-def parse_time(start=None, end=None, freq='10min', periods=None,
-               dayfirst=False, yearfirst=False, **kwargs):
+# subfunctions for datetime
+def parse_datetime(start=None, end=None, freq='10min', periods=None,
+                   dayfirst=False, yearfirst=False, **kwargs):
     f = partial(parse, dayfirst=dayfirst, yearfirst=yearfirst)
 
     if (start is None) and (end is None):

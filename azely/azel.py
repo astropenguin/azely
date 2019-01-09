@@ -8,6 +8,7 @@ from itertools import chain
 from logging import getLogger
 logger = getLogger(__name__)
 
+
 # dependent packages
 import pandas as pd
 from astropy.coordinates import get_body
@@ -30,11 +31,11 @@ class AzEl(SkyCoord):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def at(self, time=None, timezone=None):
+    def at(self, datetime=None, timezone=None):
         object_ = self.info.meta['object']
         location = self.info.meta['location']
 
-        return compute_azel(object_, location, time, timezone)
+        return compute_azel(object_, location, datetime, timezone)
 
     @property
     def az(self):
@@ -87,15 +88,15 @@ class AzEl(SkyCoord):
 
 
 # functions for azel computation
-def compute_azel(object_, location=None, time=None, timezone=None):
+def compute_azel(object_, location=None, datetime=None, timezone=None):
     if isinstance(object_, str):
         object_ = query.get_object(object_)
 
     if isinstance(location, str) or (location is None):
         location = query.get_location(location)
 
-    if isinstance(time, str) or (time is None):
-        time = query.get_time(time)
+    if isinstance(datetime, str) or (datetime is None):
+        datetime = query.get_datetime(datetime)
 
     if isinstance(timezone, (str, int, float)):
         timezone = query.get_timezone(timezone)
@@ -104,7 +105,7 @@ def compute_azel(object_, location=None, time=None, timezone=None):
         timezone = query.get_timezone(location['timezone'])
 
     # create astropy's time
-    obstime = create_obstime(location, time, timezone)
+    obstime = create_obstime(location, datetime, timezone)
 
     # create astropy's skycoord
     coord = create_skycoord(object_, obstime)
@@ -117,9 +118,9 @@ def compute_azel(object_, location=None, time=None, timezone=None):
     return AzEl(coord)
 
 
-def compute_azels(objects, location=None, time=None, timezone=None):
+def compute_azels(objects, location=None, datetime=None, timezone=None):
     location = query.get_location(location)
-    time     = query.get_time(time)
+    datetime = query.get_datetime(datetime)
     timezone = query.get_timezone(timezone)
 
     all_objects = []
@@ -131,19 +132,19 @@ def compute_azels(objects, location=None, time=None, timezone=None):
             all_objects.append([query.get_object(obj_or_tag)])
 
     for object_ in chain(*all_objects):
-        yield compute_azel(object_, location, time, timezone)
+        yield compute_azel(object_, location, datetime, timezone)
 
 
 # subfunctions for azel computation
-def create_obstime(location, time, timezone):
-    if time.tzinfo is None:
-        time = time.tz_localize(timezone).tz_convert('UTC')
+def create_obstime(location, datetime, timezone):
+    if datetime.tzinfo is None:
+        datetime = datetime.tz_localize(timezone).tz_convert('UTC')
 
     location = EarthLocation(lat=location['latitude'],
                              lon=location['longitude'],
                              height=location['altitude'])
 
-    return Time(time, location=location)
+    return Time(datetime, location=location)
 
 
 def create_skycoord(object_, obstime):

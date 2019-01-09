@@ -10,7 +10,7 @@ timeout = 5
 pattern = "*.toml"
 searchdirs = ["~/.azely"]
 
-["time"]
+["datetime"]
 yearfirst = true
 dayfirst = false
 
