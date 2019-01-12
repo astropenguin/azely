@@ -1,15 +1,18 @@
 __all__ = ['cache_to',
            'default_kwargs',
            'abspath',
+           'open_googlemaps',
            'read_toml',
            'write_toml']
 
 
 # standard library
+import webbrowser
 from functools import wraps
 from inspect import signature, getmodule
 from logging import getLogger
 from pathlib import Path
+from urllib.parse import urlencode
 logger = getLogger(__name__)
 
 
@@ -69,6 +72,11 @@ class default_kwargs:
 
 def abspath(*paths):
     return (Path(p).expanduser() for p in paths)
+
+
+def open_googlemaps(latitude, longitude, **ignored):
+    query = urlencode(dict(q=f'{latitude}, {longitude}'))
+    webbrowser.open(f'https://google.com/maps?{query}')
 
 
 def read_toml(path, Class=CaseInsensitiveDict, encoding='utf-8'):
