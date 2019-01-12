@@ -9,7 +9,7 @@ __all__ = ['cache_to',
 # standard library
 import webbrowser
 from functools import wraps
-from inspect import signature, getmodule
+from inspect import signature
 from logging import getLogger
 from pathlib import Path
 from urllib.parse import urlencode
