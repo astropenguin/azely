@@ -1,5 +1,5 @@
-__all__ = ['get_location',
-           'get_object',
+__all__ = ['get_object',
+           'get_location',
            'get_datetime',
            'get_timezone']
 
@@ -32,17 +32,6 @@ LOCATION_KEYS = {'address', 'timezone', 'latitude', 'longitude'}
 
 
 # main query functions
-@utils.default_kwargs(**CONFIG['location'])
-def get_location(query=None, **kwargs):
-    if query is None:
-        return location_here(**kwargs)
-
-    try:
-        return location_offline(query, **kwargs)
-    except ValueError:
-        return location_online(query, **kwargs)
-
-
 @utils.default_kwargs(**CONFIG['object'])
 def get_object(query, **kwargs):
     if is_solar(query):
@@ -52,6 +41,17 @@ def get_object(query, **kwargs):
         return object_offline(query, **kwargs)
     except ValueError:
         return object_online(query, **kwargs)
+
+
+@utils.default_kwargs(**CONFIG['location'])
+def get_location(query=None, **kwargs):
+    if query is None:
+        return location_here(**kwargs)
+
+    try:
+        return location_offline(query, **kwargs)
+    except ValueError:
+        return location_online(query, **kwargs)
 
 
 @utils.default_kwargs(**CONFIG['datetime'])
@@ -73,11 +73,49 @@ def get_timezone(query, **kwargs):
         return pytz.timezone(query)
 
 
-# subfunctions for location
+# subfunctions for object
 def is_solar(query):
     return query.lower() in solar_system_ephemeris.bodies
 
 
+@utils.cache_to(CONFIG['cache']['object'], CONFIG['cache']['enable'])
+def object_online(query, frame='icrs', timeout=5, **kwargs):
+    try:
+        with Conf.remote_timeout.set_temp(timeout):
+            coord = SkyCoord.from_name(query, frame)
+    except name_resolve.NameResolveError:
+        raise ValueError(query)
+
+    keys = list(coord.get_representation_component_names())[:2]
+    values = coord.to_string('hmsdms').split()
+
+    return dict(name=query, frame=frame, **dict(zip(keys, values)))
+
+
+def object_offline(query, pattern='*.toml', searchdirs=('.',), **kwargs):
+    for searchdir in utils.abspath(*searchdirs):
+        for path in searchdir.glob(pattern):
+            data = utils.read_toml(path)
+
+            if query not in data:
+                continue
+
+            object_ = data[query].copy()
+            object_.pop('name', None)
+
+            try:
+                SkyCoord(**object_)
+            except:
+                continue
+
+            object_ = data[query]
+            object_.setdefault('name', query)
+            return object_
+    else:
+        raise ValueError(query)
+
+
+# subfunctions for location
 def location_here(timeout=5, **ignored_kwargs):
     geo = geocoder.ip('me', timeout=timeout)
 
@@ -125,44 +163,6 @@ def location_offline(query, pattern='*.toml', searchdirs=('.',), **kwargs):
             location = data[query]
             location.setdefault('name', query)
             return location
-    else:
-        raise ValueError(query)
-
-
-# subfunctions for object
-@utils.cache_to(CONFIG['cache']['object'], CONFIG['cache']['enable'])
-def object_online(query, frame='icrs', timeout=5, **kwargs):
-    try:
-        with Conf.remote_timeout.set_temp(timeout):
-            coord = SkyCoord.from_name(query, frame)
-    except name_resolve.NameResolveError:
-        raise ValueError(query)
-
-    keys = list(coord.get_representation_component_names())[:2]
-    values = coord.to_string('hmsdms').split()
-
-    return dict(name=query, frame=frame, **dict(zip(keys, values)))
-
-
-def object_offline(query, pattern='*.toml', searchdirs=('.',), **kwargs):
-    for searchdir in utils.abspath(*searchdirs):
-        for path in searchdir.glob(pattern):
-            data = utils.read_toml(path)
-
-            if query not in data:
-                continue
-
-            object_ = data[query].copy()
-            object_.pop('name', None)
-
-            try:
-                SkyCoord(**object_)
-            except:
-                continue
-
-            object_ = data[query]
-            object_.setdefault('name', query)
-            return object_
     else:
         raise ValueError(query)
 
