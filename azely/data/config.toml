@@ -1,5 +1,5 @@
 ["location"]
-key = ""
+provider = "osm"
 timeout = 5
 pattern = "*.toml"
 searchdirs = ["~/.azely"]
