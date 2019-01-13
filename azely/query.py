@@ -11,13 +11,14 @@ logger = getLogger(__name__)
 
 
 # dependent packages
-import googlemaps
+import geocoder
 import pytz
 import pandas as pd
 from astropy.coordinates import SkyCoord, name_resolve
 from astropy.coordinates import solar_system_ephemeris
 from astropy.utils.data import Conf
 from dateutil.parser import parse
+from timezonefinder import TimezoneFinder
 
 
 # azely modules
@@ -27,8 +28,7 @@ import azely.utils as utils
 
 # module constants
 CONFIG = azely.config
-LOCATION_KEYS = {'address', 'timezone',
-                 'latitude', 'longitude', 'altitude'}
+LOCATION_KEYS = {'address', 'timezone', 'latitude', 'longitude'}
 
 
 # main query functions
@@ -78,49 +78,34 @@ def is_solar(query):
     return query.lower() in solar_system_ephemeris.bodies
 
 
-def location_here(key, timeout=5, **kwargs):
-    client = googlemaps.Client(key, timeout=timeout)
+def location_here(timeout=5, **ignored_kwargs):
+    geo = geocoder.ip('me', timeout=timeout)
 
-    # coordinates
-    result = client.geolocate()
-    name = 'Current Location'
-    addr = ''
-    lat = result['location']['lat']
-    lng = result['location']['lng']
+    if not geo.ok:
+        raise RuntimeError('not connected to a network')
 
-    # altitude
-    result = client.elevation((lat, lng))[0]
-    alt = result['elevation']
+    name = geo.address.split(',')[0]
+    tz = TimezoneFinder().timezone_at(lng=geo.lng, lat=geo.lat)
 
-    # timezone
-    result = client.timezone((lat, lng))
-    tz = result['timeZoneId']
-
-    return {'name': name, 'address': addr, 'timezone': tz,
-            'latitude': lat, 'longitude': lng, 'altitude': alt}
+    return {'name': name, 'address': geo.address, 'timezone': tz,
+            'longitude': geo.lng, 'latitude': geo.lat}
 
 
 @utils.cache_to(CONFIG['cache']['location'], CONFIG['cache']['enable'])
-def location_online(query, key, timeout=5, **kwargs):
-    client = googlemaps.Client(key, timeout=timeout)
+def location_online(query, provider='osm', method='geocode',
+                    key=None, timeout=5, **ignored_kwargs):
+    func = getattr(geocoder, provider)
+    geo = func(query, method=method, key=key, timeout=timeout)
 
-    # coordinates
-    result = client.places(query)['results'][0]
-    name = result['name']
-    addr = result['formatted_address']
-    lat = result['geometry']['location']['lat']
-    lng = result['geometry']['location']['lng']
+    if not geo.ok:
+        raise RuntimeError(f'could not find {query}'
+                           ' (or not connected to a network)')
 
-    # altitude
-    result = client.elevation((lat, lng))[0]
-    alt = result['elevation']
+    name = getattr(geo, 'name', geo.address.split(',')[0])
+    tz = TimezoneFinder().timezone_at(lng=geo.lng, lat=geo.lat)
 
-    # timezon
-    result = client.timezone((lat, lng))
-    tz = result['timeZoneId']
-
-    return {'name': name, 'address': addr, 'timezone': tz,
-            'latitude': lat, 'longitude': lng, 'altitude': alt}
+    return {'name': name, 'address': geo.address, 'timezone': tz,
+            'longitude': geo.lng, 'latitude': geo.lat}
 
 
 def location_offline(query, pattern='*.toml', searchdirs=('.',), **kwargs):
