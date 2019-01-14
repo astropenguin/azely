@@ -10,10 +10,11 @@ requests = "*"
 matplotlib = "*"
 python-dateutil = "*"
 toml = "*"
-googlemaps = "*"
 pandas = "*"
 pyqt5 = "*"
 pyyaml = "*"
+timezonefinder = "*"
+geocoder = "*"
 
 [dev-packages]
 ipython = "*"
