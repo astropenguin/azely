@@ -142,7 +142,7 @@ def create_obstime(location, datetime, timezone):
 
     location = EarthLocation(lat=location['latitude'],
                              lon=location['longitude'],
-                             height=location['altitude'])
+                             height=location.get('altitude', 0))
 
     return Time(datetime, location=location)
 
