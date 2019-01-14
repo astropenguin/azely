@@ -1,5 +1,6 @@
 # standard library
 from argparse import ArgumentParser
+from pathlib import Path
 
 
 # azely modules
@@ -11,7 +12,7 @@ import azely.utils as utils
 def create_parser():
     """Create an argument parser."""
     # read toml
-    path = azely.__path__[0] + '/data/cli.toml'
+    path = Path(azely.__path__[0]) / 'data' / 'cli.toml'
     config = utils.read_toml(path)
 
     main = config['main']
