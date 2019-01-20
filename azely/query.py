@@ -5,6 +5,8 @@ __all__ = ['get_object',
 
 
 # standard library
+import re
+from datetime import timedelta, timezone
 from functools import partial
 from logging import getLogger
 logger = getLogger(__name__)
@@ -68,7 +70,7 @@ def get_timezone(query, **kwargs):
         return None
 
     try:
-        return parse_number(query)
+        return timezone_utcoffset(query)
     except ValueError:
         return pytz.timezone(query)
 
@@ -184,9 +186,16 @@ def parse_datetime(start=None, end=None, freq='10min', periods=None,
 
 
 # subfunctions for timezone
-def parse_number(number):
-    try:
-        zone = f'Etc/GMT{int(number):+d}'
-        return pytz.timezone(zone)
-    except pytz.UnknownTimeZoneError:
-        raise ValueError(number)
+def timezone_utcoffset(query):
+    m = re.search('^(UTC)?([+\-])?([0-9.]+):?([0-9]+)?', query)
+
+    if m is None:
+        raise ValueError(query)
+
+    sign, hh, mm = m.groups()[1:]
+
+    sign = +1 if sign != '-' else -1
+    mm = 0 if mm is None else mm
+    hh, mm = sign*float(hh), sign*float(mm)
+
+    return timezone(timedelta(hours=hh, minutes=mm))
