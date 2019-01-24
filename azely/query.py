@@ -14,12 +14,11 @@ logger = getLogger(__name__)
 
 # dependent packages
 import geocoder
-import pytz
 import pandas as pd
 from astropy.coordinates import SkyCoord, name_resolve
 from astropy.coordinates import solar_system_ephemeris
 from astropy.utils.data import Conf
-from dateutil.parser import parse
+from dateutil import parser, tz
 from timezonefinder import TimezoneFinder
 
 
@@ -72,7 +71,7 @@ def get_timezone(query, **kwargs):
     try:
         return timezone_utcoffset(query)
     except ValueError:
-        return pytz.timezone(query)
+        return tz.gettz(query)
 
 
 # subfunctions for object
@@ -172,10 +171,10 @@ def location_offline(query, pattern='*.toml', searchdirs=('.',), **kwargs):
 # subfunctions for datetime
 def parse_datetime(start=None, end=None, freq='10min', periods=None,
                    dayfirst=False, yearfirst=False, **kwargs):
-    f = partial(parse, dayfirst=dayfirst, yearfirst=yearfirst)
+    f = partial(parser.parse, dayfirst=dayfirst, yearfirst=yearfirst)
 
     if (start is None) and (end is None):
-        start = end = pd.Timestamp('now', tz=pytz.UTC)
+        start = end = pd.Timestamp('now', tz=tz.UTC)
     elif (start is not None) and (end is None):
         start = f(start).date()
         end = start + pd.offsets.Day()
