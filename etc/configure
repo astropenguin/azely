@@ -5,6 +5,7 @@ PROJ=`pipenv --where`
 # Write environment variables to .env
 echo PYTHONPATH=${PROJ} >> .env
 echo IPYTHONDIR=${PROJ}/.ipython >> .env
+export $(grep -v '^#' .env | xargs)
 
 # Create IPython profile
 mkdir -p .ipython
