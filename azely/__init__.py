@@ -6,6 +6,7 @@ def _load_config():
     # standard library
     from collections import defaultdict
     from logging import getLogger
+    from shutil import copy
     from pathlib import Path
     logger = getLogger(__name__)
 
