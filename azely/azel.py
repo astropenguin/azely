@@ -4,12 +4,14 @@ __all__ = ['AzEl',
 
 
 # standard library
+from datetime import datetime, timedelta
 from itertools import chain
 from logging import getLogger
 logger = getLogger(__name__)
 
 
 # dependent packages
+import numpy as np
 import pandas as pd
 from astropy.coordinates import get_body
 from astropy.coordinates import SkyCoord, EarthLocation
@@ -39,46 +41,82 @@ class AzEl(SkyCoord):
 
     @property
     def az(self):
-        return self._df(SkyCoord(self.altaz).az)
+        return self._to_dataframe(SkyCoord(self.altaz).az)
 
     @property
     def el(self):
-        return self._df(SkyCoord(self.altaz).alt)
+        return self._to_dataframe(SkyCoord(self.altaz).alt)
 
     @property
     def ra(self):
-        return self._df(SkyCoord(self.icrs).ra)
+        return self._to_dataframe(SkyCoord(self.icrs).ra)
 
     @property
     def dec(self):
-        return self._df(SkyCoord(self.icrs).dec)
+        return self._to_dataframe(SkyCoord(self.icrs).dec)
 
     @property
     def l(self):
-        return self._df(SkyCoord(self.galactic).l)
+        return self._to_dataframe(SkyCoord(self.galactic).l)
 
     @property
     def b(self):
-        return self._df(SkyCoord(self.galactic).b)
+        return self._to_dataframe(SkyCoord(self.galactic).b)
 
     @property
-    def utc(self):
-        return self._df(self.obstime.utc)
+    def az_lst(self):
+        return self._to_dataframe(SkyCoord(self.altaz).az, 'lst')
 
     @property
-    def lst(self):
-        return self._df(self.obstime.sidereal_time('mean'))
+    def el_lst(self):
+        return self._to_dataframe(SkyCoord(self.altaz).alt, 'lst')
 
-    def _df(self, data):
-        name = self.info.meta['object']['name']
-        return pd.DataFrame({name: data}, self._df_index())
+    @property
+    def ra_lst(self):
+        return self._to_dataframe(SkyCoord(self.icrs).ra, 'lst')
 
-    def _df_index(self):
-        utc = self.obstime.to_datetime()
+    @property
+    def dec_lst(self):
+        return self._to_dataframe(SkyCoord(self.icrs).dec, 'lst')
+
+    @property
+    def l_lst(self):
+        return self._to_dataframe(SkyCoord(self.galactic).l, 'lst')
+
+    @property
+    def b_lst(self):
+        return self._to_dataframe(SkyCoord(self.galactic).b, 'lst')
+
+    def _to_dataframe(self, angle, index='tz'):
+        index = getattr(self, f'_index_{index}')
+        data = {self.info.meta['object']['name']: angle}
+        return pd.DataFrame(data, index)
+
+    @property
+    def _index_tz(self):
+        if self.info.meta['timezone'] is not None:
         timezone = self.info.meta['timezone']
+        else:
+            timezone = self.info.meta['location']['timezone']
 
-        index = pd.Index(utc, name=timezone.zone)
+        name = f'Datetime ({timezone})'
+        index = pd.Index(self.obstime.to_datetime(), name=name)
         return index.tz_localize('UTC').tz_convert(timezone)
+
+    @property
+    def _index_lst(self):
+        utc = self.obstime.utc
+        lst = self.obstime.sidereal_time('mean').value
+        diff = (np.diff(utc)>0).astype(int) - (np.diff(lst)>0).astype(int)
+        day = np.insert(diff, 0, 0).cumsum()
+
+        name = 'Local Sidereal Time'
+        return pd.Index(pd.to_datetime(day+lst/24, unit='D'), name=name)
+
+    @property
+    def _index_utc(self):
+        name = 'Datetime (UTC)'
+        return pd.Index(self.obstime.utc, name=name)
 
     def __repr__(self):
         object_ = self.info.meta['object']['name']
@@ -100,9 +138,6 @@ def compute_azel(object_, location=None, datetime=None, timezone=None):
 
     if isinstance(timezone, (str, int, float)):
         timezone = query.get_timezone(timezone)
-
-    if timezone is None:
-        timezone = query.get_timezone(location['timezone'])
 
     # create astropy's time
     obstime = create_obstime(location, datetime, timezone)
@@ -137,6 +172,9 @@ def compute_azels(objects, location=None, datetime=None, timezone=None):
 
 # subfunctions for azel computation
 def create_obstime(location, datetime, timezone):
+    if timezone is None:
+        timezone = location['timezone']
+
     if datetime.tzinfo is None:
         datetime = datetime.tz_localize(timezone).tz_convert('UTC')
 
