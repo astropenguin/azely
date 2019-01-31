@@ -95,7 +95,7 @@ class AzEl(SkyCoord):
     @property
     def _index_tz(self):
         if self.info.meta['timezone'] is not None:
-        timezone = self.info.meta['timezone']
+            timezone = self.info.meta['timezone']
         else:
             timezone = self.info.meta['location']['timezone']
 
