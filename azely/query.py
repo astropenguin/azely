@@ -74,7 +74,7 @@ def is_valid_object(object_):
         return False
 
 
-@utils.override_defaults(**azely.config['object'])
+@utils.set_defaults(**azely.config['object'])
 def get_object_local(query, pattern='*.toml', searchdirs='.', **_):
     # lazy import
     from astropy.coordinates import solar_system_ephemeris
@@ -82,7 +82,7 @@ def get_object_local(query, pattern='*.toml', searchdirs='.', **_):
     if query.lower() in solar_system_ephemeris.bodies:
         return {'name': query}
 
-    for object_ in utils.find_in(query, pattern, searchdirs):
+    for object_ in utils.findin_toml(query, pattern, searchdirs):
         if not is_valid_object(object_):
             continue
 
@@ -93,7 +93,7 @@ def get_object_local(query, pattern='*.toml', searchdirs='.', **_):
 
 
 @utils.cache_to(azely.config['object']['cache'])
-@utils.override_defaults(**azely.config['object'])
+@utils.set_defaults(**azely.config['object'])
 def get_object_server(query, frame='icrs', timeout=5, **_):
     # lazy import
     from astropy.coordinates import SkyCoord, name_resolve
@@ -119,9 +119,9 @@ def is_valid_location(location):
     return location.keys() >= LOCATION_KEYS
 
 
-@utils.override_defaults(**azely.config['location'])
+@utils.set_defaults(**azely.config['location'])
 def get_location_local(query, pattern='*.toml', searchdirs='.', **_):
-    for location in utils.find_in(query, pattern, searchdirs):
+    for location in utils.findin_toml(query, pattern, searchdirs):
         if not is_valid_location(location):
             continue
 
@@ -132,7 +132,7 @@ def get_location_local(query, pattern='*.toml', searchdirs='.', **_):
 
 
 @utils.cache_to(azely.config['location']['cache'])
-@utils.override_defaults(**azely.config['location'])
+@utils.set_defaults(**azely.config['location'])
 def get_location_server(query=None, provider='osm', key=None,
                         method='geocode', timeout=5, **_):
     if query is None:
@@ -158,7 +158,7 @@ def get_datetime_now():
     return pd.date_range(start, end)
 
 
-@utils.override_defaults(**azely.config['datetime'])
+@utils.set_defaults(**azely.config['datetime'])
 def get_datetime_period(query, frequency='10min',
                         dayfirst=False, yearfirst=False, **_):
     items = query.split(',')
@@ -179,7 +179,7 @@ def get_datetime_period(query, frequency='10min',
 
 
 # subfunctions for timezone
-@utils.override_defaults(**azely.config['timezone'])
+@utils.set_defaults(**azely.config['timezone'])
 def get_timezone_default(default='location', **_):
     if default == 'location':
         return gettz('location')
