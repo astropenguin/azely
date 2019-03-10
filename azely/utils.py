@@ -1,9 +1,7 @@
 __all__ = ['cache_to',
            'override_defaults',
            'abspath',
-           'open_googlemaps',
-           'read_toml',
-           'write_toml']
+           'open_googlemaps']
 
 
 # standard library
@@ -104,34 +102,3 @@ def abspath(*paths):
 def open_googlemaps(latitude, longitude, **_):
     query = urlencode({'q': f'{latitude}, {longitude}'})
     webbrowser.open(f'https://google.com/maps?{query}')
-
-
-def read_toml(path, DictClass=None, encoding='utf-8'):
-    if DictClass is None:
-        DictClass = CaseInsensitiveDict
-
-    with Path(path).open('r', encoding=encoding) as f:
-        try:
-            return DictClass(toml.load(f))
-            logger.debug(f'succeed in loading {path}')
-        except:
-            logger.warning(f'fail to load {path}')
-            logger.warning('empty dict is returned instead')
-            return DictClass()
-
-
-def write_toml(path, data, encoding='utf-8'):
-    try:
-        string = toml.dumps(dict(data))
-        logger.debug('succeed in converting data to TOML')
-    except:
-        logger.warning('fail to convert data to TOML')
-        logger.warning(f'fail to write data to {path}')
-        return None
-
-    with Path(path).open('w', encoding=encoding) as f:
-        try:
-            f.write(string)
-            logger.debug(f'succeed in writing data to {path}')
-        except:
-            logger.warning(f'fail to write data to {path}')
