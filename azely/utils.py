@@ -1,11 +1,13 @@
 __all__ = ['open_toml',
            'cache_to',
            'set_defaults',
+           'findin_toml',
            'open_googlemaps']
 
 
 # standard library
 import webbrowser
+from copy import deepcopy
 from functools import wraps
 from inspect import signature
 from logging import getLogger
@@ -110,8 +112,21 @@ class set_defaults:
         return sig.replace(parameters=params)
 
 
-def abspath(*paths):
-    return (Path(p).expanduser() for p in paths)
+def findin_toml(query, pattern='*.toml', searchdirs='.'):
+    if query is None:
+        return iter([])
+
+    for dirpath in (Path(p).expanduser() for p in searchdirs):
+        if not dirpath.is_dir():
+            continue
+
+        for path in dirpath.glob(pattern):
+            data = open_toml(path)
+
+            if not query in data:
+                continue
+
+            yield deepcopy(data[query])
 
 
 def open_googlemaps(latitude, longitude, **_):
