@@ -65,18 +65,36 @@ class cache_to:
 
 
 class default_kwargs:
-    def __init__(self, **kwargs):
-        self.kwargs = kwargs
+    def __init__(self, **defaults):
+        self.defaults = defaults
 
     def __call__(self, func):
+        sig = signature(func)
+        sig_new = self.modify_signature(sig)
+
         @wraps(func)
         def wrapper(*args, **kwargs):
-            _kwargs = self.kwargs.copy()
-            _kwargs.update(kwargs)
-
-            return func(*args, **_kwargs)
+            bound = sig_new.bind(*args, **kwargs)
+            bound.apply_defaults()
+            return func(*bound.args, **bound.kwargs)
 
         return wrapper
+
+    def modify_signature(self, sig):
+        params = []
+
+        for p in sig.parameters.values():
+            if (p.kind == p.VAR_POSITIONAL) or (p.kind==p.VAR_KEYWORD):
+                params.append(p.replace())
+                continue
+
+            if not p.name in self.defaults:
+                params.append(p.replace())
+                continue
+
+            params.append(p.replace(default=self.defaults[p.name]))
+
+        return sig.replace(parameters=params)
 
 
 def abspath(*paths):
