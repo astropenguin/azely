@@ -83,8 +83,8 @@ def abspath(*paths):
     return (Path(p).expanduser() for p in paths)
 
 
-def open_googlemaps(latitude, longitude, **ignored):
-    query = urlencode(dict(q=f'{latitude}, {longitude}'))
+def open_googlemaps(latitude, longitude, **_):
+    query = urlencode({'q': f'{latitude}, {longitude}'})
     webbrowser.open(f'https://google.com/maps?{query}')
 
 
