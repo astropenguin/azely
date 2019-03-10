@@ -1,5 +1,5 @@
 __all__ = ['cache_to',
-           'default_kwargs',
+           'override_defaults',
            'abspath',
            'open_googlemaps',
            'read_toml',
@@ -64,7 +64,7 @@ class cache_to:
         return wrapper
 
 
-class default_kwargs:
+class override_defaults:
     def __init__(self, **defaults):
         self.defaults = defaults
 
