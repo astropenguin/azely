@@ -24,7 +24,7 @@ from requests.utils import CaseInsensitiveDict
 class cache_to:
     def __init__(self, path=None, arg_query='query'):
         if path is not None:
-        self.path = Path(path).expanduser()
+            self.path = Path(path).expanduser()
             self.arg_query = arg_query
 
     def __call__(self, func):
