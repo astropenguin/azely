@@ -1,4 +1,5 @@
-__all__ = ['cache_to',
+__all__ = ['open_toml',
+           'cache_to',
            'override_defaults',
            'abspath',
            'open_googlemaps']
@@ -17,6 +18,30 @@ logger = getLogger(__name__)
 # dependent packages
 import toml
 from requests.utils import CaseInsensitiveDict
+
+
+class open_toml(CaseInsensitiveDict):
+    def __init__(self, path, update_when_exit=True):
+        self.path = Path(path)
+        self.update_when_exit = update_when_exit
+        super().__init__(self.load_toml())
+
+    def load_toml(self):
+        with self.path.open('r') as f:
+            return toml.load(f)
+
+    def update_toml(self):
+        data = toml.dumps(dict(self))
+
+        with self.path.open('w') as f:
+                f.write(data)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        if self.update_when_exit:
+            self.update_toml()
 
 
 class cache_to:
