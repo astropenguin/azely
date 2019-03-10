@@ -58,31 +58,18 @@ class cache_to:
 
         @wraps(func)
         def wrapper(*args, **kwargs):
-            # read cache
             if not self.path.exists():
-                logger.info(f'creating {self.path}')
                 self.path.touch()
 
-            logger.debug(f'loading {self.path}')
-            cache = read_toml(self.path)
-
-            # get query
             bound = sig.bind(*args, **kwargs)
             query = bound.arguments[self.arg_query]
 
-            # return cached data if it exists
-            if query in cache:
-                logger.debug(f'{query} exists in {self.path}')
-                logger.debug('cached data is then returned')
+            with open_toml(self.path) as cache:
+                if not query in cache:
+                    data = func(*args, **kwargs)
+                    cache.update({query: data})
+
                 return cache[query]
-
-            logger.debug(f'{query} does not exist in {self.path}')
-            logger.debug('trying to get data and cache it')
-            data = func(*args, **kwargs)
-
-            cache.update({query: data})
-            write_toml(self.path, cache)
-            return data
 
         return wrapper
 
@@ -107,7 +94,11 @@ class override_defaults:
         params = []
 
         for p in sig.parameters.values():
-            if (p.kind == p.VAR_POSITIONAL) or (p.kind==p.VAR_KEYWORD):
+            if p.kind == p.VAR_POSITIONAL:
+                params.append(p.replace())
+                continue
+
+            if p.kind == p.VAR_KEYWORD:
                 params.append(p.replace())
                 continue
 
@@ -115,7 +106,8 @@ class override_defaults:
                 params.append(p.replace())
                 continue
 
-            params.append(p.replace(default=self.defaults[p.name]))
+            default = self.defaults[p.name]
+            params.append(p.replace(default=default))
 
         return sig.replace(parameters=params)
 
