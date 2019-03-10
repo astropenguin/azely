@@ -5,8 +5,6 @@ __all__ = ['get_object',
 
 
 # standard library
-import re
-from datetime import timedelta, timezone
 from functools import partial
 from logging import getLogger
 logger = getLogger(__name__)
@@ -15,10 +13,8 @@ logger = getLogger(__name__)
 # dependent packages
 import geocoder
 import pandas as pd
-from astropy.coordinates import SkyCoord, name_resolve
-from astropy.coordinates import solar_system_ephemeris
-from astropy.utils.data import Conf
-from dateutil import parser, tz
+from dateutil.parser import parse
+from dateutil.tz import gettz, UTC
 from timezonefinder import TimezoneFinder
 
 
@@ -28,117 +24,126 @@ import azely.utils as utils
 
 
 # module constants
-CONFIG = azely.config
 LOCATION_KEYS = {'address', 'timezone', 'latitude', 'longitude'}
 
 
 # main query functions
-@utils.default_kwargs(**CONFIG['object'])
 def get_object(query, **kwargs):
-    if is_solar(query):
-        return {'name': query}
-
     try:
-        return object_offline(query, **kwargs)
+        return get_object_local(query, **kwargs)
     except ValueError:
-        return object_online(query, **kwargs)
+        return get_object_server(query, **kwargs)
 
 
-@utils.default_kwargs(**CONFIG['location'])
 def get_location(query=None, **kwargs):
-    if query is None:
-        return location_here(**kwargs)
-
     try:
-        return location_offline(query, **kwargs)
+        return get_location_local(query, **kwargs)
     except ValueError:
-        return location_online(query, **kwargs)
+        return get_location_server(query, **kwargs)
 
 
-@utils.default_kwargs(**CONFIG['datetime'])
 def get_datetime(query=None, **kwargs):
     if query is None:
-        return parse_datetime()
+        return get_datetime_now()
+    else:
+        return get_datetime_period(query, **kwargs)
 
-    return parse_datetime(*query.split(','), **kwargs)
 
-
-@utils.default_kwargs(**CONFIG['timezone'])
-def get_timezone(query, **kwargs):
+def get_timezone(query=None, **kwargs):
     if query is None:
-        return None
-
-    try:
-        return timezone_utcoffset(query)
-    except ValueError:
-        return tz.gettz(query)
+        return get_timezone_default(**kwargs)
+    else:
+        return get_timezone_name(query)
 
 
 # subfunctions for object
-def is_solar(query):
-    return query.lower() in solar_system_ephemeris.bodies
+def is_valid_object(object_):
+    # lazy import
+    from astropy.coordinates import SkyCoord
+
+    if not isinstance(object_, dict):
+        return False
+
+    object_ = object_.copy()
+    object_.pop('name', None)
+
+    try:
+        SkyCoord(**object_)
+        return True
+    except:
+        return False
 
 
-@utils.cache_to(CONFIG['cache']['object'], CONFIG['cache']['enable'])
-def object_online(query, frame='icrs', timeout=5, **kwargs):
+@utils.override_defaults(**azely.config['object'])
+def get_object_local(query, pattern='*.toml', searchdirs='.', **_):
+    # lazy import
+    from astropy.coordinates import solar_system_ephemeris
+
+    if query.lower() in solar_system_ephemeris.bodies:
+        return {'name': query}
+
+    for object_ in utils.find_in(query, pattern, searchdirs):
+        if not is_valid_object(object_):
+            continue
+
+        object_.setdefault('name', query)
+        return object_
+    else:
+        raise ValueError(query)
+
+
+@utils.cache_to(azely.config['object']['cache'])
+@utils.override_defaults(**azely.config['object'])
+def get_object_server(query, frame='icrs', timeout=5, **_):
+    # lazy import
+    from astropy.coordinates import SkyCoord, name_resolve
+    from astropy.utils.data import Conf
+
     try:
         with Conf.remote_timeout.set_temp(timeout):
             coord = SkyCoord.from_name(query, frame)
     except name_resolve.NameResolveError:
         raise ValueError(query)
 
-    keys = list(coord.get_representation_component_names())[:2]
+    keys = list(coord.representation_component_units)
     values = coord.to_string('hmsdms').split()
+    coords = dict(zip(keys, values))
+    return {'name': query, 'frame': frame, **coords}
 
-    return dict(name=query, frame=frame, **dict(zip(keys, values)))
+
+# subfunctions for location
+def is_valid_location(location):
+    if not isinstance(location, dict):
+        return False
+
+    return location.keys() >= LOCATION_KEYS
 
 
-def object_offline(query, pattern='*.toml', searchdirs=('.',), **kwargs):
-    for searchdir in utils.abspath(*searchdirs):
-        for path in searchdir.glob(pattern):
-            data = utils.read_toml(path)
+@utils.override_defaults(**azely.config['location'])
+def get_location_local(query, pattern='*.toml', searchdirs='.', **_):
+    for location in utils.find_in(query, pattern, searchdirs):
+        if not is_valid_location(location):
+            continue
 
-            if query not in data:
-                continue
-
-            object_ = data[query].copy()
-            object_.pop('name', None)
-
-            try:
-                SkyCoord(**object_)
-            except:
-                continue
-
-            object_ = data[query]
-            object_.setdefault('name', query)
-            return object_
+        location.setdefault('name', query)
+        return location
     else:
         raise ValueError(query)
 
 
-# subfunctions for location
-def location_here(timeout=5, **ignored_kwargs):
-    geo = geocoder.ip('me', timeout=timeout)
+@utils.cache_to(azely.config['location']['cache'])
+@utils.override_defaults(**azely.config['location'])
+def get_location_server(query=None, provider='osm', key=None,
+                        method='geocode', timeout=5, **_):
+    if query is None:
+        geo = geocoder.ip('me', timeout=timeout)
+    else:
+        func = getattr(geocoder, provider)
+        geo = func(query, method=method, key=key, timeout=timeout)
 
     if not geo.ok:
-        raise RuntimeError('not connected to a network')
-
-    name = geo.address.split(',')[0]
-    tz = TimezoneFinder().timezone_at(lng=geo.lng, lat=geo.lat)
-
-    return {'name': name, 'address': geo.address, 'timezone': tz,
-            'longitude': geo.lng, 'latitude': geo.lat}
-
-
-@utils.cache_to(CONFIG['cache']['location'], CONFIG['cache']['enable'])
-def location_online(query, provider='osm', method='geocode',
-                    key=None, timeout=5, **ignored_kwargs):
-    func = getattr(geocoder, provider)
-    geo = func(query, method=method, key=key, timeout=timeout)
-
-    if not geo.ok:
-        raise RuntimeError(f'could not find {query}'
-                           ' (or not connected to a network)')
+        raise RuntimeError('could not find location'
+                           'or not connected to a network')
 
     name = getattr(geo, 'name', geo.address.split(',')[0])
     tz = TimezoneFinder().timezone_at(lng=geo.lng, lat=geo.lat)
@@ -147,54 +152,47 @@ def location_online(query, provider='osm', method='geocode',
             'longitude': geo.lng, 'latitude': geo.lat}
 
 
-def location_offline(query, pattern='*.toml', searchdirs=('.',), **kwargs):
-    for searchdir in utils.abspath(*searchdirs):
-        for path in searchdir.glob(pattern):
-            data = utils.read_toml(path)
+# subfunctions for datetime
+def get_datetime_now():
+    start = end = pd.Timestamp('now', tz=UTC)
+    return pd.date_range(start, end)
 
-            if query not in data:
-                continue
 
-            location = data[query].copy()
-            location.pop('name', None)
+@utils.override_defaults(**azely.config['datetime'])
+def get_datetime_period(query, frequency='10min',
+                        dayfirst=False, yearfirst=False, **_):
+    items = query.split(',')
+    func = partial(parse, dayfirst=dayfirst, yearfirst=yearfirst)
 
-            if location.keys() < LOCATION_KEYS:
-                continue
-
-            location = data[query]
-            location.setdefault('name', query)
-            return location
+    if len(items) == 1:
+        start = func(items[0])
+        end = start + pd.offsets.Day()
+    elif len(items) == 2:
+        start, end = map(func, items)
+    elif len(items) == 3:
+        start, end = map(func, items[:2])
+        frequency = items[2]
     else:
         raise ValueError(query)
 
-
-# subfunctions for datetime
-def parse_datetime(start=None, end=None, freq='10min', periods=None,
-                   dayfirst=False, yearfirst=False, **kwargs):
-    f = partial(parser.parse, dayfirst=dayfirst, yearfirst=yearfirst)
-
-    if (start is None) and (end is None):
-        start = end = pd.Timestamp('now', tz=tz.UTC)
-    elif (start is not None) and (end is None):
-        start = f(start).date()
-        end = start + pd.offsets.Day()
-    else:
-        start, end = f(start), f(end)
-
-    return pd.date_range(start, end, periods, freq)
+    return pd.date_range(start, end, None, frequency)
 
 
 # subfunctions for timezone
-def timezone_utcoffset(query):
-    m = re.search('^(UTC)?([+\-])?([0-9.]+):?([0-9]+)?', query)
+@utils.override_defaults(**azely.config['timezone'])
+def get_timezone_default(default='location', **_):
+    if default == 'location':
+        return gettz('location')
+    elif default == 'localtime':
+        return gettz('/etc/localtime')
+    else:
+        raise ValueError(default)
 
-    if m is None:
+
+def get_timezone_name(query):
+    tz = gettz(query)
+
+    if tz is not None:
+        return tz
+    else:
         raise ValueError(query)
-
-    sign, hh, mm = m.groups()[1:]
-
-    sign = +1 if sign != '-' else -1
-    mm = 0 if mm is None else mm
-    hh, mm = sign*float(hh), sign*float(mm)
-
-    return timezone(timedelta(hours=hh, minutes=mm))
