@@ -22,35 +22,44 @@ from requests.utils import CaseInsensitiveDict
 
 
 class cache_to:
-    def __init__(self, path, enable=True, query_arg='query'):
+    def __init__(self, path=None, arg_query='query'):
+        if path is not None:
         self.path = Path(path).expanduser()
-        self.enable = enable
-        self.query_arg = query_arg
+            self.arg_query = arg_query
 
     def __call__(self, func):
+        if not hasattr(self, 'path'):
+            return func
+
         sig = signature(func)
 
         @wraps(func)
         def wrapper(*args, **kwargs):
-            if not self.enable:
-                return func(*args, **kwargs)
-
-            # read config
+            # read cache
             if not self.path.exists():
+                logger.info(f'creating {self.path}')
                 self.path.touch()
 
-            config = read_toml(self.path)
+            logger.debug(f'loading {self.path}')
+            cache = read_toml(self.path)
 
-            # query check and update
+            # get query
             bound = sig.bind(*args, **kwargs)
-            query = bound.arguments[self.query_arg]
+            query = bound.arguments[self.arg_query]
 
-            if query not in config:
-                result = func(*args, **kwargs)
-                config.update({query: result})
-                write_toml(self.path, config)
+            # return cached data if it exists
+            if query in cache:
+                logger.debug(f'{query} exists in {self.path}')
+                logger.debug('cached data is then returned')
+                return cache[query]
 
-            return config[query]
+            logger.debug(f'{query} does not exist in {self.path}')
+            logger.debug('trying to get data and cache it')
+            data = func(*args, **kwargs)
+
+            cache.update({query: data})
+            write_toml(self.path, cache)
+            return data
 
         return wrapper
 
