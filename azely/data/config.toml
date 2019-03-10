@@ -1,20 +1,20 @@
-["location"]
-provider = "osm"
-timeout = 5
-pattern = "*.toml"
-searchdirs = ["~/.azely"]
-
 ["object"]
 frame = "icrs"
 timeout = 5
 pattern = "*.toml"
 searchdirs = ["~/.azely"]
+cache = "~/.azely/known_objects.toml"
+
+["location"]
+provider = "osm"
+timeout = 5
+pattern = "*.toml"
+searchdirs = ["~/.azely"]
+cache = "~/.azely/known_locations.toml"
 
 ["datetime"]
 yearfirst = true
 dayfirst = false
 
-["cache"]
-enable = true
-object = "~/.azely/known_objects.toml"
-location = "~/.azely/known_locations.toml"
+["timezone"]
+default = 'location'
