@@ -1,7 +1,6 @@
 __all__ = ['open_toml',
            'cache_to',
-           'override_defaults',
-           'abspath',
+           'set_defaults',
            'open_googlemaps']
 
 
@@ -64,17 +63,20 @@ class cache_to:
             bound = sig.bind(*args, **kwargs)
             query = bound.arguments[self.arg_query]
 
+            if query is None:
+                return func(*args, **kwargs)
+
             with open_toml(self.path) as cache:
-                if not query in cache:
-                    data = func(*args, **kwargs)
-                    cache.update({query: data})
+                if query not in cache:
+                    item = func(*args, **kwargs)
+                    cache.update({query: item})
 
                 return cache[query]
 
         return wrapper
 
 
-class override_defaults:
+class set_defaults:
     def __init__(self, **defaults):
         self.defaults = defaults
 
@@ -94,11 +96,7 @@ class override_defaults:
         params = []
 
         for p in sig.parameters.values():
-            if p.kind == p.VAR_POSITIONAL:
-                params.append(p.replace())
-                continue
-
-            if p.kind == p.VAR_KEYWORD:
+            if (p.kind==p.VAR_POSITIONAL) or (p.kind==p.VAR_KEYWORD):
                 params.append(p.replace())
                 continue
 
