@@ -1,7 +1,7 @@
 __all__ = ['open_toml',
+           'findin_toml',
            'cache_to',
            'set_defaults',
-           'findin_toml',
            'open_googlemaps']
 
 
@@ -43,6 +43,23 @@ class open_toml(CaseInsensitiveDict):
     def __exit__(self, exc_type, exc_value, traceback):
         if self.update_when_exit:
             self.update_toml()
+
+
+def findin_toml(query, pattern='*.toml', searchdirs='.'):
+    if query is None:
+        return iter([])
+
+    for dirpath in (Path(p).expanduser() for p in searchdirs):
+        if not dirpath.is_dir():
+            continue
+
+        for path in dirpath.glob(pattern):
+            data = open_toml(path)
+
+            if not query in data:
+                continue
+
+            yield deepcopy(data[query])
 
 
 class cache_to:
@@ -110,23 +127,6 @@ class set_defaults:
             params.append(p.replace(default=default))
 
         return sig.replace(parameters=params)
-
-
-def findin_toml(query, pattern='*.toml', searchdirs='.'):
-    if query is None:
-        return iter([])
-
-    for dirpath in (Path(p).expanduser() for p in searchdirs):
-        if not dirpath.is_dir():
-            continue
-
-        for path in dirpath.glob(pattern):
-            data = open_toml(path)
-
-            if not query in data:
-                continue
-
-            yield deepcopy(data[query])
 
 
 def open_googlemaps(latitude, longitude, **_):
