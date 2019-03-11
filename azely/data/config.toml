@@ -13,6 +13,7 @@ searchdirs = ["~/.config/azely"]
 cache = "~/.config/azely/known_locations.toml"
 
 ["datetime"]
+frequency = "10min"
 yearfirst = true
 dayfirst = false
 
