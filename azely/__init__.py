@@ -14,7 +14,7 @@ def _load_config():
     import toml
 
     data = Path(__path__[0]) / 'data'
-    user = Path.home() / '.azely'
+    user = Path.home() / '.config' / 'azely'
     config = 'config.toml'
 
     if not user.exists():
@@ -32,6 +32,7 @@ def _load_config():
 config = _load_config()
 from . import utils
 from . import query
-from . import azel
+# from . import azel
+# from . import plot
 from .query import *
-from .azel import *
+# from .azel import *
