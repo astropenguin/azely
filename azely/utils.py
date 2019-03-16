@@ -114,17 +114,21 @@ class set_defaults:
     def modify_signature(self, sig):
         params = []
 
-        for p in sig.parameters.values():
-            if (p.kind==p.VAR_POSITIONAL) or (p.kind==p.VAR_KEYWORD):
-                params.append(p.replace())
+        for param in sig.parameters.values():
+            if param.kind == param.VAR_POSITIONAL:
+                params.append(param.replace())
                 continue
 
-            if not p.name in self.defaults:
-                params.append(p.replace())
+            if param.kind == param.VAR_POSITIONAL:
+                params.append(param.replace())
                 continue
 
-            default = self.defaults[p.name]
-            params.append(p.replace(default=default))
+            if not param.name in self.defaults:
+                params.append(param.replace())
+                continue
+
+            default = self.defaults[param.name]
+            params.append(param.replace(default=default))
 
         return sig.replace(parameters=params)
 
