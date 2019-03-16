@@ -63,10 +63,13 @@ def findin_toml(query, pattern='*.toml', searchdirs='.'):
 
 
 class cache_to:
-    def __init__(self, path=None, arg_query='query'):
+    def __init__(self, path=None, ignore_query='$.',
+                 query_argument='query', **_):
         if path is not None:
             self.path = Path(path).expanduser()
-            self.arg_query = arg_query
+
+        self.ignore_query = re.compile(ignore_query)
+        self.query_argument = query_argument
 
     def __call__(self, func):
         if not hasattr(self, 'path'):
@@ -76,14 +79,19 @@ class cache_to:
 
         @wraps(func)
         def wrapper(*args, **kwargs):
+            bound = sig.bind(*args, **kwargs)
+            bound.apply_defaults()
+
+            if self.query_argument not in bound.arguments:
+                return func(*args, **kwargs)
+
+            query = bound.arguments[self.query_argument]
+
+            if self.ignore_query.match(query):
+                return func(*args, **kwargs)
+
             if not self.path.exists():
                 self.path.touch()
-
-            bound = sig.bind(*args, **kwargs)
-            query = bound.arguments[self.arg_query]
-
-            if query is None:
-                return func(*args, **kwargs)
 
             with open_toml(self.path) as cache:
                 if query not in cache:
