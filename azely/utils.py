@@ -1,11 +1,12 @@
 __all__ = ['open_toml',
-           'findin_toml',
+           'search_for',
            'cache_to',
            'set_defaults',
            'open_googlemaps']
 
 
 # standard library
+import re
 import webbrowser
 from copy import deepcopy
 from functools import wraps
@@ -35,7 +36,7 @@ class open_toml(CaseInsensitiveDict):
         data = toml.dumps(dict(self))
 
         with self.path.open('w') as f:
-                f.write(data)
+            f.write(data)
 
     def __enter__(self):
         return self
@@ -45,7 +46,7 @@ class open_toml(CaseInsensitiveDict):
             self.update_toml()
 
 
-def findin_toml(query, pattern='*.toml', searchdirs='.'):
+def search_for(query, searchfile='*.toml', searchdirs='.'):
     if query is None:
         return iter([])
 
@@ -53,7 +54,7 @@ def findin_toml(query, pattern='*.toml', searchdirs='.'):
         if not dirpath.is_dir():
             continue
 
-        for path in dirpath.glob(pattern):
+        for path in dirpath.glob(searchfile):
             data = open_toml(path)
 
             if not query in data:
