@@ -2,6 +2,7 @@ __version__ = '0.3'
 __author__  = 'astropenguin'
 
 
+# azely's config
 def _load_config():
     # standard library
     from collections import defaultdict
@@ -28,11 +29,18 @@ def _load_config():
     with (user/config).open() as f:
         return defaultdict(dict, toml.load(f))
 
-
 config = _load_config()
+
+
+# azely's base error class
+class AzelyError(Exception):
+    pass
+
+
+# azely's submodules
 from . import utils
 from . import query
-# from . import azel
+from . import azel
 # from . import plot
 from .query import *
 # from .azel import *
