@@ -14,7 +14,7 @@ logger = getLogger(__name__)
 import geocoder
 import pandas as pd
 from dateutil.parser import parse
-from dateutil.tz import gettz, UTC
+from dateutil.tz import gettz
 from timezonefinder import TimezoneFinder
 
 
@@ -27,11 +27,16 @@ import azely.utils as utils
 LOCATION_KEYS = {'address', 'timezone', 'latitude', 'longitude'}
 
 
+# module exceptions
+class AzelyQueryError(azely.AzelyError):
+    pass
+
+
 # main query functions
 def get_object(query, **kwargs):
     try:
         return get_object_local(query, **kwargs)
-    except ValueError:
+    except AzelyQueryError:
         return get_object_server(query, **kwargs)
 
 
@@ -41,7 +46,7 @@ def get_location(query=None, **kwargs):
 
     try:
         return get_location_local(query, **kwargs)
-    except ValueError:
+    except AzelyQueryError:
         return get_location_server(query, **kwargs)
 
 
@@ -92,7 +97,7 @@ def get_object_local(query, searchfile='*.toml', searchdirs='.', **_):
         object_.setdefault('name', query)
         return object_
     else:
-        raise ValueError(query)
+        raise AzelyQueryError(query)
 
 
 @utils.set_defaults(**azely.config['object'])
@@ -106,7 +111,7 @@ def get_object_server(query, frame='icrs', timeout=5, **_):
         with Conf.remote_timeout.set_temp(timeout):
             coord = SkyCoord.from_name(query, frame)
     except name_resolve.NameResolveError:
-        raise ValueError(query)
+        raise AzelyQueryError(query)
 
     keys = list(coord.representation_component_units)
     values = coord.to_string('hmsdms').split()
@@ -130,7 +135,7 @@ def get_location_default(default='ip', timeout=5, **_):
     else:
         try:
             return get_location_local(default)
-        except ValueError:
+        except AzelyQueryError:
             return get_location_server(default)
 
 
@@ -143,7 +148,7 @@ def get_location_local(query, searchfile='*.toml', searchdirs='.', **_):
         location.setdefault('name', query)
         return location
     else:
-        raise ValueError(query)
+        raise AzelyQueryError(query)
 
 
 @utils.set_defaults(**azely.config['location'])
@@ -154,8 +159,7 @@ def get_location_server(query=None, provider='osm', key=None,
     geo = func(query, method=method, key=key, timeout=timeout)
 
     if not geo.ok:
-        raise RuntimeError('could not find location'
-                           'or not connected to a network')
+        raise AzelyQueryError()
 
     name = getattr(geo, 'name', geo.address.split(',')[0])
     tz = TimezoneFinder().timezone_at(lng=geo.lng, lat=geo.lat)
@@ -172,7 +176,7 @@ def get_datetime_default(default='today', **_):
         end = start + pd.offsets.Day()
         return get_datetime_from(f'{start}, {end}')
     elif default == 'now':
-        start = end = pd.Timestamp('now', tz=UTC)
+        start = end = pd.Timestamp('now', tz='UTC')
         return get_datetime_from(f'{start}, {end}')
     else:
         return get_datetime_from(default)
@@ -193,7 +197,7 @@ def get_datetime_from(query, frequency='10min',
         start, end = map(func, items[:2])
         frequency = items[2]
     else:
-        raise ValueError(query)
+        raise AzelyQueryError(query)
 
     return pd.date_range(start, end, None, frequency)
 
@@ -215,4 +219,4 @@ def get_timezone_from(query):
     if tz is not None:
         return tz
     else:
-        raise ValueError(query)
+        raise AzelyQueryError(query)
