@@ -65,12 +65,12 @@ def search_for(query, searchfile='*.toml', searchdirs='.'):
 
 class cache_to:
     def __init__(self, path=None, ignore_query='$.',
-                 query_argument='query', **_):
+                 query_parameter='query', **_):
         if path is not None:
             self.path = Path(path).expanduser()
 
         self.ignore_query = re.compile(ignore_query)
-        self.query_argument = query_argument
+        self.query_parameter = query_parameter
 
     def __call__(self, func):
         if not hasattr(self, 'path'):
@@ -83,10 +83,10 @@ class cache_to:
             bound = sig.bind(*args, **kwargs)
             bound.apply_defaults()
 
-            if self.query_argument not in bound.arguments:
+            if self.query_parameter not in bound.arguments:
                 return func(*args, **kwargs)
 
-            query = bound.arguments[self.query_argument]
+            query = bound.arguments[self.query_parameter]
 
             if self.ignore_query.match(query):
                 return func(*args, **kwargs)
