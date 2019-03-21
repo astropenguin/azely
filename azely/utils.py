@@ -9,7 +9,7 @@ __all__ = ['TOMLDict',
 # standard library
 import re
 import webbrowser
-from copy import deepcopy
+from copy import copy
 from functools import wraps
 from inspect import signature
 from logging import getLogger
@@ -141,12 +141,15 @@ def search_for(query, searchfile='*.toml', searchdirs='.'):
             continue
 
         for path in dirpath.glob(searchfile):
+            try:
             data = open_toml(path)
+            except (FileNotFoundError, TomlDecodeError):
+                continue
 
             if not query in data:
                 continue
 
-            yield deepcopy(data[query])
+            yield copy(data[query])
 
 
 def open_googlemaps(latitude, longitude, **_):
