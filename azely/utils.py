@@ -3,7 +3,8 @@ __all__ = ['TOMLDict',
            'set_defaults',
            'open_toml',
            'search_for',
-           'open_googlemaps']
+           'open_googlemaps',
+           'is_solar']
 
 # standard library
 import re
@@ -151,3 +152,10 @@ def search_for(query, searchfile='*.toml', searchdirs='.'):
 def open_googlemaps(latitude, longitude, **_):
     query = urlencode({'q': f'{latitude}, {longitude}'})
     webbrowser.open(f'https://google.com/maps?{query}')
+
+
+def is_solar(name):
+    # lazy import
+    from astropy.coordinates import solar_system_ephemeris
+
+    return name.lower() in solar_system_ephemeris.bodies
