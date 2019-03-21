@@ -1,4 +1,4 @@
-__all__ = ['TOMLDict',
+__all__ = ['TomlDict',
            'cache_to',
            'set_defaults',
            'open_toml',
@@ -20,11 +20,12 @@ logger = getLogger(__name__)
 
 # dependent packages
 import toml
+from toml import TomlDecodeError
 from requests.utils import CaseInsensitiveDict
 
 
 # classes or decorators
-class TOMLDict(CaseInsensitiveDict):
+class TomlDict(CaseInsensitiveDict):
     def __init__(self, path, update_when_exit=True):
         self.path = Path(path).expanduser()
         self.update_when_exit = update_when_exit
@@ -129,7 +130,7 @@ class set_defaults:
 
 # functions
 def open_toml(path, update_when_exit=True):
-    return TOMLDict(path, update_when_exit)
+    return TomlDict(path, update_when_exit)
 
 
 def search_for(query, searchfile='*.toml', searchdirs='.'):
@@ -142,7 +143,7 @@ def search_for(query, searchfile='*.toml', searchdirs='.'):
 
         for path in dirpath.glob(searchfile):
             try:
-            data = open_toml(path)
+                data = open_toml(path)
             except (FileNotFoundError, TomlDecodeError):
                 continue
 
