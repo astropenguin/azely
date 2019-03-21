@@ -14,17 +14,13 @@ logger = getLogger(__name__)
 import geocoder
 import pandas as pd
 from dateutil.parser import parse
-from dateutil.tz import gettz
+from dateutil.tz import gettz, tzlocal
 from timezonefinder import TimezoneFinder
 
 
 # azely modules
 import azely
 import azely.utils as utils
-
-
-# module constants
-LOCATION_KEYS = {'address', 'timezone', 'latitude', 'longitude'}
 
 
 # module exceptions
@@ -35,59 +31,62 @@ class AzelyQueryError(azely.AzelyError):
 # main query functions
 def get_object(query, **kwargs):
     try:
-        return get_object_local(query, **kwargs)
+        return get_object_offline(query, **kwargs)
     except AzelyQueryError:
-        return get_object_server(query, **kwargs)
+        return get_object_online(query, **kwargs)
 
 
 def get_location(query=None, **kwargs):
     if query is None:
-        return get_location_default(**kwargs)
+        return get_location_online('me', 'ip', **kwargs)
 
     try:
-        return get_location_local(query, **kwargs)
+        return get_location_offline(query, **kwargs)
     except AzelyQueryError:
-        return get_location_server(query, **kwargs)
+        return get_location_online(query, **kwargs)
 
 
 def get_datetime(query=None, **kwargs):
     if query is None:
-        return get_datetime_default(**kwargs)
+        query = str(pd.Timestamp('now').date())
 
     return get_datetime_from(query, **kwargs)
 
 
-def get_timezone(query=None, **kwargs):
+def get_timezone(query=None):
     if query is None:
-        return get_timezone_default(**kwargs)
+        query = 'location'
 
     return get_timezone_from(query)
 
 
-# subfunctions for object
+# validators
 def is_valid_object(object_):
-    # lazy import
-    from astropy.coordinates import SkyCoord
-
     if not isinstance(object_, dict):
         return False
 
-    object_ = object_.copy()
-    object_.pop('name', None)
+    keys = object_.keys()
+    name = object_.get('name', '')
 
-    try:
-        SkyCoord(**object_)
-        return True
-    except:
+    return (keys >= {'ra', 'dec'}
+            or keys >= {'l', 'b'}
+            or utils.is_solar(name))
+
+
+def is_valid_location(location):
+    if not isinstance(location, dict):
         return False
 
+    keys = location.keys()
 
+    return keys >= {'address', 'timezone',
+                    'latitude', 'longitude'}
+
+
+# subfunctions for object
 @utils.set_defaults(**azely.config['object'])
-def get_object_local(query, searchfile='*.toml', searchdirs='.', **_):
-    # lazy import
-    from astropy.coordinates import solar_system_ephemeris
-
-    if query.lower() in solar_system_ephemeris.bodies:
+def get_object_offline(query, searchfile='*.toml', searchdirs='.', **_):
+    if utils.is_solar(query):
         return {'name': query}
 
     for object_ in utils.search_for(query, searchfile, searchdirs):
@@ -102,7 +101,7 @@ def get_object_local(query, searchfile='*.toml', searchdirs='.', **_):
 
 @utils.set_defaults(**azely.config['object'])
 @utils.cache_to(azely.config['object']['cachefile'])
-def get_object_server(query, frame='icrs', timeout=5, **_):
+def get_object_online(query, frame='icrs', timeout=5, **_):
     # lazy import
     from astropy.coordinates import SkyCoord, name_resolve
     from astropy.utils.data import Conf
@@ -121,26 +120,8 @@ def get_object_server(query, frame='icrs', timeout=5, **_):
 
 
 # subfunctions for location
-def is_valid_location(location):
-    if not isinstance(location, dict):
-        return False
-
-    return location.keys() >= LOCATION_KEYS
-
-
 @utils.set_defaults(**azely.config['location'])
-def get_location_default(default='ip', timeout=5, **_):
-    if default == 'ip':
-        return get_location_server('me', 'ip')
-    else:
-        try:
-            return get_location_local(default)
-        except AzelyQueryError:
-            return get_location_server(default)
-
-
-@utils.set_defaults(**azely.config['location'])
-def get_location_local(query, searchfile='*.toml', searchdirs='.', **_):
+def get_location_offline(query, searchfile='*.toml', searchdirs='.', **_):
     for location in utils.search_for(query, searchfile, searchdirs):
         if not is_valid_location(location):
             continue
@@ -153,13 +134,13 @@ def get_location_local(query, searchfile='*.toml', searchdirs='.', **_):
 
 @utils.set_defaults(**azely.config['location'])
 @utils.cache_to(azely.config['location']['cachefile'], '^me$')
-def get_location_server(query=None, provider='osm', key=None,
+def get_location_online(query=None, provider='osm', key=None,
                         method='geocode', timeout=5, **_):
     func = getattr(geocoder, provider)
     geo = func(query, method=method, key=key, timeout=timeout)
 
     if not geo.ok:
-        raise AzelyQueryError()
+        raise AzelyQueryError(query)
 
     name = getattr(geo, 'name', geo.address.split(',')[0])
     tz = TimezoneFinder().timezone_at(lng=geo.lng, lat=geo.lat)
@@ -170,22 +151,9 @@ def get_location_server(query=None, provider='osm', key=None,
 
 # subfunctions for datetime
 @utils.set_defaults(**azely.config['datetime'])
-def get_datetime_default(default='today', **_):
-    if default == 'today':
-        start = pd.Timestamp('now').date()
-        end = start + pd.offsets.Day()
-        return get_datetime_from(f'{start}, {end}')
-    elif default == 'now':
-        start = end = pd.Timestamp('now', tz='UTC')
-        return get_datetime_from(f'{start}, {end}')
-    else:
-        return get_datetime_from(default)
-
-
-@utils.set_defaults(**azely.config['datetime'])
-def get_datetime_from(query, frequency='10min',
+def get_datetime_from(query, frequency='10min', separator=',',
                       dayfirst=False, yearfirst=False, **_):
-    items = query.split(',')
+    items = query.split(separator)
     func = partial(parse, dayfirst=dayfirst, yearfirst=yearfirst)
 
     if len(items) == 1:
@@ -203,20 +171,16 @@ def get_datetime_from(query, frequency='10min',
 
 
 # subfunctions for timezone
-@utils.set_defaults(**azely.config['timezone'])
-def get_timezone_default(default='location', **_):
-    if default == 'location':
-        return gettz('location')
-    elif default == 'localtime':
-        return gettz('/etc/localtime')
-    else:
-        return get_timezone_from(default)
-
-
 def get_timezone_from(query):
-    tz = gettz(query)
+    if query == 'location':
+        return None
 
-    if tz is not None:
-        return tz
+    if query == 'localtime':
+        return tzlocal()
+
+    timezone = gettz(query)
+
+    if timezone is not None:
+        return timezone
     else:
         raise AzelyQueryError(query)
