@@ -6,7 +6,6 @@ searchdirs = [".", "~/.config/azely"]
 cachefile = "~/.config/azely/known_objects.toml"
 
 ["location"]
-default = "ip"
 timeout = 5
 provider = "osm"
 searchfile = "*.toml"
@@ -14,10 +13,9 @@ searchdirs = [".", "~/.config/azely"]
 cachefile = "~/.config/azely/known_locations.toml"
 
 ["datetime"]
-default = "today"
 frequency = "10min"
+separator = ","
 yearfirst = true
 dayfirst = false
 
 ["timezone"]
-default = 'location'
