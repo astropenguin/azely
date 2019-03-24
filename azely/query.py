@@ -5,7 +5,6 @@ __all__ = ['get_object',
 
 
 # standard library
-from functools import partial
 from logging import getLogger
 logger = getLogger(__name__)
 
@@ -155,8 +154,14 @@ def get_datetime_offline(query, frequency='10min', separator=',',
         end = start + pd.offsets.Day()
         return pd.date_range(start, end, None, frequency)
 
+    def func(item):
+        try:
+            return parse(item, dayfirst=dayfirst,
+                         yearfirst=yearfirst)
+        except ValueError:
+            raise AzelyQueryError(query)
+
     items = query.split(separator)
-    func = partial(parse, dayfirst=dayfirst, yearfirst=yearfirst)
 
     if len(items) == 1:
         start = func(items[0])
@@ -169,7 +174,10 @@ def get_datetime_offline(query, frequency='10min', separator=',',
     else:
         raise AzelyQueryError(query)
 
-    return pd.date_range(start, end, None, frequency)
+    try:
+        return pd.date_range(start, end, None, frequency)
+    except ValueError:
+        raise AzelyQueryError(query)
 
 
 # subfunctions for timezone
