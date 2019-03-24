@@ -19,16 +19,16 @@ from timezonefinder import TimezoneFinder
 
 
 # azely modules
-import azely
-import azely.utils as utils
+from azely import config, utils, AzelyError
 
 
 # module exceptions
-class AzelyQueryError(azely.AzelyError):
+class AzelyQueryError(AzelyError):
     pass
 
 
 # main query functions
+@utils.set_defaults(**config['object'])
 def get_object(query, **kwargs):
     try:
         return get_object_offline(query, **kwargs)
@@ -36,28 +36,22 @@ def get_object(query, **kwargs):
         return get_object_online(query, **kwargs)
 
 
-def get_location(query=None, **kwargs):
-    if query is None:
-        return get_location_online('me', 'ip', **kwargs)
-
+@utils.set_defaults(**config['location'])
+def get_location(query='here', **kwargs):
     try:
         return get_location_offline(query, **kwargs)
     except AzelyQueryError:
         return get_location_online(query, **kwargs)
 
 
-def get_datetime(query=None, **kwargs):
-    if query is None:
-        query = str(pd.Timestamp('now').date())
-
-    return get_datetime_from(query, **kwargs)
+@utils.set_defaults(**config['datetime'])
+def get_datetime(query='today', **kwargs):
+    return get_datetime_offline(query, **kwargs)
 
 
-def get_timezone(query=None):
-    if query is None:
-        query = 'location'
-
-    return get_timezone_from(query)
+@utils.set_defaults(**config['timezone'])
+def get_timezone(query='location'):
+    return get_timezone_offline(query)
 
 
 # validators
@@ -84,7 +78,7 @@ def is_valid_location(location):
 
 
 # subfunctions for object
-@utils.set_defaults(**azely.config['object'])
+@utils.set_defaults(**config['object'])
 def get_object_offline(query, searchfile='*.toml', searchdirs='.', **_):
     if utils.is_solar(query):
         return {'name': query}
@@ -99,8 +93,8 @@ def get_object_offline(query, searchfile='*.toml', searchdirs='.', **_):
         raise AzelyQueryError(query)
 
 
-@utils.set_defaults(**azely.config['object'])
-@utils.cache_to(azely.config['object']['cachefile'])
+@utils.set_defaults(**config['object'])
+@utils.cache_to(config['object']['cachefile'])
 def get_object_online(query, frame='icrs', timeout=5, **_):
     # lazy import
     from astropy.coordinates import SkyCoord, name_resolve
@@ -120,7 +114,7 @@ def get_object_online(query, frame='icrs', timeout=5, **_):
 
 
 # subfunctions for location
-@utils.set_defaults(**azely.config['location'])
+@utils.set_defaults(**config['location'])
 def get_location_offline(query, searchfile='*.toml', searchdirs='.', **_):
     for location in utils.search_for(query, searchfile, searchdirs):
         if not is_valid_location(location):
@@ -132,12 +126,15 @@ def get_location_offline(query, searchfile='*.toml', searchdirs='.', **_):
         raise AzelyQueryError(query)
 
 
-@utils.set_defaults(**azely.config['location'])
-@utils.cache_to(azely.config['location']['cachefile'], '^me$')
-def get_location_online(query=None, provider='osm', key=None,
+@utils.set_defaults(**config['location'])
+@utils.cache_to(config['location']['cachefile'], '^here$')
+def get_location_online(query, provider='osm', key=None,
                         method='geocode', timeout=5, **_):
-    func = getattr(geocoder, provider)
-    geo = func(query, method=method, key=key, timeout=timeout)
+    if query == 'here':
+        geo = geocoder.ip('me')
+    else:
+        func = getattr(geocoder, provider)
+        geo = func(query, method=method, key=key, timeout=timeout)
 
     if not geo.ok:
         raise AzelyQueryError(query)
@@ -150,9 +147,14 @@ def get_location_online(query=None, provider='osm', key=None,
 
 
 # subfunctions for datetime
-@utils.set_defaults(**azely.config['datetime'])
-def get_datetime_from(query, frequency='10min', separator=',',
+@utils.set_defaults(**config['datetime'])
+def get_datetime_offline(query, frequency='10min', separator=',',
                       dayfirst=False, yearfirst=False, **_):
+    if query == 'today':
+        start = pd.Timestamp('now').date()
+        end = start + pd.offsets.Day()
+        return pd.date_range(start, end, None, frequency)
+
     items = query.split(separator)
     func = partial(parse, dayfirst=dayfirst, yearfirst=yearfirst)
 
@@ -171,7 +173,8 @@ def get_datetime_from(query, frequency='10min', separator=',',
 
 
 # subfunctions for timezone
-def get_timezone_from(query):
+@utils.set_defaults(**config['timezone'])
+def get_timezone_offline(query, **_):
     if query == 'location':
         return None
 
