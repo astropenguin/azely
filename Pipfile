@@ -5,29 +5,30 @@ name = "pypi"
 
 [packages]
 numpy = "*"
+pandas = "*"
 astropy = "*"
-requests = "*"
 matplotlib = "*"
 python-dateutil = "*"
-toml = "*"
-pandas = "*"
-pyqt5 = "*"
-pyyaml = "*"
 timezonefinder = "*"
 geocoder = "*"
+requests = "*"
+docopt = "*"
+tqdm = "*"
+toml = "*"
 
 [dev-packages]
 ipython = "*"
 jupyter = "*"
 pylint = "*"
 twine = "*"
+jupyterthemes = "*"
 
 [requires]
-python_version = "3.6"
+python_version = "3.6.8"
 
 [scripts]
-ipython = "ipython"
-jupyter = "jupyter notebook ${HOME}"
-configure = "etc/configure"
-distribute = "etc/distribute"
-azely = "python azely/cli.py"
+jupyter = "jupyter notebook"
+distribute = """
+bash -c 'python setup.py sdist
+twine upload dist/$(python setup.py --fullname).tar.gz'
+"""
