@@ -3,6 +3,7 @@
 .jupyter
 .matplotlib
 .vscode
+.azely
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
