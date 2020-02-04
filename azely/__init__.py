@@ -2,14 +2,14 @@ __version__ = "0.4.0"
 __author__ = "Akio Taniguchi"
 
 
-# get constants
+# immediate functions
 def _get_azely_dir():
+    """Get path of azely's directory."""
     # standard library
     import os
     from pathlib import Path
 
     # constants
-    AZELY = "azely"
     AZELY_DIR = "AZELY_DIR"
     XDG_CONFIG_HOME = "XDG_CONFIG_HOME"
     XDG_CONFIG_HOME_ALT = Path().home() / ".config"
@@ -17,35 +17,32 @@ def _get_azely_dir():
     if AZELY_DIR in os.environ:
         return Path(os.getenv(AZELY_DIR))
     elif XDG_CONFIG_HOME in os.environ:
-        return Path(os.getenv(XDG_CONFIG_HOME)) / AZELY
+        return Path(os.getenv(XDG_CONFIG_HOME)) / "azely"
     else:
-        return XDG_CONFIG_HOME_ALT / AZELY
+        return XDG_CONFIG_HOME_ALT / "azely"
 
 
-AZELY_DIR = _get_azely_dir()
-AZELY_CONFIG = AZELY_DIR / "config.toml"
-AZELY_OBJECTS = AZELY_DIR / "objects.toml"
-AZELY_LOCATIONS = AZELY_DIR / "locations.toml"
-
-
-# load config
-def _load_config(azely_config):
+def _load_azely_config(path):
+    """Load azely's config written in TOML."""
     # standard library
     from collections import defaultdict
 
     # dependent packages
     import toml
 
-    if not azely_config.parent.exists():
-        azely_config.parent.mkdir(parents=True)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.touch()
 
-    azely_config.touch()
-
-    with azely_config.open() as f:
+    with path.open() as f:
         return defaultdict(dict, toml.load(f))
 
 
-config = _load_config(AZELY_CONFIG)
+# get constants and load config
+AZELY_DIR = _get_azely_dir()
+AZELY_CONFIG = AZELY_DIR / "config.toml"
+AZELY_OBJECTS = AZELY_DIR / "objects.toml"
+AZELY_LOCATIONS = AZELY_DIR / "locations.toml"
+config = _load_azely_config(AZELY_CONFIG)
 
 
 # base error class
