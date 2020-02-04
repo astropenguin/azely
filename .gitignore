@@ -1,9 +1,5 @@
 # User-defined
-.ipython
-.jupyter
-.matplotlib
-.vscode
-.azely
+.vscode/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
