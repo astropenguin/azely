@@ -19,9 +19,9 @@ def _load_config(filename="config.toml"):
     XDG_CONFIG_HOME_ALT = Path().home() / ".config"
 
     if ENV_AZELY_DIR in os.environ:
-        azely_dir = Path(os.environ[ENV_AZELY_DIR])
+        azely_dir = Path(os.getenv(ENV_AZELY_DIR))
     elif XDG_CONFIG_HOME in os.environ:
-        azely_dir = Path(os.environ[XDG_CONFIG_HOME]) / AZELY
+        azely_dir = Path(os.getenv(XDG_CONFIG_HOME)) / AZELY
     else:
         azely_dir = XDG_CONFIG_HOME_ALT / AZELY
 
