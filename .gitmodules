@@ -1,3 +1,0 @@
-[submodule "etc"]
-	path = etc
-	url = https://github.com/astropenguin/pipenv-analysis-configs
