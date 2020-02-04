@@ -1,10 +1,12 @@
-__all__ = ['TomlDict',
-           'cache_to',
-           'set_defaults',
-           'open_toml',
-           'search_for',
-           'open_googlemaps',
-           'is_solar']
+__all__ = [
+    "TomlDict",
+    "cache_to",
+    "set_defaults",
+    "open_toml",
+    "search_for",
+    "open_googlemaps",
+    "is_solar",
+]
 
 # standard library
 import re
@@ -15,6 +17,7 @@ from inspect import signature
 from logging import getLogger
 from pathlib import Path
 from urllib.parse import urlencode
+
 logger = getLogger(__name__)
 
 
@@ -32,13 +35,13 @@ class TomlDict(CaseInsensitiveDict):
         super().__init__(self.load_toml())
 
     def load_toml(self):
-        with self.path.open('r') as f:
+        with self.path.open("r") as f:
             return toml.load(f)
 
     def update_toml(self):
         data = toml.dumps(dict(self))
 
-        with self.path.open('w') as f:
+        with self.path.open("w") as f:
             f.write(data)
 
     def __enter__(self):
@@ -50,8 +53,7 @@ class TomlDict(CaseInsensitiveDict):
 
 
 class cache_to:
-    def __init__(self, path=None, ignore_query='$.',
-                 query_parameter='query', **_):
+    def __init__(self, path=None, ignore_query="$.", query_parameter="query", **_):
         if path is not None:
             self.path = Path(path).expanduser()
 
@@ -59,7 +61,7 @@ class cache_to:
         self.query_parameter = query_parameter
 
     def __call__(self, func):
-        if not hasattr(self, 'path'):
+        if not hasattr(self, "path"):
             return func
 
         sig = signature(func)
@@ -133,7 +135,7 @@ def open_toml(path, update_when_exit=True):
     return TomlDict(path, update_when_exit)
 
 
-def search_for(query, searchfile='*.toml', searchdirs='.'):
+def search_for(query, searchfile="*.toml", searchdirs="."):
     if query is None:
         return iter([])
 
@@ -154,8 +156,8 @@ def search_for(query, searchfile='*.toml', searchdirs='.'):
 
 
 def open_googlemaps(latitude, longitude, **_):
-    query = urlencode({'q': f'{latitude}, {longitude}'})
-    webbrowser.open(f'https://google.com/maps?{query}')
+    query = urlencode({"q": f"{latitude}, {longitude}"})
+    webbrowser.open(f"https://google.com/maps?{query}")
 
 
 def is_solar(name):
