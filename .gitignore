@@ -1,4 +1,5 @@
 # User-defined
+.azely/
 .vscode/
 .envrc
 .env
