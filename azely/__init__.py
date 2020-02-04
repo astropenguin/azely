@@ -1,50 +1,42 @@
-__version__ = "0.3"
-__author__ = "astropenguin"
+__version__ = "0.4.0"
+__author__ = "Akio Taniguchi"
 
 
-# azely's config
-def _load_config():
+# load config
+def _load_config(filename="config.toml"):
     # standard library
+    import os
     from collections import defaultdict
-    from logging import getLogger
-    from shutil import copy
     from pathlib import Path
-
-    logger = getLogger(__name__)
 
     # dependent packages
     import toml
 
-    data = Path(__path__[0]) / "data"
-    user = Path.home() / ".config" / "azely"
-    config = "config.toml"
+    # constants
+    AZELY = "azely"
+    ENV_AZELY_DIR = "AZELY_DIR"
+    XDG_CONFIG_HOME = "XDG_CONFIG_HOME"
+    XDG_CONFIG_HOME_ALT = Path().home() / ".config"
 
-    if not user.exists():
-        logger.info(f"creating {user}")
-        user.mkdir(parents=True)
+    if ENV_AZELY_DIR in os.environ:
+        azely_dir = Path(os.environ[ENV_AZELY_DIR])
+    elif XDG_CONFIG_HOME in os.environ:
+        azely_dir = Path(os.environ[XDG_CONFIG_HOME]) / AZELY
+    else:
+        azely_dir = XDG_CONFIG_HOME_ALT / AZELY
 
-    if not (user / config).exists():
-        logger.info(f"creating {user/config}")
-        copy(data / config, user / config)
+    if not azely_dir.exists():
+        azely_dir.mkdir(parents=True)
 
-    with (user / config).open() as f:
+    (azely_dir / filename).touch()
+
+    with (azely_dir / filename).open() as f:
         return defaultdict(dict, toml.load(f))
 
 
 config = _load_config()
 
 
-# azely's base error class
+# base error class
 class AzelyError(Exception):
     pass
-
-
-# azely's submodules
-from . import utils
-from . import query
-from . import azel
-
-# from . import plot
-from .query import *
-
-# from .azel import *
