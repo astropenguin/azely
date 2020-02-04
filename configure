@@ -1,0 +1,40 @@
+#!/bin/bash
+
+
+# check dependencies
+if ! type poetry >/dev/null 2>&1
+then
+    echo "poetry is not installed"
+    exit 1
+fi
+
+if ! type direnv >/dev/null 2>&1
+then
+    echo "direnv is not installed"
+    exit 1
+fi
+
+
+# set environment valiables
+echo "dotenv" > .envrc
+direnv allow .
+
+cat << EOS >> .env
+PYTHONSTARTUP=${PWD}/startup.py
+EOS
+
+
+# set VS Code settings
+mkdir -p .vscode
+
+cat << EOS > .vscode/settings.json
+{
+    "python.pythonPath": "$(poetry env info -p)/bin/python",
+    "editor.formatOnSave": true,
+    "python.formatting.provider": "black",
+    "python.linting.enabled": true,
+    "python.linting.lintOnSave": true,
+    "python.linting.flake8Enabled": true,
+    "python.linting.pylintEnabled": false,
+}
+EOS
