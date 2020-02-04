@@ -1,12 +1,11 @@
-__all__ = ['AzEl',
-           'compute_azel',
-           'compute_azels']
+__all__ = ["AzEl", "compute_azel", "compute_azels"]
 
 
 # standard library
 from datetime import datetime, timedelta
 from itertools import chain
 from logging import getLogger
+
 logger = getLogger(__name__)
 
 
@@ -34,8 +33,8 @@ class AzEl(SkyCoord):
         super().__init__(*args, **kwargs)
 
     def at(self, datetime=None, timezone=None):
-        object_ = self.info.meta['object']
-        location = self.info.meta['location']
+        object_ = self.info.meta["object"]
+        location = self.info.meta["location"]
 
         return compute_azel(object_, location, datetime, timezone)
 
@@ -65,64 +64,64 @@ class AzEl(SkyCoord):
 
     @property
     def az_lst(self):
-        return self._to_dataframe(SkyCoord(self.altaz).az, 'lst')
+        return self._to_dataframe(SkyCoord(self.altaz).az, "lst")
 
     @property
     def el_lst(self):
-        return self._to_dataframe(SkyCoord(self.altaz).alt, 'lst')
+        return self._to_dataframe(SkyCoord(self.altaz).alt, "lst")
 
     @property
     def ra_lst(self):
-        return self._to_dataframe(SkyCoord(self.icrs).ra, 'lst')
+        return self._to_dataframe(SkyCoord(self.icrs).ra, "lst")
 
     @property
     def dec_lst(self):
-        return self._to_dataframe(SkyCoord(self.icrs).dec, 'lst')
+        return self._to_dataframe(SkyCoord(self.icrs).dec, "lst")
 
     @property
     def l_lst(self):
-        return self._to_dataframe(SkyCoord(self.galactic).l, 'lst')
+        return self._to_dataframe(SkyCoord(self.galactic).l, "lst")
 
     @property
     def b_lst(self):
-        return self._to_dataframe(SkyCoord(self.galactic).b, 'lst')
+        return self._to_dataframe(SkyCoord(self.galactic).b, "lst")
 
-    def _to_dataframe(self, angle, index='tz'):
-        index = getattr(self, f'_index_{index}')
-        data = {self.info.meta['object']['name']: angle}
+    def _to_dataframe(self, angle, index="tz"):
+        index = getattr(self, f"_index_{index}")
+        data = {self.info.meta["object"]["name"]: angle}
         return pd.DataFrame(data, index)
 
     @property
     def _index_tz(self):
-        if self.info.meta['timezone'] is not None:
-            timezone = self.info.meta['timezone']
+        if self.info.meta["timezone"] is not None:
+            timezone = self.info.meta["timezone"]
         else:
-            timezone = self.info.meta['location']['timezone']
+            timezone = self.info.meta["location"]["timezone"]
 
-        name = f'Datetime ({timezone})'
+        name = f"Datetime ({timezone})"
         index = pd.Index(self.obstime.to_datetime(), name=name)
-        return index.tz_localize('UTC').tz_convert(timezone)
+        return index.tz_localize("UTC").tz_convert(timezone)
 
     @property
     def _index_lst(self):
         utc = self.obstime.utc
-        lst = self.obstime.sidereal_time('mean').value
-        diff = (np.diff(utc)>0).astype(int) - (np.diff(lst)>0).astype(int)
+        lst = self.obstime.sidereal_time("mean").value
+        diff = (np.diff(utc) > 0).astype(int) - (np.diff(lst) > 0).astype(int)
         day = np.insert(diff, 0, 0).cumsum()
 
-        name = 'Local Sidereal Time'
-        return pd.Index(pd.to_datetime(day+lst/24, unit='D'), name=name)
+        name = "Local Sidereal Time"
+        return pd.Index(pd.to_datetime(day + lst / 24, unit="D"), name=name)
 
     @property
     def _index_utc(self):
-        name = 'Datetime (UTC)'
+        name = "Datetime (UTC)"
         return pd.Index(self.obstime.utc, name=name)
 
     def __repr__(self):
-        object_ = self.info.meta['object']['name']
-        location = self.info.meta['location']['name']
+        object_ = self.info.meta["object"]["name"]
+        location = self.info.meta["location"]["name"]
 
-        return f'AzEl({object_} / {location})'
+        return f"AzEl({object_} / {location})"
 
 
 # functions for azel computation
@@ -146,9 +145,7 @@ def compute_azel(object_, location=None, datetime=None, timezone=None):
     coord = create_skycoord(object_, obstime)
 
     # update skycoord's information
-    coord.info.meta = {'object': object_,
-                       'location': location,
-                       'timezone': timezone}
+    coord.info.meta = {"object": object_, "location": location, "timezone": timezone}
 
     return AzEl(coord)
 
@@ -161,7 +158,7 @@ def compute_azels(objects, location=None, datetime=None, timezone=None):
     all_objects = []
 
     for obj_or_tag in objects:
-        if obj_or_tag.startswith('@'):
+        if obj_or_tag.startswith("@"):
             all_objects.append(get_objects(obj_or_tag))
         else:
             all_objects.append([query.get_object(obj_or_tag)])
@@ -173,21 +170,23 @@ def compute_azels(objects, location=None, datetime=None, timezone=None):
 # subfunctions for azel computation
 def create_obstime(location, datetime, timezone):
     if timezone is None:
-        timezone = location['timezone']
+        timezone = location["timezone"]
 
     if datetime.tzinfo is None:
-        datetime = datetime.tz_localize(timezone).tz_convert('UTC')
+        datetime = datetime.tz_localize(timezone).tz_convert("UTC")
 
-    location = EarthLocation(lat=location['latitude'],
-                             lon=location['longitude'],
-                             height=location.get('altitude', 0))
+    location = EarthLocation(
+        lat=location["latitude"],
+        lon=location["longitude"],
+        height=location.get("altitude", 0),
+    )
 
     return Time(datetime, location=location)
 
 
 def create_skycoord(object_, obstime):
     object_ = object_.copy()
-    name = object_.pop('name')
+    name = object_.pop("name")
 
     try:
         coord = get_body(name, time=obstime)
@@ -199,9 +198,9 @@ def create_skycoord(object_, obstime):
     return coord
 
 
-@utils.default_kwargs(**CONFIG['object'])
-def get_objects(tag, searchdirs=('.',), **kwargs):
-    filename = tag.lstrip('@') + '.toml'
+@utils.default_kwargs(**CONFIG["object"])
+def get_objects(tag, searchdirs=(".",), **kwargs):
+    filename = tag.lstrip("@") + ".toml"
 
     for searchdir in utils.abspath(*searchdirs):
         path = searchdir / filename
@@ -211,8 +210,7 @@ def get_objects(tag, searchdirs=('.',), **kwargs):
     else:
         raise FileNotFoundError(filename)
 
-    kwargs = {'pattern': path.name,
-              'searchdirs': (path.parent,)}
+    kwargs = {"pattern": path.name, "searchdirs": (path.parent,)}
 
     for object_ in utils.read_toml(path):
         yield query.get_object(object_, **kwargs)
