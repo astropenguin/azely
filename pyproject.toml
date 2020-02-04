@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "azely"
+version = "0.4.0"
+description = "Python package for calculation and plotting of astronomical object's azimuth/elevation"
+authors = ["Akio Taniguchi <taniguchi@a.phys.nagoya-u.ac.jp>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+astropy = "^4.0"
+astroquery = "^0.4"
+docopt = "^0.6.2"
+geopy = "^1.21.0"
+matplotlib = "^3.1.3"
+numpy = "^1.18.1"
+pandas = "^1.0.0"
+python-dateutil = "^2.8.1"
+requests = "^2.22.0"
+timezonefinder = "^4.2.0"
+toml = "^0.10.0"
+tqdm = "^4.42.1"
+
+[tool.poetry.dev-dependencies]
+black = "^19.10b0"
+flake8 = "^3.7.9"
+ipython = "^7.12.0"
+jupyter = "^1.0.0"
+jupyterlab = "^1.2.6"
+pytest = "^5.3.5"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
