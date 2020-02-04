@@ -2,39 +2,50 @@ __version__ = "0.4.0"
 __author__ = "Akio Taniguchi"
 
 
-# load config
-def _load_config(filename="config.toml"):
+# get constants
+def _get_azely_dir():
     # standard library
     import os
-    from collections import defaultdict
     from pathlib import Path
+
+    # constants
+    AZELY = "azely"
+    AZELY_DIR = "AZELY_DIR"
+    XDG_CONFIG_HOME = "XDG_CONFIG_HOME"
+    XDG_CONFIG_HOME_ALT = Path().home() / ".config"
+
+    if AZELY_DIR in os.environ:
+        return Path(os.getenv(AZELY_DIR))
+    elif XDG_CONFIG_HOME in os.environ:
+        return Path(os.getenv(XDG_CONFIG_HOME)) / AZELY
+    else:
+        return XDG_CONFIG_HOME_ALT / AZELY
+
+
+AZELY_DIR = _get_azely_dir()
+AZELY_CONFIG = AZELY_DIR / "config.toml"
+AZELY_OBJECTS = AZELY_DIR / "objects.toml"
+AZELY_LOCATIONS = AZELY_DIR / "locations.toml"
+
+
+# load config
+def _load_config(azely_config):
+    # standard library
+    from collections import defaultdict
 
     # dependent packages
     import toml
 
-    # constants
-    AZELY = "azely"
-    ENV_AZELY_DIR = "AZELY_DIR"
-    XDG_CONFIG_HOME = "XDG_CONFIG_HOME"
-    XDG_CONFIG_HOME_ALT = Path().home() / ".config"
+    if not azely_config.parent.exists():
+        azely_config.parent.mkdir(parents=True)
 
-    if ENV_AZELY_DIR in os.environ:
-        azely_dir = Path(os.getenv(ENV_AZELY_DIR))
-    elif XDG_CONFIG_HOME in os.environ:
-        azely_dir = Path(os.getenv(XDG_CONFIG_HOME)) / AZELY
-    else:
-        azely_dir = XDG_CONFIG_HOME_ALT / AZELY
+    azely_config.touch()
 
-    if not azely_dir.exists():
-        azely_dir.mkdir(parents=True)
-
-    (azely_dir / filename).touch()
-
-    with (azely_dir / filename).open() as f:
+    with azely_config.open() as f:
         return defaultdict(dict, toml.load(f))
 
 
-config = _load_config()
+config = _load_config(AZELY_CONFIG)
 
 
 # base error class
