@@ -20,6 +20,7 @@ echo "dotenv" > .envrc
 direnv allow .
 
 cat << EOS >> .env
+AZELY_DIR=${PWD}/.azely
 PYTHONSTARTUP=${PWD}/startup.py
 EOS
 
