@@ -47,13 +47,14 @@ def get_object_of_solar(query: str) -> dict:
 @cache_to(AZELY_OBJECT)
 def get_object_by_query(query: str, frame: str = "icrs", timeout: int = 5) -> dict:
     # lazy import
-    from astropy.coordinates import SkyCoord, name_resolve
+    from astropy.coordinates import SkyCoord
+    from astropy.coordinates.name_resolve import NameResolveError
     from astropy.utils.data import Conf
 
     try:
         with Conf.remote_timeout.set_temp(timeout):
             coord = SkyCoord.from_name(query, frame)
-    except name_resolve.NameResolveError:
+    except NameResolveError:
         raise AzelyError(f"Failed to get object: {query}")
 
     longitude, latitude = coord.to_string("hmsdms").split()
