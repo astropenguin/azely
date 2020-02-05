@@ -40,8 +40,8 @@ def _load_azely_config(path):
 # get constants and load config
 AZELY_DIR = _get_azely_dir()
 AZELY_CONFIG = AZELY_DIR / "config.toml"
-AZELY_OBJECTS = AZELY_DIR / "objects.toml"
-AZELY_LOCATIONS = AZELY_DIR / "locations.toml"
+AZELY_OBJECT = AZELY_DIR / "object.toml"
+AZELY_LOCATION = AZELY_DIR / "location.toml"
 config = _load_azely_config(AZELY_CONFIG)
 
 
