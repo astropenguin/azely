@@ -29,7 +29,7 @@ class Location:
 
 
 # main functions
-@set_defaults(**config.get("location"))
+@set_defaults(**config["location"])
 def get_location(query: str = "here", timeout: int = 5) -> Location:
     if query == "here":
         return Location(**get_location_by_ip(timeout))
