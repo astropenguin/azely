@@ -26,6 +26,7 @@ class Location:
     longitude: str
     latitude: str
     timezone: str
+    altitude: str = "0"
 
 
 # main functions
