@@ -1,4 +1,4 @@
-__all__ = ["get_location"]
+__all__ = ["Location", "get_location"]
 
 # standard library
 from dataclasses import dataclass
@@ -8,7 +8,7 @@ import requests
 from geopy import Nominatim
 from geopy.exc import GeocoderServiceError
 from timezonefinder import TimezoneFinder
-from . import AzelyError, AZELY_LOCATIONS, config
+from . import AzelyError, AZELY_LOCATION, config
 from .utils import cache_to, set_defaults
 
 # constants
@@ -42,7 +42,7 @@ def get_timezone(longitude: float, latitude: float) -> str:
     return tf.timezone_at(lng=longitude, lat=latitude)
 
 
-@cache_to(AZELY_LOCATIONS)
+@cache_to(AZELY_LOCATION)
 def get_location_by_query(query: str, timeout: int = 5) -> dict:
     try:
         res = osm.geocode(query, timeout=timeout)
