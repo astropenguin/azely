@@ -31,7 +31,7 @@ class Location:
 # main functions
 @set_defaults(**config["location"])
 def get_location(query: str = "here", timeout: int = 5) -> Location:
-    if query == "here":
+    if query.lower() == "here" or query.lower() == "ip":
         return Location(**get_location_by_ip(timeout))
     else:
         return Location(**get_location_by_query(query, timeout))
