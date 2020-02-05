@@ -32,7 +32,7 @@ class Location:
 @set_defaults(**config["location"])
 def get_location(query: str = "here", timeout: int = 5) -> Location:
     if query.lower() == "here" or query.lower() == "ip":
-        return Location(**get_location_by_ip(timeout))
+        return Location(**get_location_by_ip(query, timeout))
     else:
         return Location(**get_location_by_query(query, timeout))
 
@@ -60,7 +60,8 @@ def get_location_by_query(query: str, timeout: int = 5) -> dict:
     }
 
 
-def get_location_by_ip(timeout: int = 5) -> dict:
+@cache_to(AZELY_LOCATION)
+def get_location_by_ip(query: str, timeout: int = 5) -> dict:
     try:
         res = requests.get(IPINFO_URL, timeout=timeout).json()
     except requests.ConnectionError:
