@@ -23,8 +23,8 @@ osm = Nominatim(user_agent="azely")
 @dataclass
 class Location:
     name: str
-    longitude: float
-    latitude: float
+    longitude: str
+    latitude: str
     timezone: str
 
 
@@ -54,8 +54,8 @@ def get_location_by_query(query: str, timeout: int = 5) -> dict:
 
     return {
         "name": res.address.split(",")[0],
-        "longitude": res.longitude,
-        "latitude": res.latitude,
+        "longitude": res.raw["lon"],
+        "latitude": res.raw["lat"],
         "timezone": get_timezone(res.longitude, res.latitude),
     }
 
@@ -66,11 +66,11 @@ def get_location_by_ip(timeout: int = 5) -> dict:
     except requests.ConnectionError:
         raise AzelyError("Failed to get location by IP address")
 
-    latitude, longitude = res.get("loc").split(",")
+    latitude, longitude = res["loc"].split(",")
 
     return {
-        "name": res.get("city"),
-        "longitude": float(longitude),
-        "latitude": float(latitude),
+        "name": res["city"],
+        "longitude": longitude,
+        "latitude": latitude,
         "timezone": get_timezone(float(longitude), float(latitude)),
     }
