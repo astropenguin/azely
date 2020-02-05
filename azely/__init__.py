@@ -52,4 +52,4 @@ class AzelyError(Exception):
 
 # submodules
 from . import utils  # noqa
-from . import locations  # noqa
+from . import object  # noqa
