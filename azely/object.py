@@ -34,10 +34,11 @@ def is_solar(query: str) -> bool:
     return query.lower() in solar_system_ephemeris.bodies
 
 
+@cache_to(AZELY_OBJECT)
 def get_object_of_solar(query: str) -> dict:
     return {
-        "name": query.capitalize(),
-        "frame": "n/a",
+        "name": query,
+        "frame": "solar",
         "longitude": "n/a",
         "latitude": "n/a",
     }
