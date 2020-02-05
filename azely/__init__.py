@@ -48,3 +48,7 @@ config = _load_azely_config(AZELY_CONFIG)
 # base error class
 class AzelyError(Exception):
     pass
+
+
+# submodules
+from . import utils  # noqa
