@@ -1,88 +1,36 @@
-__all__ = [
-    "TomlDict",
-    "cache_to",
-    "set_defaults",
-    "open_toml",
-    "search_for",
-    "open_googlemaps",
-    "is_solar",
-]
+from __future__ import annotations
+
+__all__ = ["cache_to", "set_defaults"]
 
 # standard library
-import re
-import webbrowser
-from copy import copy
 from functools import wraps
-from inspect import signature
-from logging import getLogger
+from inspect import Signature, signature
 from pathlib import Path
-from urllib.parse import urlencode
-
-logger = getLogger(__name__)
-
+from typing import Callable, Union
 
 # dependent packages
 import toml
-from toml import TomlDecodeError
-from requests.utils import CaseInsensitiveDict
+
+# constants
+PathLike = Union[Path, str]
 
 
-# classes or decorators
-class TomlDict(CaseInsensitiveDict):
-    def __init__(self, path, update_when_exit=True):
-        self.path = Path(path).expanduser()
-        self.update_when_exit = update_when_exit
-        super().__init__(self.load_toml())
-
-    def load_toml(self):
-        with self.path.open("r") as f:
-            return toml.load(f)
-
-    def update_toml(self):
-        data = toml.dumps(dict(self))
-
-        with self.path.open("w") as f:
-            f.write(data)
-
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_value, traceback):
-        if self.update_when_exit:
-            self.update_toml()
-
-
+# main classes
 class cache_to:
-    def __init__(self, path=None, ignore_query="$.", query_parameter="query", **_):
-        if path is not None:
-            self.path = Path(path).expanduser()
+    def __init__(self, path: PathLike, query: str = "query") -> None:
+        self.path = Path(path).expanduser()
+        self.query = query
 
-        self.ignore_query = re.compile(ignore_query)
-        self.query_parameter = query_parameter
-
-    def __call__(self, func):
-        if not hasattr(self, "path"):
-            return func
-
+    def __call__(self, func: Callable) -> Callable:
         sig = signature(func)
 
         @wraps(func)
         def wrapper(*args, **kwargs):
             bound = sig.bind(*args, **kwargs)
             bound.apply_defaults()
+            query = bound.arguments[self.query]
 
-            if self.query_parameter not in bound.arguments:
-                return func(*args, **kwargs)
-
-            query = bound.arguments[self.query_parameter]
-
-            if self.ignore_query.match(query):
-                return func(*args, **kwargs)
-
-            if not self.path.exists():
-                self.path.touch()
-
-            with open_toml(self.path) as cache:
+            with TOMLDict(self.path) as cache:
                 if query not in cache:
                     item = func(*args, **kwargs)
                     cache.update({query: item})
@@ -93,75 +41,61 @@ class cache_to:
 
 
 class set_defaults:
-    def __init__(self, **defaults):
+    def __init__(self, **defaults: dict) -> None:
         self.defaults = defaults
 
-    def __call__(self, func):
-        sig = signature(func)
-        sig_new = self.modify_signature(sig)
+    def __call__(self, func: Callable) -> Callable:
+        sig = self.get_signature(func)
 
         @wraps(func)
         def wrapper(*args, **kwargs):
-            bound = sig_new.bind(*args, **kwargs)
+            bound = sig.bind(*args, **kwargs)
             bound.apply_defaults()
             return func(*bound.args, **bound.kwargs)
 
         return wrapper
 
-    def modify_signature(self, sig):
+    def get_signature(self, func: Callable) -> Signature:
+        sig = signature(func)
         params = []
 
         for param in sig.parameters.values():
             if param.kind == param.VAR_POSITIONAL:
                 params.append(param.replace())
-                continue
-
-            if param.kind == param.VAR_POSITIONAL:
+            elif param.kind == param.VAR_POSITIONAL:
                 params.append(param.replace())
-                continue
-
-            if not param.name in self.defaults:
+            elif param.name not in self.defaults:
                 params.append(param.replace())
-                continue
-
-            default = self.defaults[param.name]
-            params.append(param.replace(default=default))
+            else:
+                default = self.defaults[param.name]
+                params.append(param.replace(default=default))
 
         return sig.replace(parameters=params)
 
 
-# functions
-def open_toml(path, update_when_exit=True):
-    return TomlDict(path, update_when_exit)
+# helper classes
+class TOMLDict(dict):
+    def __init__(self, path: PathLike, create_if_not_exists: bool = True) -> None:
+        self.path = Path(path).expanduser()
 
+        if create_if_not_exists:
+            self.path.touch()
 
-def search_for(query, searchfile="*.toml", searchdirs="."):
-    if query is None:
-        return iter([])
+        super().__init__(self.load_toml())
 
-    for dirpath in (Path(p).expanduser() for p in searchdirs):
-        if not dirpath.is_dir():
-            continue
+    def load_toml(self) -> dict:
+        with self.path.open("r") as f:
+            return toml.load(f)
 
-        for path in dirpath.glob(searchfile):
-            try:
-                data = open_toml(path)
-            except (FileNotFoundError, TomlDecodeError):
-                continue
+    def update_toml(self) -> None:
+        with self.path.open("w") as f:
+            f.write(toml.dumps(dict(self)))
 
-            if not query in data:
-                continue
+    def close(self) -> None:
+        self.update_toml()
 
-            yield copy(data[query])
+    def __enter__(self) -> TOMLDict:
+        return self
 
-
-def open_googlemaps(latitude, longitude, **_):
-    query = urlencode({"q": f"{latitude}, {longitude}"})
-    webbrowser.open(f"https://google.com/maps?{query}")
-
-
-def is_solar(name):
-    # lazy import
-    from astropy.coordinates import solar_system_ephemeris
-
-    return name.lower() in solar_system_ephemeris.bodies
+    def __exit__(self, exc_type, exc_value, traceback) -> None:
+        self.close()
