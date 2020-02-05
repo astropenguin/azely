@@ -33,7 +33,7 @@ def _load_azely_config(path):
     path.parent.mkdir(parents=True, exist_ok=True)
     path.touch()
 
-    with path.open() as f:
+    with path.open("r") as f:
         return defaultdict(dict, toml.load(f))
 
 
