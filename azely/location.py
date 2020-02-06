@@ -41,6 +41,11 @@ def get_location(query: str = HERE, timeout: int = 5) -> Location:
         return Location(**get_location_by_query(query, timeout))
 
 
+@set_defaults(**config["location"])
+def get_tzinfo(query: str = HERE, timeout: int = 5) -> tzinfo:
+    return pytz.timezone(get_location(query, timeout).timezone)
+
+
 # helper functions
 def get_timezone(longitude: float, latitude: float) -> str:
     return tf.timezone_at(lng=longitude, lat=latitude)
