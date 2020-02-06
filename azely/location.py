@@ -1,9 +1,11 @@
 __all__ = ["Location", "get_location"]
 
 # standard library
+from datetime import tzinfo
 from dataclasses import dataclass
 
 # dependent packages
+import pytz
 import requests
 from geopy import Nominatim
 from geopy.exc import GeocoderServiceError
@@ -12,6 +14,7 @@ from . import AzelyError, AZELY_LOCATION, config
 from .utils import cache_to, set_defaults
 
 # constants
+HERE = "here"
 IPINFO_URL = "https://ipinfo.io/json"
 
 # query instances
@@ -31,8 +34,8 @@ class Location:
 
 # main functions
 @set_defaults(**config["location"])
-def get_location(query: str = "here", timeout: int = 5) -> Location:
-    if query.lower() == "here" or query.lower() == "ip":
+def get_location(query: str = HERE, timeout: int = 5) -> Location:
+    if query.lower() == HERE:
         return Location(**get_location_by_ip(query, timeout))
     else:
         return Location(**get_location_by_query(query, timeout))
@@ -44,7 +47,7 @@ def get_timezone(longitude: float, latitude: float) -> str:
 
 
 @cache_to(AZELY_LOCATION)
-def get_location_by_query(query: str, timeout: int = 5) -> dict:
+def get_location_by_query(query: str, timeout: int) -> dict:
     try:
         res = osm.geocode(query, timeout=timeout)
     except GeocoderServiceError:
@@ -62,7 +65,7 @@ def get_location_by_query(query: str, timeout: int = 5) -> dict:
 
 
 @cache_to(AZELY_LOCATION)
-def get_location_by_ip(query: str, timeout: int = 5) -> dict:
+def get_location_by_ip(query: str, timeout: int) -> dict:
     try:
         res = requests.get(IPINFO_URL, timeout=timeout).json()
     except requests.ConnectionError:
