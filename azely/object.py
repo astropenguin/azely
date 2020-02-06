@@ -4,6 +4,9 @@ __all__ = ["Object", "get_object"]
 from dataclasses import dataclass
 
 # dependent packages
+from astropy.coordinates import SkyCoord, solar_system_ephemeris
+from astropy.coordinates.name_resolve import NameResolveError
+from astropy.utils.data import Conf
 from . import AzelyError, AZELY_OBJECT, config
 from .utils import cache_to, set_defaults
 
@@ -28,9 +31,6 @@ def get_object(query: str, frame: str = "icrs", timeout: int = 5) -> Object:
 
 # helper functions
 def is_solar(query: str) -> bool:
-    # lazy import
-    from astropy.coordinates import solar_system_ephemeris
-
     return query.lower() in solar_system_ephemeris.bodies
 
 
@@ -46,11 +46,6 @@ def get_object_of_solar(query: str) -> dict:
 
 @cache_to(AZELY_OBJECT)
 def get_object_by_query(query: str, frame: str, timeout: int) -> dict:
-    # lazy import
-    from astropy.coordinates import SkyCoord
-    from astropy.coordinates.name_resolve import NameResolveError
-    from astropy.utils.data import Conf
-
     try:
         with Conf.remote_timeout.set_temp(timeout):
             coord = SkyCoord.from_name(query, frame)
