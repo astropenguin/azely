@@ -48,7 +48,7 @@ def get_tzinfo(query: str = HERE, timeout: int = 5) -> tzinfo:
 
 
 @set_defaults(**config["location"])
-def get_earth_location(query: str = HERE, timeout: int = 5):
+def get_earthloc(query: str = HERE, timeout: int = 5):
     loc = get_location(query, timeout)
     return EarthLocation(lat=loc.latitude, lon=loc.longitude, height=loc.altitude)
 
