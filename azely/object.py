@@ -45,7 +45,7 @@ def get_object_of_solar(query: str) -> dict:
 
 
 @cache_to(AZELY_OBJECT)
-def get_object_by_query(query: str, frame: str = "icrs", timeout: int = 5) -> dict:
+def get_object_by_query(query: str, frame: str, timeout: int) -> dict:
     # lazy import
     from astropy.coordinates import SkyCoord
     from astropy.coordinates.name_resolve import NameResolveError
