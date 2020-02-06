@@ -1,11 +1,9 @@
 __all__ = ["Location", "get_location"]
 
 # standard library
-from datetime import tzinfo
 from dataclasses import dataclass
 
 # dependent packages
-import pytz
 import requests
 from astropy.coordinates import EarthLocation
 from geopy import Nominatim
@@ -40,11 +38,6 @@ def get_location(query: str = HERE, timeout: int = 5) -> Location:
         return Location(**get_location_by_ip(query, timeout))
     else:
         return Location(**get_location_by_query(query, timeout))
-
-
-@set_defaults(**config["location"])
-def get_tzinfo(query: str = HERE, timeout: int = 5) -> tzinfo:
-    return pytz.timezone(get_location(query, timeout).timezone)
 
 
 @set_defaults(**config["location"])
