@@ -7,14 +7,11 @@ import pandas as pd
 from astropy.time import Time
 from dateutil.parser import ParserError, parse
 from pandas import DatetimeIndex, Series
-from . import AzelyError, config
+from . import AzelyError, HERE, NOW, TODAY, config
 from .location import get_earthloc, get_location, get_tzinfo
 from .utils import set_defaults
 
 # constants
-NOW = "now"
-TODAY = "today"
-HERE = "here"
 UTC = "utc"
 LST = "local sidereal time"
 PERIOD_SEP = ":"

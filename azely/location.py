@@ -9,11 +9,10 @@ from astropy.coordinates import EarthLocation
 from geopy import Nominatim
 from geopy.exc import GeocoderServiceError
 from timezonefinder import TimezoneFinder
-from . import AzelyError, AZELY_LOCATION, config
+from . import AzelyError, AZELY_LOCATION, HERE, config
 from .utils import cache_to, set_defaults
 
 # constants
-HERE = "here"
 IPINFO_URL = "https://ipinfo.io/json"
 
 # query instances
