@@ -7,6 +7,7 @@ from dataclasses import dataclass
 # dependent packages
 import pytz
 import requests
+from astropy.coordinates import EarthLocation
 from geopy import Nominatim
 from geopy.exc import GeocoderServiceError
 from timezonefinder import TimezoneFinder
@@ -44,6 +45,12 @@ def get_location(query: str = HERE, timeout: int = 5) -> Location:
 @set_defaults(**config["location"])
 def get_tzinfo(query: str = HERE, timeout: int = 5) -> tzinfo:
     return pytz.timezone(get_location(query, timeout).timezone)
+
+
+@set_defaults(**config["location"])
+def get_earth_location(query: str = HERE, timeout: int = 5):
+    loc = get_location(query, timeout)
+    return EarthLocation(lat=loc.latitude, lon=loc.longitude, height=loc.altitude)
 
 
 # helper functions
