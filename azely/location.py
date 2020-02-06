@@ -41,7 +41,7 @@ def get_location(query: str = HERE, timeout: int = 5) -> Location:
 
 
 @set_defaults(**config["location"])
-def get_earthloc(query: str = HERE, timeout: int = 5):
+def get_earthloc(query: str = HERE, timeout: int = 5) -> EarthLocation:
     loc = get_location(query, timeout)
     return EarthLocation(lat=loc.latitude, lon=loc.longitude, height=loc.altitude)
 
