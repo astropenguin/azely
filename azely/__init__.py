@@ -37,11 +37,17 @@ def _load_azely_config(path):
         return defaultdict(dict, toml.load(f))
 
 
-# get constants and load config
+# constants
+HERE = "here"
+NOW = "now"
+TODAY = "today"
 AZELY_DIR = _get_azely_dir()
 AZELY_CONFIG = AZELY_DIR / "config.toml"
 AZELY_OBJECT = AZELY_DIR / "object.toml"
 AZELY_LOCATION = AZELY_DIR / "location.toml"
+
+
+# config
 config = _load_azely_config(AZELY_CONFIG)
 
 
