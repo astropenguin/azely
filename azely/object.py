@@ -2,14 +2,14 @@ __all__ = ["Object", "get_object"]
 
 
 # standard library
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 
 
 # dependent packages
 from astropy.coordinates import SkyCoord, solar_system_ephemeris
 from astropy.coordinates.name_resolve import NameResolveError
 from astropy.utils.data import Conf
-from . import AzelyError, AZELY_OBJECT, config
+from . import AzelyError, AZELY_OBJECT, SOLAR, config
 from .utils import cache_to, set_defaults
 
 
@@ -38,12 +38,7 @@ def is_solar(query: str) -> bool:
 
 @cache_to(AZELY_OBJECT)
 def get_object_of_solar(query: str) -> dict:
-    return {
-        "name": query,
-        "frame": "solar",
-        "longitude": "n/a",
-        "latitude": "n/a",
-    }
+    return asdict(Object(query, SOLAR, "NaN", "NaN"))
 
 
 @cache_to(AZELY_OBJECT)
@@ -55,10 +50,4 @@ def get_object_by_query(query: str, frame: str, timeout: int) -> dict:
             raise AzelyError(f"Failed to get object: {query}")
 
     longitude, latitude = coord.to_string("hmsdms").split()
-
-    return {
-        "name": query,
-        "frame": frame,
-        "longitude": longitude,
-        "latitude": latitude,
-    }
+    return asdict(Object(query, frame, longitude, latitude))
