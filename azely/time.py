@@ -1,4 +1,4 @@
-__all__ = ["get_time"]
+__all__ = ["Time", "get_time"]
 
 
 # standard library
@@ -18,9 +18,17 @@ from .utils import set_defaults
 PERIOD_SEP = ":"
 
 
+# data class
+class Time(DatetimeIndex):
+    """Data class of time (equivalent to pandas.DatetimeIndex)."""
+
+    def __new__(cls, *args, **kwargs):
+        return super().__new__(cls, *args, **kwargs)
+
+
 # main functions
 @set_defaults(**config["time"])
-def get_time(query: str = NOW, at: str = HERE, freq: str = "10T") -> DatetimeIndex:
+def get_time(query: str = NOW, at: str = HERE, freq: str = "10T") -> Time:
     tzinfo = get_tzinfo(at)
 
     if query == NOW:
@@ -35,7 +43,7 @@ def get_time(query: str = NOW, at: str = HERE, freq: str = "10T") -> DatetimeInd
         start = get_datetime(query)
         end = start + timedelta(days=1)
 
-    return date_range(start, end, None, freq, tzinfo)
+    return Time(date_range(start, end, None, freq, tzinfo))
 
 
 # helper functions
