@@ -41,6 +41,7 @@ def _load_azely_config(path):
 HERE = "here"
 NOW = "now"
 TODAY = "today"
+SOLAR = "solar"
 AZELY_DIR = _get_azely_dir()
 AZELY_CONFIG = AZELY_DIR / "config.toml"
 AZELY_OBJECT = AZELY_DIR / "object.toml"
