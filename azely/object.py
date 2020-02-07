@@ -1,7 +1,9 @@
 __all__ = ["Object", "get_object"]
 
+
 # standard library
 from dataclasses import dataclass
+
 
 # dependent packages
 from astropy.coordinates import SkyCoord, solar_system_ephemeris

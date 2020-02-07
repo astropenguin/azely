@@ -1,7 +1,9 @@
 __all__ = ["Location", "get_location"]
 
+
 # standard library
 from dataclasses import dataclass
+
 
 # dependent packages
 import requests
@@ -12,8 +14,10 @@ from timezonefinder import TimezoneFinder
 from . import AzelyError, AZELY_LOCATION, HERE, config
 from .utils import cache_to, set_defaults
 
+
 # constants
 IPINFO_URL = "https://ipinfo.io/json"
+
 
 # query instances
 tf = TimezoneFinder()
