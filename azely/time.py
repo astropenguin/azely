@@ -1,52 +1,50 @@
 __all__ = ["get_time"]
 
 # standard library
+from datetime import datetime, timedelta, tzinfo
 
 # dependent packages
-import pandas as pd
-from astropy.time import Time
 from dateutil.parser import ParserError, parse
-from pandas import DatetimeIndex, Series
+from pandas import DatetimeIndex, date_range
+from pytz import UnknownTimeZoneError, timezone
 from . import AzelyError, HERE, NOW, TODAY, config
-from .location import get_earthloc, get_location, get_tzinfo
+from .location import get_location
 from .utils import set_defaults
 
 # constants
-UTC = "utc"
-LST = "local sidereal time"
 PERIOD_SEP = ":"
 
 
 # main functions
 @set_defaults(**config["time"])
-def get_time(query: str = NOW, at: str = HERE, freq: str = "10T") -> Series:
-    index = get_time_index(query, at, freq)
-    time = Time(index.tz_convert(UTC), location=get_earthloc(at))
+def get_time(query: str = NOW, at: str = HERE, freq: str = "10T") -> DatetimeIndex:
+    tzinfo = get_tzinfo(at)
 
-    lst = pd.to_timedelta(time.sidereal_time("mean").value, unit="h")
-    return Series(lst, index, name=LST)
+    if query == NOW:
+        start = end = datetime.now(tzinfo)
+    elif query == TODAY:
+        start = datetime.now(tzinfo).date()
+        end = start + timedelta(days=1)
+    elif PERIOD_SEP in query:
+        queries = query.split(PERIOD_SEP)
+        start, end = map(get_datetime, queries)
+    else:
+        start = get_datetime(query)
+        end = start + timedelta(days=1)
+
+    return date_range(start, end, None, freq, tzinfo)
 
 
 # helper functions
-def get_time_index(query: str, at: str, freq: str) -> DatetimeIndex:
-    tzinfo = get_tzinfo(at)
-    name = get_location(at).name
+def get_tzinfo(query: str) -> tzinfo:
+    try:
+        return timezone(query)
+    except UnknownTimeZoneError:
+        return timezone(get_location(query).timezone)
 
-    if query == NOW:
-        start = end = pd.Timestamp.now(tzinfo)
-    elif query == TODAY:
-        start = pd.Timestamp.now(tzinfo).date()
-        end = start + pd.offsets.Day()
-    elif PERIOD_SEP in query:
-        try:
-            start, end = map(parse, query.split(PERIOD_SEP))
-        except ParserError:
-            raise AzelyError(f"Failed to parse: {query}")
-    else:
-        try:
-            start = parse(query)
-            end = start + pd.offsets.Day()
-        except ParserError:
-            raise AzelyError(f"Failed to parse: {query}")
 
-    return pd.date_range(start, end, None, freq, tzinfo, name=name)
+def get_datetime(query: str) -> datetime:
+    try:
+        return parse(query)
+    except ParserError:
+        raise AzelyError(f"Failed to parse: {query}")
