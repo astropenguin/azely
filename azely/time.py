@@ -28,8 +28,8 @@ class Time(DatetimeIndex):
 
 # main functions
 @set_defaults(**config["time"])
-def get_time(query: str = NOW, at: str = HERE, freq: str = "10T") -> Time:
-    tzinfo = get_tzinfo(at)
+def get_time(query: str = NOW, view: str = HERE, freq: str = "10T") -> Time:
+    tzinfo = get_tzinfo(view)
 
     if query == NOW:
         start = end = datetime.now(tzinfo)
