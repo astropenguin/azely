@@ -1,4 +1,4 @@
-__all__ = ["Object", "get_object"]
+__all__ = ["get_object"]
 
 
 # standard library
