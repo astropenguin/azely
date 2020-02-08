@@ -5,10 +5,9 @@ __all__ = ["compute"]
 
 
 # dependent packages
-import pandas as pd
 from astropy.coordinates import SkyCoord, get_body
 from astropy.time import Time as ObsTime
-from pandas import DataFrame
+from pandas import DataFrame, to_timedelta
 from . import HERE, NOW
 from .location import Location, get_location
 from .object import Object, get_object
@@ -47,12 +46,9 @@ def get_dataframe(skycoord: SkyCoord, time: Time) -> DataFrame:
     az = skycoord.altaz.az
     el = skycoord.altaz.alt
     lst = skycoord.obstime.sidereal_time("mean")
-    lst = pd.to_timedelta(lst.value, unit="h")
+    lst = to_timedelta(lst.value, unit="h")
 
-    df = DataFrame({"az": az, "el": el, "lst": lst}, index=time)
-    df.az.name = skycoord.info.name
-    df.el.name = skycoord.info.name
-    return df
+    return AzEl(DataFrame({"az": az, "el": el, "lst": lst}, index=time))
 
 
 def get_skycoord(object: Object, site: Location, time: Time) -> SkyCoord:
