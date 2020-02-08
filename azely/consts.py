@@ -2,7 +2,7 @@
 HERE = "here"
 NOW = "now"
 TODAY = "today"
-FRAME = "tcrs"
+FRAME = "icrs"
 FREQ = "10T"
 SEP = "to"
 TIMEOUT = 5
