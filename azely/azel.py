@@ -19,14 +19,14 @@ from .time import Time, get_time
 
 
 # helper functions
-def get_skycoord(object_: Object, site: Location, time: Time) -> SkyCoord:
+def get_skycoord(object: Object, site: Location, time: Time) -> SkyCoord:
     obstime = ObsTime(time.as_utc, location=site.earthloc)
 
-    if object_.is_solar:
-        skycoord = get_body(object_.name, time=obstime)
-        skycoord.location = obstime.location
+    if object.is_solar:
+        skycoord = get_body(object.name, time=obstime)
     else:
-        skycoord = SkyCoord(*object_.coords, frame=object_.frame, obstime=obstime)
-        skycoord.location = obstime.location
+        skycoord = SkyCoord(*object.coords, frame=object.frame, obstime=obstime)
 
+        skycoord.location = obstime.location
+    skycoord.info.name = object.name
     return skycoord
