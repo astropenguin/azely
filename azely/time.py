@@ -10,7 +10,8 @@ import pytz
 from dateutil.parser import ParserError, parse
 from pandas import DatetimeIndex, date_range
 from pytz import UnknownTimeZoneError
-from . import AzelyError, HERE, NOW, TODAY
+from . import AzelyError
+from .consts import HERE, NOW, TODAY, FREQ, SEP, TIMEOUT
 from .location import get_location
 
 
@@ -18,9 +19,9 @@ from .location import get_location
 def get_time(
     query: str = NOW,
     view: str = HERE,
-    freq: str = "10T",
-    sep: str = "to",
-    timeout: int = 5,
+    freq: str = FREQ,
+    sep: str = SEP,
+    timeout: int = TIMEOUT,
 ) -> DatetimeIndex:
     tzinfo = parse_tzinfo(view, timeout)
     name = tzinfo.zone

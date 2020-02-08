@@ -3,8 +3,8 @@ __author__ = "Akio Taniguchi"
 
 
 # immediate functions
-def _get_azely_dir():
-    """Get path of azely's directory."""
+def _get_azely_path(filename: str):
+    """Get path of azely file."""
     # standard library
     import os
     from pathlib import Path
@@ -15,11 +15,13 @@ def _get_azely_dir():
     XDG_CONFIG_HOME_ALT = Path().home() / ".config"
 
     if AZELY_DIR in os.environ:
-        return Path(os.getenv(AZELY_DIR))
+        azely_dir = Path(os.getenv(AZELY_DIR))
     elif XDG_CONFIG_HOME in os.environ:
-        return Path(os.getenv(XDG_CONFIG_HOME)) / "azely"
+        azely_dir = Path(os.getenv(XDG_CONFIG_HOME)) / "azely"
     else:
-        return XDG_CONFIG_HOME_ALT / "azely"
+        azely_dir = XDG_CONFIG_HOME_ALT / "azely"
+
+    return azely_dir / filename
 
 
 def _load_azely_config(path):
@@ -38,13 +40,9 @@ def _load_azely_config(path):
 
 
 # constants
-HERE = "here"
-NOW = "now"
-TODAY = "today"
-AZELY_DIR = _get_azely_dir()
-AZELY_CONFIG = AZELY_DIR / "config.toml"
-AZELY_OBJECT = AZELY_DIR / "object.toml"
-AZELY_LOCATION = AZELY_DIR / "location.toml"
+AZELY_CONFIG = _get_azely_path("config.toml")
+AZELY_OBJECT = _get_azely_path("object.toml")
+AZELY_LOCATION = _get_azely_path("location.toml")
 
 
 # config
@@ -57,6 +55,7 @@ class AzelyError(Exception):
 
 
 # submodules
+from . import consts  # noqa
 from . import utils  # noqa
 from .location import *  # noqa
 from .object import *  # noqa

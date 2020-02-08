@@ -10,11 +10,12 @@ from astropy.coordinates import SkyCoord, get_body
 from astropy.time import Time
 from pandas import DataFrame, DatetimeIndex, Series, to_timedelta
 from pandas.api.extensions import register_dataframe_accessor
-from . import HERE, NOW, config
+from . import config
+from .consts import HERE, NOW, FRAME, FREQ, SEP, TIMEOUT
+from .utils import set_defaults
 from .location import Location, get_location
 from .object import Object, get_object
 from .time import get_time
-from .utils import set_defaults
 
 
 # constants
@@ -69,10 +70,10 @@ def compute(
     site: str = HERE,
     time: str = NOW,
     view: str = "",
-    frame: str = "icrs",
-    freq: str = "10T",
-    sep: str = "to",
-    timeout: int = 5,
+    frame: str = FRAME,
+    freq: str = FREQ,
+    sep: str = SEP,
+    timeout: int = TIMEOUT,
 ) -> DataFrame:
     object_ = get_object(object, frame, timeout)
     site_ = get_location(site, timeout)
