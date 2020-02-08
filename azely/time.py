@@ -11,23 +11,12 @@ from datetime import datetime, timedelta, tzinfo
 # dependent packages
 import pytz
 from dateutil.parser import ParserError, parse
-from pandas import DatetimeIndex, date_range
+from pandas import date_range
+from pandas import DatetimeIndex as Time
 from pytz import UnknownTimeZoneError
 from . import AzelyError, HERE, NOW, TODAY, config
 from .location import get_location
 from .utils import set_defaults
-
-
-# data class
-class Time(DatetimeIndex):
-    """Data class of time (pandas.DatetimeIndex with properties)."""
-
-    def __new__(cls, *args, **kwargs) -> Time:
-        return super().__new__(cls, *args, **kwargs)
-
-    @property
-    def as_utc(self) -> Time:
-        return Time(self.tz_convert(pytz.UTC))
 
 
 # main functions
