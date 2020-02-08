@@ -10,10 +10,11 @@ from astropy.coordinates import SkyCoord, get_body
 from astropy.time import Time
 from pandas import DataFrame, DatetimeIndex, Series, to_timedelta
 from pandas.api.extensions import register_dataframe_accessor
-from . import HERE, NOW
+from . import HERE, NOW, config
 from .location import Location, get_location
 from .object import Object, get_object
 from .time import get_time
+from .utils import set_defaults
 
 
 # constants
@@ -62,6 +63,7 @@ class AsUTCAccessor(AsAccessor):
 
 
 # main functions
+@set_defaults(**config["compute"])
 def compute(
     object: str,
     site: str = HERE,

@@ -10,13 +10,11 @@ import pytz
 from dateutil.parser import ParserError, parse
 from pandas import DatetimeIndex, date_range
 from pytz import UnknownTimeZoneError
-from . import AzelyError, HERE, NOW, TODAY, config
+from . import AzelyError, HERE, NOW, TODAY
 from .location import get_location
-from .utils import set_defaults
 
 
 # main functions
-@set_defaults(**config["time"])
 def get_time(
     query: str = NOW,
     view: str = HERE,
