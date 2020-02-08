@@ -22,16 +22,16 @@ SOLAR_TO_SIDEREAL = 1.002_737_909
 
 # data accessor
 class AsAccessor:
-    def __init__(self, df: DataFrame) -> None:
-        self._df = df
+    def __init__(self, accessed: DataFrame) -> None:
+        self.accessed = accessed
 
     @property
     def az(self) -> Series:
-        return self._df.set_index(self.index).az
+        return self.accessed.set_index(self.index).az
 
     @property
     def el(self) -> Series:
-        return self._df.set_index(self.index).el
+        return self.accessed.set_index(self.index).el
 
 
 @register_dataframe_accessor("as_lst")
@@ -41,11 +41,12 @@ class AsLSTAccessor(AsAccessor):
 
     @property
     def index(self) -> DatetimeIndex:
-        dt_solar = self._df.index - self._df.index[0]
-        dt_sidereal = dt_solar * SOLAR_TO_SIDEREAL + self._df.lst[0]
-        dt_sidereal = dt_sidereal.floor("1D") + self._df.lst
+        df = self.accessed
+        td_solar = df.index - df.index[0]
+        td_sidereal = td_solar * SOLAR_TO_SIDEREAL + df.lst[0]
+        td_sidereal = td_sidereal.floor("1D") + df.lst
 
-        index = self._df.index[0].floor("1D") + dt_sidereal
+        index = df.index[0].floor("1D").tz_localize(None) + td_sidereal
         return DatetimeIndex(index, name="Local Sidereal Time")
 
 
@@ -56,7 +57,7 @@ class AsUTCAccessor(AsAccessor):
 
     @property
     def index(self) -> DatetimeIndex:
-        index = self._df.index.tz_convert(pytz.UTC)
+        index = self.accessed.index.tz_convert(pytz.UTC)
         return DatetimeIndex(index, name=index.tzinfo.zone)
 
 
