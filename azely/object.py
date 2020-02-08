@@ -10,8 +10,8 @@ from typing import Tuple
 from astropy.coordinates import SkyCoord, solar_system_ephemeris
 from astropy.coordinates.name_resolve import NameResolveError
 from astropy.utils.data import Conf
-from . import AzelyError, AZELY_OBJECT, config
-from .utils import cache_to, set_defaults
+from . import AzelyError, AZELY_OBJECT
+from .utils import cache_to
 
 
 # constants
@@ -36,7 +36,6 @@ class Object:
 
 
 # main functions
-@set_defaults(**config["object"])
 def get_object(query: str, frame: str = "icrs", timeout: int = 5) -> Object:
     if query.lower() in solar_system_ephemeris.bodies:
         return Object(**get_object_of_solar(query))
