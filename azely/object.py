@@ -3,23 +3,36 @@ __all__ = ["Object", "get_object"]
 
 # standard library
 from dataclasses import asdict, dataclass
+from typing import Tuple
 
 
 # dependent packages
 from astropy.coordinates import SkyCoord, solar_system_ephemeris
 from astropy.coordinates.name_resolve import NameResolveError
 from astropy.utils.data import Conf
-from . import AzelyError, AZELY_OBJECT, SOLAR, config
+from . import AzelyError, AZELY_OBJECT, config
 from .utils import cache_to, set_defaults
 
 
+# constants
+SOLAR = "solar"
+
+
 # data classes
-@dataclass
+@dataclass(frozen=True)
 class Object:
     name: str
     frame: str
     longitude: str
     latitude: str
+
+    @property
+    def is_solar(self) -> bool:
+        return self.frame == SOLAR
+
+    @property
+    def coords(self) -> Tuple[str]:
+        return self.longitude, self.longitude
 
 
 # main functions
