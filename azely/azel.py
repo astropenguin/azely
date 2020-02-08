@@ -15,6 +15,11 @@ from .time import Time, get_time
 
 
 # data class
+class AzEl(DataFrame):
+    """Data class of azel (pandas.DataFrame with properties)."""
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
 
 
 # main functions
