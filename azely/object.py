@@ -38,17 +38,13 @@ class Object:
 # main functions
 @set_defaults(**config["object"])
 def get_object(query: str, frame: str = "icrs", timeout: int = 5) -> Object:
-    if is_solar(query):
+    if query.lower() in solar_system_ephemeris.bodies:
         return Object(**get_object_of_solar(query))
     else:
         return Object(**get_object_by_query(query, frame, timeout))
 
 
 # helper functions
-def is_solar(query: str) -> bool:
-    return query.lower() in solar_system_ephemeris.bodies
-
-
 @cache_to(AZELY_OBJECT)
 def get_object_of_solar(query: str) -> dict:
     return asdict(Object(query, SOLAR, "NaN", "NaN"))
