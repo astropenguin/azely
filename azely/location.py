@@ -14,7 +14,8 @@ from astropy.coordinates import EarthLocation
 from geopy import Nominatim
 from geopy.exc import GeocoderServiceError
 from timezonefinder import TimezoneFinder
-from . import AzelyError, AZELY_LOCATION, HERE
+from . import AzelyError, AZELY_LOCATION
+from .consts import HERE, TIMEOUT
 from .utils import cache_to
 
 
@@ -51,7 +52,7 @@ class Location:
 
 
 # main functions
-def get_location(query: str = HERE, timeout: int = 5) -> Location:
+def get_location(query: str = HERE, timeout: int = TIMEOUT) -> Location:
     if query.lower() == HERE:
         return Location(**get_location_by_ip(query, timeout))
     else:

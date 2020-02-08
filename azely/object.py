@@ -11,6 +11,7 @@ from astropy.coordinates import SkyCoord, solar_system_ephemeris
 from astropy.coordinates.name_resolve import NameResolveError
 from astropy.utils.data import Conf
 from . import AzelyError, AZELY_OBJECT
+from .consts import FRAME, TIMEOUT
 from .utils import cache_to
 
 
@@ -36,7 +37,7 @@ class Object:
 
 
 # main functions
-def get_object(query: str, frame: str = "icrs", timeout: int = 5) -> Object:
+def get_object(query: str, frame: str = FRAME, timeout: int = TIMEOUT) -> Object:
     if query.lower() in solar_system_ephemeris.bodies:
         return Object(**get_object_of_solar(query))
     else:
