@@ -1,3 +1,4 @@
+__all__ = ["compute"]
 
 
 # standard library
@@ -23,6 +24,22 @@ class AzEl(DataFrame):
 
 
 # main functions
+def compute(
+    object: str,
+    site: str = HERE,
+    time: str = NOW,
+    view: str = "",
+    frame: str = "icrs",
+    freq: str = "10T",
+    sep: str = "to",
+    timeout: int = 5,
+) -> AzEl:
+    object_ = get_object(object, frame, timeout)
+    site_ = get_location(site, timeout)
+    time_ = get_time(time, view or site, freq, sep, timeout)
+
+    skycoord = get_skycoord(object_, site_, time_)
+    return AzEl(get_dataframe(skycoord, time_))
 
 
 # helper functions
@@ -46,6 +63,6 @@ def get_skycoord(object: Object, site: Location, time: Time) -> SkyCoord:
     else:
         skycoord = SkyCoord(*object.coords, frame=object.frame, obstime=obstime)
 
-        skycoord.location = obstime.location
+    skycoord.location = obstime.location
     skycoord.info.name = object.name
     return skycoord
