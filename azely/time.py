@@ -1,7 +1,4 @@
-from __future__ import annotations
-
-
-__all__ = ["Time", "get_time"]
+__all__ = ["get_time"]
 
 
 # standard library
@@ -11,8 +8,7 @@ from datetime import datetime, timedelta, tzinfo
 # dependent packages
 import pytz
 from dateutil.parser import ParserError, parse
-from pandas import date_range
-from pandas import DatetimeIndex as Time
+from pandas import DatetimeIndex, date_range
 from pytz import UnknownTimeZoneError
 from . import AzelyError, HERE, NOW, TODAY, config
 from .location import get_location
@@ -27,7 +23,7 @@ def get_time(
     freq: str = "10T",
     sep: str = "to",
     timeout: int = 5,
-) -> Time:
+) -> DatetimeIndex:
     tzinfo = parse_tzinfo(view, timeout)
     name = tzinfo.zone
 
@@ -43,7 +39,7 @@ def get_time(
         start = parse_datetime(query)
         end = start + timedelta(days=1)
 
-    return Time(date_range(start, end, None, freq, tzinfo, name=name))
+    return date_range(start, end, None, freq, tzinfo, name=name)
 
 
 # helper functions
