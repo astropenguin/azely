@@ -32,7 +32,7 @@ class Object:
 
     @property
     def coords(self) -> Tuple[str]:
-        return self.longitude, self.longitude
+        return self.longitude, self.latitude
 
 
 # main functions
