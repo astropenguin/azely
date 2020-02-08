@@ -3,6 +3,8 @@ __all__ = ["Location", "get_location"]
 
 # standard library
 from dataclasses import asdict, dataclass
+from datetime import tzinfo
+from typing import Tuple
 
 
 # dependent packages
@@ -34,16 +36,16 @@ class Location:
     altitude: str = "0"
 
     @property
-    def coords(self):
+    def coords(self) -> Tuple[float]:
         return float(self.longitude), float(self.latitude), float(self.altitude)
 
     @property
-    def tzinfo(self):
+    def tzinfo(self) -> tzinfo:
         coords = self.coords
         return pytz.timezone(tf.timezone_at(lng=coords[0], lat=coords[1]))
 
     @property
-    def earthloc(self):
+    def earthloc(self) -> EarthLocation:
         coords = self.coords
         return EarthLocation(lon=coords[0], lat=coords[1], height=coords[2])
 
