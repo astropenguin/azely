@@ -1,4 +1,4 @@
-__all__ = ["Location", "get_location"]
+__all__ = ["get_location"]
 
 
 # standard library
