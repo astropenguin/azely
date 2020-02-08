@@ -2,10 +2,11 @@ __all__ = ["Location", "get_location"]
 
 
 # standard library
-from dataclasses import dataclass
+from dataclasses import asdict, dataclass
 
 
 # dependent packages
+import pytz
 import requests
 from astropy.coordinates import EarthLocation
 from geopy import Nominatim
@@ -25,13 +26,26 @@ osm = Nominatim(user_agent="azely")
 
 
 # data classes
-@dataclass
+@dataclass(frozen=True)
 class Location:
     name: str
     longitude: str
     latitude: str
-    timezone: str
     altitude: str = "0"
+
+    @property
+    def coords(self):
+        return float(self.longitude), float(self.latitude), float(self.altitude)
+
+    @property
+    def tzinfo(self):
+        coords = self.coords
+        return pytz.timezone(tf.timezone_at(lng=coords[0], lat=coords[1]))
+
+    @property
+    def earthloc(self):
+        coords = self.coords
+        return EarthLocation(lon=coords[0], lat=coords[1], height=coords[2])
 
 
 # main functions
@@ -43,33 +57,15 @@ def get_location(query: str = HERE, timeout: int = 5) -> Location:
         return Location(**get_location_by_query(query, timeout))
 
 
-@set_defaults(**config["location"])
-def get_earthloc(query: str = HERE, timeout: int = 5) -> EarthLocation:
-    loc = get_location(query, timeout)
-    return EarthLocation(lat=loc.latitude, lon=loc.longitude, height=loc.altitude)
-
-
 # helper functions
-def get_timezone(longitude: float, latitude: float) -> str:
-    return tf.timezone_at(lng=longitude, lat=latitude)
-
-
 @cache_to(AZELY_LOCATION)
 def get_location_by_query(query: str, timeout: int) -> dict:
     try:
-        res = osm.geocode(query, timeout=timeout)
-    except GeocoderServiceError:
+        res = osm.geocode(query, timeout=timeout, namedetails=True).raw
+    except (AttributeError, GeocoderServiceError):
         raise AzelyError(f"Failed to get location: {query}")
 
-    if res is None:
-        raise AzelyError(f"Failed to get location: {query}")
-
-    return {
-        "name": res.address.split(",")[0],
-        "longitude": res.raw["lon"],
-        "latitude": res.raw["lat"],
-        "timezone": get_timezone(res.longitude, res.latitude),
-    }
+    return asdict(Location(res["namedetails"]["name"], res["lon"], res["lat"]))
 
 
 @cache_to(AZELY_LOCATION)
@@ -79,11 +75,4 @@ def get_location_by_ip(query: str, timeout: int) -> dict:
     except requests.ConnectionError:
         raise AzelyError("Failed to get location by IP address")
 
-    latitude, longitude = res["loc"].split(",")
-
-    return {
-        "name": res["city"],
-        "longitude": longitude,
-        "latitude": latitude,
-        "timezone": get_timezone(float(longitude), float(latitude)),
-    }
+    return asdict(Location(res["city"], *res["loc"].split(",")[::-1]))
