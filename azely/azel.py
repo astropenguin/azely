@@ -73,7 +73,7 @@ def get_dataframe(skycoord: SkyCoord, time: Time) -> DataFrame:
 
 
 def get_skycoord(object: Object, site: Location, time: Time) -> SkyCoord:
-    obstime = ObsTime(time.as_utc, location=site.earthloc)
+    obstime = ObsTime(time.tz_convert(pytz.UTC), location=site.earthloc)
 
     if object.is_solar:
         skycoord = get_body(object.name, time=obstime)
