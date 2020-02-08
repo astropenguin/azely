@@ -1,32 +1,28 @@
 name: Main
-on: push
+
+on: [push]
 
 jobs:
   job:
+    env:
+      GET_POETRY: https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.7, 3.8]
     steps:
       - uses: actions/checkout@v2
-      - name: Install packages
-        uses: abatilo/actions-poetry@v1.5.0
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v1
         with:
-          python_version: 3.7.6
-          poetry_version: 1.0.2
-          args: install
-      - name: Run flake8
-        uses: abatilo/actions-poetry@v1.5.0
-        with:
-          python_version: 3.7.6
-          poetry_version: 1.0.2
-          args: run flake8 azely
-      - name: Run black
-        uses: abatilo/actions-poetry@v1.5.0
-        with:
-          python_version: 3.7.6
-          poetry_version: 1.0.2
-          args: run black --check azely
-      - name: Run pytest
-        uses: abatilo/actions-poetry@v1.5.0
-        with:
-          python_version: 3.7.6
-          poetry_version: 1.0.2
-          args: run pytest
+          python-version: ${{ matrix.python-version }}
+      - name: Install poetry
+        run: curl -sSL ${GET_POETRY} | python
+      - name: Install dependencies
+        run: poetry install
+      - name: Lint with flake8
+        run: poetry run flake8 azely
+      - name: Format with flake8
+        run: poetry run black --check azely
+      - name: Test with pytest
+        run : poetry run pytest
