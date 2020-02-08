@@ -5,6 +5,7 @@ __all__ = ["compute"]
 
 
 # dependent packages
+import pytz
 from astropy.coordinates import SkyCoord, get_body
 from astropy.time import Time as ObsTime
 from pandas import DataFrame, to_timedelta
@@ -14,12 +15,32 @@ from .object import Object, get_object
 from .time import Time, get_time
 
 
+# constants
+SOLAR_TO_SIDEREAL = 1.002_737_909
+
+
 # data class
 class AzEl(DataFrame):
     """Data class of azel (pandas.DataFrame with properties)."""
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
+
+    @property
+    def as_utc(self):
+        new_index = self.index.tz_convert(pytz.UTC)
+        new_index.name = new_index.tzinfo.zone
+        return AzEl(self.set_index(new_index))
+
+    @property
+    def as_lst(self):
+        dt_solar = self.index - self.index[0]
+        dt_sidereal = dt_solar * SOLAR_TO_SIDEREAL + self.lst[0]
+        dt_sidereal = dt_sidereal.floor("1D") + self.lst
+
+        new_index = self.index[0].floor("1D") + dt_sidereal
+        new_index.name = "Local Sidereal Time"
+        return AzEl(self.set_index(new_index))
 
 
 # main functions
