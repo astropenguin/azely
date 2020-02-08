@@ -4,8 +4,6 @@ on: [push]
 
 jobs:
   job:
-    env:
-      URL_GET_POETRY: https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -17,9 +15,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install poetry
-        run: |
-          curl -sSL $URL_GET_POETRY | python
-          source $HOME/.poetry/env
+        run: pip install --user poetry
       - name: Install dependencies
         run: poetry install
       - name: Lint with flake8
