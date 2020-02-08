@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 __all__ = ["Time", "get_time"]
 
 
@@ -15,16 +18,16 @@ from .location import get_location
 from .utils import set_defaults
 
 
-# constants
-PERIOD_SEP = ":"
-
-
 # data class
 class Time(DatetimeIndex):
-    """Data class of time (equivalent to pandas.DatetimeIndex)."""
+    """Data class of time (pandas.DatetimeIndex with properties)."""
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls, *args, **kwargs) -> Time:
         return super().__new__(cls, *args, **kwargs)
+
+    @property
+    def as_utc(self) -> Time:
+        return Time(self.tz_convert(pytz.UTC))
 
 
 # main functions
