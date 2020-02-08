@@ -40,6 +40,7 @@ def get_time(
     timeout: int = 5,
 ) -> Time:
     tzinfo = parse_tzinfo(view, timeout)
+    name = tzinfo.zone
 
     if query == NOW:
         start = end = datetime.now(tzinfo)
@@ -53,7 +54,7 @@ def get_time(
         start = parse_datetime(query)
         end = start + timedelta(days=1)
 
-    return Time(date_range(start, end, None, freq, tzinfo))
+    return Time(date_range(start, end, None, freq, tzinfo, name=name))
 
 
 # helper functions
