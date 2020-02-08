@@ -1,6 +1,3 @@
-from __future__ import annotations
-
-
 # standard library
 from functools import wraps
 from inspect import Signature, signature
@@ -95,7 +92,7 @@ class TOMLDict(dict):
     def close(self) -> None:
         self.update_toml()
 
-    def __enter__(self) -> TOMLDict:
+    def __enter__(self):
         return self
 
     def __exit__(self, exc_type, exc_value, traceback) -> None:
