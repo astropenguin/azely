@@ -5,4 +5,4 @@ TODAY = "today"
 FRAME = "icrs"
 FREQ = "10T"
 SEP = "to"
-TIMEOUT = 5
+TIMEOUT = 10
