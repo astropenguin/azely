@@ -5,6 +5,7 @@ from io import StringIO
 # dependent packages
 import azely
 import pandas as pd
+from pandas.testing import assert_frame_equal
 
 
 # constants
@@ -41,9 +42,8 @@ Asia/Tokyo,az,el,lst
 # test functions
 def test_compute():
     result = azely.compute("NGC1068", "ALMA AOS", "2020-02-01", view="Tokyo", freq="1H")
-
-    converters = {"lst": pd.Timedelta}
-    expected = pd.read_csv(StringIO(data), index_col=0, converters=converters)
+    expected = pd.read_csv(StringIO(data), index_col=0)
     expected = expected.set_index(result.index)
 
-    pd.testing.assert_frame_equal(result, expected, check_less_precise=True)
+    columns = ["az", "el"]
+    assert_frame_equal(result[columns], expected[columns], check_less_precise=True)
