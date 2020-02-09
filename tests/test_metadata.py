@@ -3,7 +3,7 @@ import azely
 
 def test_version():
     """Make sure the version is valid."""
-    assert azely.__version__ == "0.4.1"
+    assert azely.__version__ == "0.4.2"
 
 
 def test_author():
