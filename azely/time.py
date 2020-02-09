@@ -7,12 +7,17 @@ from datetime import datetime, timedelta, tzinfo
 
 # dependent packages
 import pytz
-from dateutil.parser import ParserError, parse
+from dateutil import parser
 from pandas import DatetimeIndex, date_range
 from pytz import UnknownTimeZoneError
 from . import AzelyError
 from .consts import HERE, NOW, TODAY, FREQ, SEP, TIMEOUT
 from .location import get_location
+
+try:
+    from dateutil.parser import ParserError
+except ImportError:
+    ParserError = ValueError
 
 
 # main functions
@@ -51,6 +56,6 @@ def parse_tzinfo(query: str, timeout: int) -> tzinfo:
 
 def parse_datetime(query: str) -> datetime:
     try:
-        return parse(query)
+        return parser.parse(query)
     except ParserError:
         raise AzelyError(f"Failed to parse: {query}")
