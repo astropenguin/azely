@@ -1,8 +1,14 @@
+# standard library
+from io import StringIO
+
+
 # dependent packages
 import azely
+import pandas as pd
 
 
-expected = """\
+# constants
+data = """\
 Asia/Tokyo,az,el,lst
 2020-02-01 00:00:00+09:00,99.52798157601987,-21.44516907364186,0 days 19:10:12.608533200
 2020-02-01 01:00:00+09:00,93.21559165012916,-7.692853010898757,0 days 20:10:22.464976800
@@ -35,4 +41,9 @@ Asia/Tokyo,az,el,lst
 # test functions
 def test_compute():
     result = azely.compute("NGC1068", "ALMA AOS", "2020-02-01", view="Tokyo", freq="1H")
-    assert result.to_csv() == expected
+
+    converters = {"lst": pd.Timedelta}
+    expected = pd.read_csv(StringIO(data), index_col=0, converters=converters)
+    expected = expected.set_index(result.index)
+
+    pd.testing.assert_frame_equal(result, expected, check_less_precise=True)
