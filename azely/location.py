@@ -4,7 +4,7 @@ __all__ = ["get_location"]
 # standard library
 from dataclasses import asdict, dataclass
 from datetime import tzinfo
-from typing import Tuple
+from typing import Dict, Tuple
 
 
 # dependent packages
@@ -61,7 +61,7 @@ def get_location(query: str = HERE, timeout: int = TIMEOUT) -> Location:
 
 # helper functions
 @cache_to(AZELY_LOCATION)
-def get_location_by_query(query: str, timeout: int) -> dict:
+def get_location_by_query(query: str, timeout: int) -> Dict[str, str]:
     try:
         res = osm.geocode(query, timeout=timeout, namedetails=True).raw
     except (AttributeError, GeocoderServiceError):
@@ -71,7 +71,7 @@ def get_location_by_query(query: str, timeout: int) -> dict:
 
 
 @cache_to(AZELY_LOCATION)
-def get_location_by_ip(query: str, timeout: int) -> dict:
+def get_location_by_ip(query: str, timeout: int) -> Dict[str, str]:
     try:
         res = requests.get(IPINFO_URL, timeout=timeout).json()
     except requests.ConnectionError:

@@ -3,7 +3,7 @@ __all__ = ["get_object"]
 
 # standard library
 from dataclasses import asdict, dataclass
-from typing import Tuple
+from typing import Dict, Tuple
 
 
 # dependent packages
@@ -46,12 +46,12 @@ def get_object(query: str, frame: str = FRAME, timeout: int = TIMEOUT) -> Object
 
 # helper functions
 @cache_to(AZELY_OBJECT)
-def get_object_of_solar(query: str) -> dict:
+def get_object_of_solar(query: str) -> Dict[str, str]:
     return asdict(Object(query, SOLAR, "NaN", "NaN"))
 
 
 @cache_to(AZELY_OBJECT)
-def get_object_by_query(query: str, frame: str, timeout: int) -> dict:
+def get_object_by_query(query: str, frame: str, timeout: int) -> Dict[str, str]:
     with Conf.remote_timeout.set_temp(timeout):
         try:
             res = SkyCoord.from_name(query, frame)
