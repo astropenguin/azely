@@ -28,7 +28,7 @@ def get_time(
     sep: str = SEP,
     timeout: int = TIMEOUT,
 ) -> DatetimeIndex:
-    tzinfo = parse_tzinfo(view, timeout)
+    tzinfo = get_tzinfo(view, timeout)
     name = tzinfo.zone
 
     if query == NOW:
@@ -38,23 +38,23 @@ def get_time(
         end = start + timedelta(days=1)
     elif sep in query:
         queries = query.split(sep)
-        start, end = map(parse_datetime, queries)
+        start, end = map(get_datetime, queries)
     else:
-        start = parse_datetime(query)
+        start = get_datetime(query)
         end = start + timedelta(days=1)
 
     return date_range(start, end, None, freq, tzinfo, name=name)
 
 
 # helper functions
-def parse_tzinfo(query: str, timeout: int) -> tzinfo:
+def get_tzinfo(query: str, timeout: int) -> tzinfo:
     try:
         return pytz.timezone(query)
     except UnknownTimeZoneError:
         return get_location(query, timeout).tzinfo
 
 
-def parse_datetime(query: str) -> datetime:
+def get_datetime(query: str) -> datetime:
     try:
         return parser.parse(query)
     except ParserError:
