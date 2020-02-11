@@ -73,12 +73,8 @@ class set_defaults:
 
 # helper classes
 class TOMLDict(dict):
-    def __init__(self, path: PathLike, create_if_not_exists: bool = True) -> None:
+    def __init__(self, path: PathLike) -> None:
         self.path = Path(path).expanduser()
-
-        if create_if_not_exists:
-            self.path.touch()
-
         super().__init__(self.load_toml())
 
     def load_toml(self) -> dict:
