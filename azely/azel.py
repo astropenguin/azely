@@ -79,12 +79,13 @@ def compute(
     site_ = get_location(site, timeout)
     time_ = get_time(time, view or site, freq, sep, timeout)
 
-    skycoord = get_skycoord(object_, site_, time_)
-    return get_dataframe(skycoord, time_)
+    return get_dataframe(object_, site_, time_)
 
 
 # helper functions
-def get_dataframe(skycoord: SkyCoord, time: DatetimeIndex) -> DataFrame:
+def get_dataframe(object: Object, site: Location, time: DatetimeIndex) -> DataFrame:
+    skycoord = get_skycoord(object, site, time)
+
     az = skycoord.altaz.az
     el = skycoord.altaz.alt
     lst = skycoord.obstime.sidereal_time("mean")
