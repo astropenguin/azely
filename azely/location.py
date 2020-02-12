@@ -4,6 +4,7 @@ __all__ = ["get_location"]
 # standard library
 from dataclasses import asdict, dataclass
 from datetime import tzinfo
+from pathlib import Path
 from typing import Tuple
 
 
@@ -14,13 +15,15 @@ from astropy.coordinates import EarthLocation
 from geopy import Nominatim
 from geopy.exc import GeocoderServiceError
 from timezonefinder import TimezoneFinder
-from . import AzelyError, AZELY_LOCATION
+from . import AzelyError, AZELY_DIR, AZELY_LOCATION
 from .consts import HERE, TIMEOUT
-from .utils import TOMLDict, cache_to
+from .utils import LinkedDict, TOMLDict, cache_to
 
 
 # constants
+DELIMITER = ":"
 IPINFO_URL = "https://ipinfo.io/json"
+TOML_SUFFIX = ".toml"
 
 
 # query instances
@@ -53,13 +56,31 @@ class Location:
 
 # main functions
 def get_location(query: str = HERE, timeout: int = TIMEOUT) -> Location:
-    if query.lower() == HERE:
+    if DELIMITER in query:
+        return Location(**get_location_by_user(query))
+    elif query.lower() == HERE:
         return Location(**get_location_by_ip(query, timeout))
     else:
         return Location(**get_location_by_query(query, timeout))
 
 
 # helper functions
+def get_location_by_user(query: str) -> TOMLDict:
+    path, query = query.split(DELIMITER)
+    path = Path(path).with_suffix(TOML_SUFFIX).expanduser()
+
+    if not path.exists():
+        path = AZELY_DIR / path
+
+    if not path.exists():
+        raise AzelyError(f"Failed to find path: {path}")
+
+    try:
+        return LinkedDict(path)[query]
+    except KeyError:
+        raise AzelyError(f"Failed to get location: {query}")
+
+
 @cache_to(AZELY_LOCATION)
 def get_location_by_query(query: str, timeout: int) -> TOMLDict:
     try:
