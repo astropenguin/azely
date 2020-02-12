@@ -28,7 +28,7 @@ class cache_to:
             bound.apply_defaults()
             query = bound.arguments[self.query]
 
-            with TOMLDict(self.path) as cache:
+            with LinkedDict(self.path) as cache:
                 if query not in cache:
                     item = func(*args, **kwargs)
                     cache.update({query: item})
@@ -72,7 +72,7 @@ class set_defaults:
 
 
 # helper classes
-class TOMLDict(dict):
+class LinkedDict(dict):
     def __init__(self, path: PathLike) -> None:
         self.path = Path(path).expanduser()
         super().__init__(self.load_toml())
