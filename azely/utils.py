@@ -17,7 +17,7 @@ TOMLDict = Dict[str, Union[str, int, float]]
 # main classes
 class cache_to:
     def __init__(self, path: PathLike, query: str = "query") -> None:
-        self.path = Path(path)
+        self.path = ensure_existance(path)
         self.query = query
 
     def __call__(self, func: Callable) -> Callable:
@@ -41,7 +41,7 @@ class cache_to:
 
 class set_defaults:
     def __init__(self, path: PathLike, key: str = "") -> None:
-        self.path = Path(path)
+        self.path = ensure_existance(path)
         self.key = key
 
     def __call__(self, func: Callable) -> Callable:
@@ -74,6 +74,15 @@ class set_defaults:
                 params.append(param.replace())
 
         return sig.replace(parameters=params)
+
+
+# helper functions
+def ensure_existance(path: PathLike) -> Path:
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.touch()
+
+    return path
 
 
 # helper classes
