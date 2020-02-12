@@ -11,7 +11,7 @@ from dateutil import parser
 from pandas import DatetimeIndex, date_range
 from pytz import UnknownTimeZoneError
 from . import AzelyError
-from .consts import HERE, NOW, TODAY, FREQ, TIMEOUT
+from .consts import DAYFIRST, HERE, NOW, TODAY, FREQ, TIMEOUT, YEARFIRST
 from .location import get_location
 
 try:
@@ -21,12 +21,17 @@ except ImportError:
 
 
 # constants
-SEP_QUERY = "to"
+DELIMITER = "to"
 
 
 # main functions
 def get_time(
-    query: str = NOW, view: str = HERE, freq: str = FREQ, timeout: int = TIMEOUT,
+    query: str = NOW,
+    view: str = HERE,
+    freq: str = FREQ,
+    dayfirst: bool = DAYFIRST,
+    yearfirst: bool = YEARFIRST,
+    timeout: int = TIMEOUT,
 ) -> DatetimeIndex:
     tzinfo = get_tzinfo(view, timeout)
     name = tzinfo.zone
@@ -36,11 +41,12 @@ def get_time(
     elif query == TODAY:
         start = datetime.now(tzinfo).date()
         end = start + timedelta(days=1)
-    elif SEP_QUERY in query:
-        queries = query.split(SEP_QUERY)
-        start, end = map(get_datetime, queries)
+    elif DELIMITER in query:
+        queries = query.split(DELIMITER)
+        start = get_datetime(queries[0], dayfirst, yearfirst)
+        end = get_datetime(queries[1], dayfirst, yearfirst)
     else:
-        start = get_datetime(query)
+        start = get_datetime(query, dayfirst, yearfirst)
         end = start + timedelta(days=1)
 
     return date_range(start, end, None, freq, tzinfo, name=name)
@@ -54,8 +60,8 @@ def get_tzinfo(query: str, timeout: int) -> tzinfo:
         return get_location(query, timeout).tzinfo
 
 
-def get_datetime(query: str) -> datetime:
+def get_datetime(query: str, dayfirst: bool, yearfirst: bool) -> datetime:
     try:
-        return parser.parse(query)
+        return parser.parse(query, dayfirst=dayfirst, yearfirst=yearfirst)
     except ParserError:
         raise AzelyError(f"Failed to parse: {query}")
