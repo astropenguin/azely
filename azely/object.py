@@ -3,6 +3,7 @@ __all__ = ["get_object"]
 
 # standard library
 from dataclasses import asdict, dataclass
+from pathlib import Path
 from typing import Tuple
 
 
@@ -10,13 +11,15 @@ from typing import Tuple
 from astropy.coordinates import SkyCoord, solar_system_ephemeris
 from astropy.coordinates.name_resolve import NameResolveError
 from astropy.utils.data import Conf
-from . import AzelyError, AZELY_OBJECT
+from . import AzelyError, AZELY_DIR, AZELY_OBJECT
 from .consts import FRAME, TIMEOUT
-from .utils import TOMLDict, cache_to
+from .utils import LinkedDict, TOMLDict, cache_to
 
 
 # constants
+DELIMITER = ":"
 SOLAR = "solar"
+TOML_SUFFIX = ".toml"
 
 
 # data classes
@@ -38,13 +41,31 @@ class Object:
 
 # main functions
 def get_object(query: str, frame: str = FRAME, timeout: int = TIMEOUT) -> Object:
-    if query.lower() in solar_system_ephemeris.bodies:
+    if DELIMITER in query:
+        return Object(**get_object_by_user(query))
+    elif query.lower() in solar_system_ephemeris.bodies:
         return Object(**get_object_of_solar(query))
     else:
         return Object(**get_object_by_query(query, frame, timeout))
 
 
 # helper functions
+def get_object_by_user(query: str) -> TOMLDict:
+    path, query = query.split(DELIMITER)
+    path = Path(path).with_suffix(TOML_SUFFIX).expanduser()
+
+    if not path.exists():
+        path = AZELY_DIR / path
+
+    if not path.exists():
+        raise AzelyError(f"Failed to find path: {path}")
+
+    try:
+        return LinkedDict(path)[query]
+    except KeyError:
+        raise AzelyError(f"Failed to get object: {query}")
+
+
 @cache_to(AZELY_OBJECT)
 def get_object_of_solar(query: str) -> TOMLDict:
     return asdict(Object(query, SOLAR, "NaN", "NaN"))
