@@ -11,7 +11,7 @@ import toml
 
 # constants
 PathLike = Union[Path, str]
-TOMLDict = Dict[str, Union[str, int, float]]
+TOMLDict = Dict[str, Union[str, int, float, bool]]
 
 
 # main classes
