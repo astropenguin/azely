@@ -3,50 +3,29 @@ __author__ = "Akio Taniguchi"
 
 
 # immediate functions
-def _get_azely_path(filename: str):
-    """Get path of azely file."""
+def _get_azely_dir():
+    """Get path of azely directory."""
     # standard library
-    import os
+    from os import environ, getenv
     from pathlib import Path
 
     # constants
     AZELY_DIR = "AZELY_DIR"
     XDG_CONFIG_HOME = "XDG_CONFIG_HOME"
-    XDG_CONFIG_HOME_ALT = Path().home() / ".config"
 
-    if AZELY_DIR in os.environ:
-        azely_dir = Path(os.getenv(AZELY_DIR))
-    elif XDG_CONFIG_HOME in os.environ:
-        azely_dir = Path(os.getenv(XDG_CONFIG_HOME)) / "azely"
+    if AZELY_DIR in environ:
+        return Path(getenv(AZELY_DIR))
+    elif XDG_CONFIG_HOME in environ:
+        return Path(getenv(XDG_CONFIG_HOME)) / "azely"
     else:
-        azely_dir = XDG_CONFIG_HOME_ALT / "azely"
-
-    return azely_dir / filename
-
-
-def _load_azely_config(path):
-    """Load azely's config written in TOML."""
-    # standard library
-    from collections import defaultdict
-
-    # dependent packages
-    import toml
-
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.touch()
-
-    with path.open("r") as f:
-        return defaultdict(dict, toml.load(f))
+        return Path().home() / ".config" / "azely"
 
 
 # constants
-AZELY_CONFIG = _get_azely_path("config.toml")
-AZELY_OBJECT = _get_azely_path("object.toml")
-AZELY_LOCATION = _get_azely_path("location.toml")
-
-
-# config
-config = _load_azely_config(AZELY_CONFIG)
+AZELY_DIR = _get_azely_dir()
+AZELY_CONFIG = AZELY_DIR / "config.toml"
+AZELY_OBJECT = AZELY_DIR / "object.toml"
+AZELY_LOCATION = AZELY_DIR / "location.toml"
 
 
 # base error class

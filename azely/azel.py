@@ -10,7 +10,7 @@ from astropy.coordinates import SkyCoord, get_body
 from astropy.time import Time
 from pandas import DataFrame, DatetimeIndex, Series, to_timedelta
 from pandas.api.extensions import register_dataframe_accessor
-from . import config
+from . import AZELY_CONFIG
 from .consts import HERE, NOW, FRAME, FREQ, SEP, TIMEOUT
 from .utils import set_defaults
 from .location import Location, get_location
@@ -64,7 +64,7 @@ class AsUTCAccessor(AsAccessor):
 
 
 # main functions
-@set_defaults(**config["compute"])
+@set_defaults(AZELY_CONFIG, "compute")
 def compute(
     object: str,
     site: str = HERE,
