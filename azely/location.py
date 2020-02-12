@@ -5,7 +5,7 @@ __all__ = ["get_location"]
 from dataclasses import asdict, dataclass
 from datetime import tzinfo
 from pathlib import Path
-from typing import Tuple
+from typing import Dict, Tuple
 
 
 # dependent packages
@@ -17,7 +17,7 @@ from geopy.exc import GeocoderServiceError
 from timezonefinder import TimezoneFinder
 from . import AzelyError, AZELY_DIR, AZELY_LOCATION
 from .consts import HERE, TIMEOUT
-from .utils import LinkedDict, TOMLDict, cache_to
+from .utils import TOMLDict, cache_to
 
 
 # constants
@@ -65,7 +65,7 @@ def get_location(query: str = HERE, timeout: int = TIMEOUT) -> Location:
 
 
 # helper functions
-def get_location_by_user(query: str) -> TOMLDict:
+def get_location_by_user(query: str) -> Dict[str, str]:
     path, query = query.split(DELIMITER)
     path = Path(path).with_suffix(TOML_SUFFIX).expanduser()
 
@@ -76,13 +76,13 @@ def get_location_by_user(query: str) -> TOMLDict:
         raise AzelyError(f"Failed to find path: {path}")
 
     try:
-        return LinkedDict(path)[query]
+        return TOMLDict(path)[query]
     except KeyError:
         raise AzelyError(f"Failed to get location: {query}")
 
 
 @cache_to(AZELY_LOCATION)
-def get_location_by_query(query: str, timeout: int) -> TOMLDict:
+def get_location_by_query(query: str, timeout: int) -> Dict[str, str]:
     try:
         res = osm.geocode(query, timeout=timeout, namedetails=True).raw
     except (AttributeError, GeocoderServiceError):
@@ -92,7 +92,7 @@ def get_location_by_query(query: str, timeout: int) -> TOMLDict:
 
 
 @cache_to(AZELY_LOCATION)
-def get_location_by_ip(query: str, timeout: int) -> TOMLDict:
+def get_location_by_ip(query: str, timeout: int) -> Dict[str, str]:
     try:
         res = requests.get(IPINFO_URL, timeout=timeout).json()
     except requests.ConnectionError:

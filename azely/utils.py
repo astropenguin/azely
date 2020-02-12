@@ -2,7 +2,7 @@
 from functools import wraps
 from inspect import Signature, signature
 from pathlib import Path
-from typing import Callable, Dict, Union
+from typing import Any, Callable, Dict, Union
 
 
 # dependent packages
@@ -11,7 +11,6 @@ import toml
 
 # constants
 PathLike = Union[Path, str]
-TOMLDict = Dict[str, Union[str, int, float, bool]]
 
 
 # main classes
@@ -29,7 +28,7 @@ class cache_to:
             bound.apply_defaults()
             query = bound.arguments[self.query]
 
-            with LinkedDict(self.path) as cache:
+            with TOMLDict(self.path) as cache:
                 if query not in cache:
                     item = func(*args, **kwargs)
                     cache.update({query: item})
@@ -49,7 +48,7 @@ class set_defaults:
 
         @wraps(func)
         def wrapper(*args, **kwargs):
-            defaults = LinkedDict(self.path)
+            defaults = TOMLDict(self.path)
 
             if self.key:
                 defaults = defaults.get(self.key, {})
@@ -63,7 +62,7 @@ class set_defaults:
         return wrapper
 
     @staticmethod
-    def update(sig: Signature, defaults: TOMLDict) -> Signature:
+    def update(sig: Signature, defaults: Dict[str, Any]) -> Signature:
         params = []
 
         for param in sig.parameters.values():
@@ -86,12 +85,12 @@ def ensure_existance(path: PathLike) -> Path:
 
 
 # helper classes
-class LinkedDict(dict):
+class TOMLDict(dict):
     def __init__(self, path: PathLike) -> None:
         self.path = Path(path)
         super().__init__(self.load_toml())
 
-    def load_toml(self) -> TOMLDict:
+    def load_toml(self) -> Dict[str, Any]:
         with self.path.open("r") as f:
             return toml.load(f)
 
