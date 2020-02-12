@@ -5,11 +5,9 @@ __author__ = "Akio Taniguchi"
 # immediate functions
 def _get_azely_dir():
     """Get path of azely directory."""
-    # standard library
     from os import environ, getenv
     from pathlib import Path
 
-    # constants
     AZELY_DIR = "AZELY_DIR"
     XDG_CONFIG_HOME = "XDG_CONFIG_HOME"
 
