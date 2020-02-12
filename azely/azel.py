@@ -11,7 +11,7 @@ from astropy.time import Time
 from pandas import DataFrame, DatetimeIndex, Series, to_timedelta
 from pandas.api.extensions import register_dataframe_accessor
 from . import AZELY_CONFIG
-from .consts import HERE, NOW, FRAME, FREQ, SEP, TIMEOUT
+from .consts import HERE, NOW, FRAME, FREQ, TIMEOUT
 from .utils import set_defaults
 from .location import Location, get_location
 from .object import Object, get_object
@@ -72,12 +72,11 @@ def compute(
     view: str = "",
     frame: str = FRAME,
     freq: str = FREQ,
-    sep: str = SEP,
     timeout: int = TIMEOUT,
 ) -> DataFrame:
     object_ = get_object(object, frame, timeout)
     site_ = get_location(site, timeout)
-    time_ = get_time(time, view or site, freq, sep, timeout)
+    time_ = get_time(time, view or site, freq, timeout)
 
     return compute_from(object_, site_, time_)
 

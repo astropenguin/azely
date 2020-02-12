@@ -11,7 +11,7 @@ from dateutil import parser
 from pandas import DatetimeIndex, date_range
 from pytz import UnknownTimeZoneError
 from . import AzelyError
-from .consts import HERE, NOW, TODAY, FREQ, SEP, TIMEOUT
+from .consts import HERE, NOW, TODAY, FREQ, TIMEOUT
 from .location import get_location
 
 try:
@@ -20,13 +20,13 @@ except ImportError:
     ParserError = ValueError
 
 
+# constants
+SEP_QUERY = "to"
+
+
 # main functions
 def get_time(
-    query: str = NOW,
-    view: str = HERE,
-    freq: str = FREQ,
-    sep: str = SEP,
-    timeout: int = TIMEOUT,
+    query: str = NOW, view: str = HERE, freq: str = FREQ, timeout: int = TIMEOUT,
 ) -> DatetimeIndex:
     tzinfo = get_tzinfo(view, timeout)
     name = tzinfo.zone
@@ -36,8 +36,8 @@ def get_time(
     elif query == TODAY:
         start = datetime.now(tzinfo).date()
         end = start + timedelta(days=1)
-    elif sep in query:
-        queries = query.split(sep)
+    elif SEP_QUERY in query:
+        queries = query.split(SEP_QUERY)
         start, end = map(get_datetime, queries)
     else:
         start = get_datetime(query)
