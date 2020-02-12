@@ -2,7 +2,7 @@
 from functools import wraps
 from inspect import Signature, signature
 from pathlib import Path
-from typing import Callable, Union
+from typing import Callable, Dict, Union
 
 
 # dependent packages
@@ -11,6 +11,7 @@ import toml
 
 # constants
 PathLike = Union[Path, str]
+TOMLDict = Dict[str, Union[str, int, float]]
 
 
 # main classes
@@ -77,7 +78,7 @@ class LinkedDict(dict):
         self.path = Path(path)
         super().__init__(self.load_toml())
 
-    def load_toml(self) -> dict:
+    def load_toml(self) -> TOMLDict:
         with self.path.open("r") as f:
             return toml.load(f)
 
