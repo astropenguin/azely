@@ -79,11 +79,11 @@ def compute(
     site_ = get_location(site, timeout)
     time_ = get_time(time, view or site, freq, sep, timeout)
 
-    return get_dataframe(object_, site_, time_)
+    return compute_from(object_, site_, time_)
 
 
 # helper functions
-def get_dataframe(object: Object, site: Location, time: DatetimeIndex) -> DataFrame:
+def compute_from(object: Object, site: Location, time: DatetimeIndex) -> DataFrame:
     skycoord = get_skycoord(object, site, time)
 
     az = skycoord.altaz.az
