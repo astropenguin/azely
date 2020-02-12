@@ -4,7 +4,7 @@ __all__ = ["get_object"]
 # standard library
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Tuple
+from typing import Dict, Tuple
 
 
 # dependent packages
@@ -13,7 +13,7 @@ from astropy.coordinates.name_resolve import NameResolveError
 from astropy.utils.data import Conf
 from . import AzelyError, AZELY_DIR, AZELY_OBJECT
 from .consts import FRAME, TIMEOUT
-from .utils import LinkedDict, TOMLDict, cache_to
+from .utils import TOMLDict, cache_to
 
 
 # constants
@@ -50,7 +50,7 @@ def get_object(query: str, frame: str = FRAME, timeout: int = TIMEOUT) -> Object
 
 
 # helper functions
-def get_object_by_user(query: str) -> TOMLDict:
+def get_object_by_user(query: str) -> Dict[str, str]:
     path, query = query.split(DELIMITER)
     path = Path(path).with_suffix(TOML_SUFFIX).expanduser()
 
@@ -61,18 +61,18 @@ def get_object_by_user(query: str) -> TOMLDict:
         raise AzelyError(f"Failed to find path: {path}")
 
     try:
-        return LinkedDict(path)[query]
+        return TOMLDict(path)[query]
     except KeyError:
         raise AzelyError(f"Failed to get object: {query}")
 
 
 @cache_to(AZELY_OBJECT)
-def get_object_of_solar(query: str) -> TOMLDict:
+def get_object_of_solar(query: str) -> Dict[str, str]:
     return asdict(Object(query, SOLAR, "NaN", "NaN"))
 
 
 @cache_to(AZELY_OBJECT)
-def get_object_by_query(query: str, frame: str, timeout: int) -> TOMLDict:
+def get_object_by_query(query: str, frame: str, timeout: int) -> Dict[str, str]:
     with Conf.remote_timeout.set_temp(timeout):
         try:
             res = SkyCoord.from_name(query, frame)
