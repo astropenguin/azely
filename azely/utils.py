@@ -40,34 +40,38 @@ class cache_to:
 
 
 class set_defaults:
-    def __init__(self, **defaults: dict) -> None:
-        self.defaults = defaults
+    def __init__(self, path: PathLike, key: str = "") -> None:
+        self.path = Path(path)
+        self.key = key
 
     def __call__(self, func: Callable) -> Callable:
-        sig = self.get_signature(func)
+        sig = signature(func)
 
         @wraps(func)
         def wrapper(*args, **kwargs):
-            bound = sig.bind(*args, **kwargs)
+            defaults = LinkedDict(self.path)
+
+            if self.key:
+                defaults = defaults.get(self.key, {})
+
+            updated = self.update(sig, defaults)
+            bound = updated.bind(*args, **kwargs)
             bound.apply_defaults()
+
             return func(*bound.args, **bound.kwargs)
 
         return wrapper
 
-    def get_signature(self, func: Callable) -> Signature:
-        sig = signature(func)
+    @staticmethod
+    def update(sig: Signature, defaults: TOMLDict) -> Signature:
         params = []
 
         for param in sig.parameters.values():
-            if param.kind == param.VAR_POSITIONAL:
-                params.append(param.replace())
-            elif param.kind == param.VAR_POSITIONAL:
-                params.append(param.replace())
-            elif param.name not in self.defaults:
-                params.append(param.replace())
-            else:
-                default = self.defaults[param.name]
+            try:
+                default = defaults[param.name]
                 params.append(param.replace(default=default))
+            except (KeyError, ValueError):
+                params.append(param.replace())
 
         return sig.replace(parameters=params)
 
