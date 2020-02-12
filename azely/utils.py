@@ -16,7 +16,7 @@ PathLike = Union[Path, str]
 # main classes
 class cache_to:
     def __init__(self, path: PathLike, query: str = "query") -> None:
-        self.path = Path(path).expanduser()
+        self.path = Path(path)
         self.query = query
 
     def __call__(self, func: Callable) -> Callable:
@@ -74,7 +74,7 @@ class set_defaults:
 # helper classes
 class LinkedDict(dict):
     def __init__(self, path: PathLike) -> None:
-        self.path = Path(path).expanduser()
+        self.path = Path(path)
         super().__init__(self.load_toml())
 
     def load_toml(self) -> dict:
