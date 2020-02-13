@@ -14,6 +14,10 @@ PathLike = Union[Path, str]
 
 
 # main classes
+class AzelyError(Exception):
+    pass
+
+
 class cache_to:
     def __init__(self, path: PathLike, query: str = "query") -> None:
         self.path = ensure_existance(path)
