@@ -5,21 +5,30 @@ __all__ = ["compute"]
 
 
 # dependent packages
-import pytz
 from astropy.coordinates import SkyCoord, get_body
-from astropy.time import Time
-from pandas import DataFrame, DatetimeIndex, Series, to_timedelta
+from astropy.time import Time as ObsTime
+from pandas import DataFrame, Series, to_timedelta
 from pandas.api.extensions import register_dataframe_accessor
-from . import AZELY_CONFIG
-from .consts import DAYFIRST, HERE, NOW, FRAME, FREQ, TIMEOUT, YEARFIRST
 from .utils import set_defaults
 from .location import Location, get_location
 from .object import Object, get_object
-from .time import get_time
+from .time import Time, get_time
 
 
 # constants
+from .consts import (
+    AZELY_CONFIG,
+    DAYFIRST,
+    HERE,
+    NOW,
+    FRAME,
+    FREQ,
+    TIMEOUT,
+    YEARFIRST,
+)
+
 SOLAR_TO_SIDEREAL = 1.002_737_909
+UTC = "UTC"
 
 
 # data accessor
@@ -42,14 +51,14 @@ class AsLSTAccessor(AsAccessor):
         super().__init__(*args, **kwargs)
 
     @property
-    def index(self) -> DatetimeIndex:
+    def index(self) -> Time:
         df = self.accessed
         td_solar = df.index - df.index[0]
         td_sidereal = td_solar * SOLAR_TO_SIDEREAL + df.lst[0]
         td_sidereal = td_sidereal.floor("1D") + df.lst
 
         index = df.index[0].floor("1D").tz_localize(None) + td_sidereal
-        return DatetimeIndex(index, name="Local Sidereal Time")
+        return Time(index, name="Local Sidereal Time")
 
 
 @register_dataframe_accessor("as_utc")
@@ -58,9 +67,9 @@ class AsUTCAccessor(AsAccessor):
         super().__init__(*args, **kwargs)
 
     @property
-    def index(self) -> DatetimeIndex:
-        index = self.accessed.index.tz_convert(pytz.UTC)
-        return DatetimeIndex(index, name=index.tzinfo.zone)
+    def index(self) -> Time:
+        index = self.accessed.index.tz_convert(UTC)
+        return Time(index, name=index.tzinfo.zone)
 
 
 # main functions
@@ -84,7 +93,7 @@ def compute(
 
 
 # helper functions
-def compute_from(object: Object, site: Location, time: DatetimeIndex) -> DataFrame:
+def compute_from(object: Object, site: Location, time: Time) -> DataFrame:
     skycoord = get_skycoord(object, site, time)
 
     az = skycoord.altaz.az
@@ -95,9 +104,9 @@ def compute_from(object: Object, site: Location, time: DatetimeIndex) -> DataFra
     return DataFrame(dict(az=az, el=el, lst=lst), index=time)
 
 
-def get_skycoord(object: Object, site: Location, time: DatetimeIndex) -> SkyCoord:
-    time_utc_naive = time.tz_convert(pytz.UTC).tz_localize(None)
-    obstime = Time(time_utc_naive, location=site.earthloc)
+def get_skycoord(object: Object, site: Location, time: Time) -> SkyCoord:
+    time_utc_naive = time.tz_convert(UTC).tz_localize(None)
+    obstime = ObsTime(time_utc_naive, location=site.earthloc)
 
     if object.is_solar:
         skycoord = get_body(object.name, time=obstime)

@@ -9,18 +9,23 @@ from typing import Dict, Tuple
 
 
 # dependent packages
-import pytz
 import requests
 from astropy.coordinates import EarthLocation
 from geopy import Nominatim
 from geopy.exc import GeocoderServiceError
+from pytz import timezone
 from timezonefinder import TimezoneFinder
-from . import AzelyError, AZELY_DIR, AZELY_LOCATION
-from .consts import HERE, TIMEOUT
-from .utils import TOMLDict, cache_to
+from .utils import AzelyError, TOMLDict, cache_to
 
 
 # constants
+from .consts import (
+    AZELY_DIR,
+    AZELY_LOCATION,
+    HERE,
+    TIMEOUT,
+)
+
 DELIMITER = ":"
 IPINFO_URL = "https://ipinfo.io/json"
 TOML_SUFFIX = ".toml"
@@ -46,7 +51,7 @@ class Location:
     @property
     def tzinfo(self) -> tzinfo:
         coords = self.coords
-        return pytz.timezone(tf.timezone_at(lng=coords[0], lat=coords[1]))
+        return timezone(tf.timezone_at(lng=coords[0], lat=coords[1]))
 
     @property
     def earthloc(self) -> EarthLocation:

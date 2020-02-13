@@ -11,12 +11,17 @@ from typing import Dict, Tuple
 from astropy.coordinates import SkyCoord, solar_system_ephemeris
 from astropy.coordinates.name_resolve import NameResolveError
 from astropy.utils.data import Conf
-from . import AzelyError, AZELY_DIR, AZELY_OBJECT
-from .consts import FRAME, TIMEOUT
-from .utils import TOMLDict, cache_to
+from .utils import AzelyError, TOMLDict, cache_to
 
 
 # constants
+from .consts import (
+    AZELY_DIR,
+    AZELY_OBJECT,
+    FRAME,
+    TIMEOUT,
+)
+
 DELIMITER = ":"
 SOLAR = "solar"
 TOML_SUFFIX = ".toml"

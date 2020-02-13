@@ -6,12 +6,11 @@ from datetime import datetime, timedelta, tzinfo
 
 
 # dependent packages
-import pytz
 from dateutil import parser
-from pandas import DatetimeIndex, date_range
-from pytz import UnknownTimeZoneError
-from . import AzelyError
-from .consts import DAYFIRST, HERE, NOW, TODAY, FREQ, TIMEOUT, YEARFIRST
+from pandas import date_range
+from pandas import DatetimeIndex as Time
+from pytz import UnknownTimeZoneError, timezone
+from .utils import AzelyError
 from .location import get_location
 
 try:
@@ -21,6 +20,16 @@ except ImportError:
 
 
 # constants
+from .consts import (
+    DAYFIRST,
+    HERE,
+    NOW,
+    TODAY,
+    FREQ,
+    TIMEOUT,
+    YEARFIRST,
+)
+
 DELIMITER = "to"
 
 
@@ -32,7 +41,7 @@ def get_time(
     dayfirst: bool = DAYFIRST,
     yearfirst: bool = YEARFIRST,
     timeout: int = TIMEOUT,
-) -> DatetimeIndex:
+) -> Time:
     tzinfo = get_tzinfo(view, timeout)
     name = tzinfo.zone
 
@@ -55,7 +64,7 @@ def get_time(
 # helper functions
 def get_tzinfo(query: str, timeout: int) -> tzinfo:
     try:
-        return pytz.timezone(query)
+        return timezone(query)
     except UnknownTimeZoneError:
         return get_location(query, timeout).tzinfo
 
