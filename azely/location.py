@@ -31,6 +31,10 @@ IPINFO_URL = "https://ipinfo.io/json"
 TOML_SUFFIX = ".toml"
 
 
+# type aliases
+LocationDict = Dict[str, str]
+
+
 # query instances
 tf = TimezoneFinder()
 osm = Nominatim(user_agent="azely")
@@ -70,7 +74,7 @@ def get_location(query: str = HERE, timeout: int = TIMEOUT) -> Location:
 
 
 # helper functions
-def get_location_by_user(query: str) -> Dict[str, str]:
+def get_location_by_user(query: str) -> LocationDict:
     path, query = query.split(DELIMITER)
     path = Path(path).with_suffix(TOML_SUFFIX).expanduser()
 
@@ -87,7 +91,7 @@ def get_location_by_user(query: str) -> Dict[str, str]:
 
 
 @cache_to(AZELY_LOCATION)
-def get_location_by_query(query: str, timeout: int) -> Dict[str, str]:
+def get_location_by_query(query: str, timeout: int) -> LocationDict:
     try:
         res = osm.geocode(query, timeout=timeout, namedetails=True).raw
     except (AttributeError, GeocoderServiceError):
@@ -97,7 +101,7 @@ def get_location_by_query(query: str, timeout: int) -> Dict[str, str]:
 
 
 @cache_to(AZELY_LOCATION)
-def get_location_by_ip(query: str, timeout: int) -> Dict[str, str]:
+def get_location_by_ip(query: str, timeout: int) -> LocationDict:
     try:
         res = requests.get(IPINFO_URL, timeout=timeout).json()
     except requests.ConnectionError:

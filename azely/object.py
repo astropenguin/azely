@@ -27,6 +27,10 @@ SOLAR = "solar"
 TOML_SUFFIX = ".toml"
 
 
+# type aliases
+ObjectDict = Dict[str, str]
+
+
 # data classes
 @dataclass(frozen=True)
 class Object:
@@ -55,7 +59,7 @@ def get_object(query: str, frame: str = FRAME, timeout: int = TIMEOUT) -> Object
 
 
 # helper functions
-def get_object_by_user(query: str) -> Dict[str, str]:
+def get_object_by_user(query: str) -> ObjectDict:
     path, query = query.split(DELIMITER)
     path = Path(path).with_suffix(TOML_SUFFIX).expanduser()
 
@@ -72,12 +76,12 @@ def get_object_by_user(query: str) -> Dict[str, str]:
 
 
 @cache_to(AZELY_OBJECT)
-def get_object_of_solar(query: str) -> Dict[str, str]:
+def get_object_of_solar(query: str) -> ObjectDict:
     return asdict(Object(query, SOLAR, "NaN", "NaN"))
 
 
 @cache_to(AZELY_OBJECT)
-def get_object_by_query(query: str, frame: str, timeout: int) -> Dict[str, str]:
+def get_object_by_query(query: str, frame: str, timeout: int) -> ObjectDict:
     with Conf.remote_timeout.set_temp(timeout):
         try:
             res = SkyCoord.from_name(query, frame)
