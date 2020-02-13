@@ -9,7 +9,7 @@ from typing import Any, Callable, Dict, Union
 import toml
 
 
-# constants
+# type aliases
 PathLike = Union[Path, str]
 
 
@@ -82,6 +82,7 @@ class set_defaults:
 # helper functions
 def ensure_existance(path: PathLike) -> Path:
     path = Path(path)
+
     path.parent.mkdir(parents=True, exist_ok=True)
     path.touch()
 
