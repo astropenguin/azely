@@ -28,11 +28,11 @@ from .consts import (
 )
 
 SOLAR_TO_SIDEREAL = 1.002_737_909
-UTC = "UTC"
 
 
 # data accessor
-class AsAccessor:
+@register_dataframe_accessor("as_lst")
+class AsLSTAccessor:
     def __init__(self, accessed: DataFrame) -> None:
         self.accessed = accessed
 
@@ -44,12 +44,6 @@ class AsAccessor:
     def el(self) -> Series:
         return self.accessed.set_index(self.index).el
 
-
-@register_dataframe_accessor("as_lst")
-class AsLSTAccessor(AsAccessor):
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-
     @property
     def index(self) -> Time:
         df = self.accessed
@@ -59,17 +53,6 @@ class AsLSTAccessor(AsAccessor):
 
         index = df.index[0].floor("1D").tz_localize(None) + td_sidereal
         return Time(index, name="Local Sidereal Time")
-
-
-@register_dataframe_accessor("as_utc")
-class AsUTCAccessor(AsAccessor):
-    def __init__(self, *args, **kwargs) -> None:
-        super().__init__(*args, **kwargs)
-
-    @property
-    def index(self) -> Time:
-        index = self.accessed.index.tz_convert(UTC)
-        return Time(index, name=index.tzinfo.zone)
 
 
 # main functions
