@@ -8,11 +8,11 @@ from typing import Dict
 
 
 # dependent packages
-import pytz
-import requests
 from astropy.coordinates import EarthLocation
 from geopy import Nominatim
 from geopy.exc import GeocoderServiceError
+from pytz import timezone
+from requests import ConnectionError, api
 from timezonefinder import TimezoneFinder
 from .utils import AzelyError, cache_to, open_toml
 
@@ -49,7 +49,7 @@ class Location:
     @property
     def tzinfo(self) -> tzinfo:
         lon, lat = map(float, (self.longitude, self.latitude))
-        return pytz.timezone(tf.timezone_at(lng=lon, lat=lat))
+        return timezone(tf.timezone_at(lng=lon, lat=lat))
 
     def to_earthloc(self) -> EarthLocation:
         lon, lat, alt = map(float, (self.longitude, self.latitude, self.altitude))
@@ -89,8 +89,8 @@ def get_location_by_query(query: str, timeout: int) -> LocationDict:
 @cache_to(AZELY_LOCATION)
 def get_location_by_ip(query: str, timeout: int) -> LocationDict:
     try:
-        res = requests.get(IPINFO_URL, timeout=timeout).json()
-    except requests.ConnectionError:
+        res = api.get(IPINFO_URL, timeout=timeout).json()
+    except ConnectionError:
         raise AzelyError("Failed to get location by IP address")
 
     return asdict(Location(res["city"], *res["loc"].split(",")[::-1]))

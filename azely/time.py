@@ -12,7 +12,7 @@ from astropy.coordinates import EarthLocation
 from astropy.time import Time as ObsTime
 from dateutil.parser import parse
 from pandas import DatetimeIndex, date_range
-from pytz import UTC, UnknownTimeZoneError, timezone
+from pytz import UnknownTimeZoneError, timezone, utc
 from .utils import AzelyError
 from .location import get_location
 
@@ -36,7 +36,7 @@ class Time(DatetimeIndex):
         return super().__new__(cls, *args, **kwargs)
 
     def to_obstime(self, earthloc: EarthLocation) -> ObsTime:
-        utc_naive = self.tz_convert(UTC).tz_localize(None)
+        utc_naive = self.tz_convert(utc).tz_localize(None)
         return ObsTime(utc_naive, location=earthloc)
 
 
