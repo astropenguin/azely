@@ -3,21 +3,18 @@ __all__ = ["get_time"]
 
 # standard library
 from datetime import datetime, timedelta, tzinfo
+from functools import partial
+from typing import Callable
 
 
 # dependent packages
-from dateutil import parser
-from pandas import date_range
-from pandas import DatetimeIndex as Time
-from pytz import UnknownTimeZoneError, timezone
+from astropy.coordinates import EarthLocation
+from astropy.time import Time as ObsTime
+from dateutil.parser import parse
+from pandas import DatetimeIndex, date_range
+from pytz import UTC, UnknownTimeZoneError, timezone
 from .utils import AzelyError
 from .location import get_location
-
-try:
-    from dateutil.parser import ParserError
-except ImportError:
-    ParserError = ValueError
-
 
 # constants
 from .consts import (
@@ -33,6 +30,16 @@ from .consts import (
 DELIMITER = "to"
 
 
+# data classes
+class Time(DatetimeIndex):
+    def __new__(cls, *args, **kwargs):
+        return super().__new__(cls, *args, **kwargs)
+
+    def to_obstime(self, earthloc: EarthLocation) -> ObsTime:
+        utc_naive = self.tz_convert(UTC).tz_localize(None)
+        return ObsTime(utc_naive, location=earthloc)
+
+
 # main functions
 def get_time(
     query: str = NOW,
@@ -42,35 +49,44 @@ def get_time(
     yearfirst: bool = YEARFIRST,
     timeout: int = TIMEOUT,
 ) -> Time:
-    tzinfo = get_tzinfo(view, timeout)
-    name = tzinfo.zone
+    try:
+        tzinfo = timezone(view)
+    except UnknownTimeZoneError:
+        tzinfo = get_location(view, timeout).tzinfo
 
     if query == NOW:
-        start = end = datetime.now(tzinfo)
+        return Time(get_time_now(tzinfo))
     elif query == TODAY:
-        start = datetime.now(tzinfo).date()
-        end = start + timedelta(days=1)
-    elif DELIMITER in query:
-        queries = query.split(DELIMITER)
-        start = get_datetime(queries[0], dayfirst, yearfirst)
-        end = get_datetime(queries[1], dayfirst, yearfirst)
+        return Time(get_time_today(freq, tzinfo))
     else:
-        start = get_datetime(query, dayfirst, yearfirst)
-        end = start + timedelta(days=1)
-
-    return date_range(start, end, None, freq, tzinfo, name=name)
+        parser = partial(parse, dayfirst=dayfirst, yearfirst=yearfirst)
+        return Time(get_time_period(query, freq, tzinfo, parser))
 
 
 # helper functions
-def get_tzinfo(query: str, timeout: int) -> tzinfo:
-    try:
-        return timezone(query)
-    except UnknownTimeZoneError:
-        return get_location(query, timeout).tzinfo
+def get_time_now(tzinfo: tzinfo) -> DatetimeIndex:
+    start = end = datetime.now(tzinfo)
+    return date_range(start, end, tz=tzinfo, name=tzinfo.zone)
 
 
-def get_datetime(query: str, dayfirst: bool, yearfirst: bool) -> datetime:
+def get_time_today(freq: str, tzinfo: tzinfo) -> DatetimeIndex:
+    start = datetime.now(tzinfo).date()
+    end = start + timedelta(days=1)
+    return date_range(start, end, None, freq, tz=tzinfo, name=tzinfo.zone)
+
+
+def get_time_period(
+    query: str, freq: str, tzinfo: tzinfo, parser: Callable
+) -> DatetimeIndex:
+    period = query.split(DELIMITER)
+
     try:
-        return parser.parse(query, dayfirst=dayfirst, yearfirst=yearfirst)
-    except ParserError:
+        if len(period) == 1:
+            start = parser(period[0])
+            end = start + timedelta(days=1)
+        else:
+            start, end = map(parser, period)
+    except ValueError:
         raise AzelyError(f"Failed to parse: {query}")
+
+    return date_range(start, end, None, freq, tz=tzinfo, name=tzinfo.zone)
