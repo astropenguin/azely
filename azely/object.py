@@ -3,7 +3,6 @@ __all__ = ["get_object"]
 
 # standard library
 from dataclasses import asdict, dataclass
-from pathlib import Path
 from typing import Dict
 
 
@@ -12,7 +11,7 @@ from astropy.coordinates import SkyCoord, get_body, solar_system_ephemeris
 from astropy.time import Time as ObsTime
 from astropy.coordinates.name_resolve import NameResolveError
 from astropy.utils.data import Conf
-from .utils import AzelyError, TOMLDict, cache_to
+from .utils import AzelyError, cache_to, open_toml
 
 
 # constants
@@ -25,7 +24,6 @@ from .consts import (
 
 DELIMITER = ":"
 SOLAR = "solar"
-TOML_SUFFIX = ".toml"
 
 
 # type aliases
@@ -68,16 +66,9 @@ def get_object(query: str, frame: str = FRAME, timeout: int = TIMEOUT) -> Object
 # helper functions
 def get_object_by_user(query: str) -> ObjectDict:
     path, query = query.split(DELIMITER)
-    path = Path(path).with_suffix(TOML_SUFFIX).expanduser()
-
-    if not path.exists():
-        path = AZELY_DIR / path
-
-    if not path.exists():
-        raise AzelyError(f"Failed to find path: {path}")
 
     try:
-        return TOMLDict(path)[query]
+        return open_toml(path, AZELY_DIR)[query]
     except KeyError:
         raise AzelyError(f"Failed to get object: {query}")
 
