@@ -4,11 +4,12 @@ __all__ = ["get_object"]
 # standard library
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Dict, Tuple
+from typing import Dict
 
 
 # dependent packages
-from astropy.coordinates import SkyCoord, solar_system_ephemeris
+from astropy.coordinates import SkyCoord, get_body, solar_system_ephemeris
+from astropy.time import Time as ObsTime
 from astropy.coordinates.name_resolve import NameResolveError
 from astropy.utils.data import Conf
 from .utils import AzelyError, TOMLDict, cache_to
@@ -39,13 +40,19 @@ class Object:
     longitude: str
     latitude: str
 
-    @property
     def is_solar(self) -> bool:
         return self.frame == SOLAR
 
-    @property
-    def coords(self) -> Tuple[str]:
-        return self.longitude, self.latitude
+    def to_skycoord(self, obstime: ObsTime) -> SkyCoord:
+        if self.is_solar():
+            skycoord = get_body(self.name, time=obstime)
+        else:
+            coords = self.longitude, self.latitude
+            skycoord = SkyCoord(*coords, frame=self.frame, obstime=obstime)
+
+        skycoord.location = obstime.location
+        skycoord.info.name = self.name
+        return skycoord
 
 
 # main functions
