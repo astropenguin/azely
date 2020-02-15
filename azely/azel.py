@@ -5,8 +5,6 @@ __all__ = ["compute"]
 
 
 # dependent packages
-from astropy.coordinates import SkyCoord, get_body
-from astropy.time import Time as ObsTime
 from pandas import DataFrame, Series, to_timedelta
 from pandas.api.extensions import register_dataframe_accessor
 from .utils import set_defaults
@@ -77,7 +75,8 @@ def compute(
 
 # helper functions
 def compute_from(object: Object, site: Location, time: Time) -> DataFrame:
-    skycoord = get_skycoord(object, site, time)
+    obstime = time.to_obstime(site.to_earthloc())
+    skycoord = object.to_skycoord(obstime)
 
     az = skycoord.altaz.az
     el = skycoord.altaz.alt
@@ -85,17 +84,3 @@ def compute_from(object: Object, site: Location, time: Time) -> DataFrame:
     lst = to_timedelta(lst.value, unit="h")
 
     return DataFrame(dict(az=az, el=el, lst=lst), index=time)
-
-
-def get_skycoord(object: Object, site: Location, time: Time) -> SkyCoord:
-    time_utc_naive = time.tz_convert(UTC).tz_localize(None)
-    obstime = ObsTime(time_utc_naive, location=site.earthloc)
-
-    if object.is_solar:
-        skycoord = get_body(object.name, time=obstime)
-    else:
-        skycoord = SkyCoord(*object.coords, frame=object.frame, obstime=obstime)
-
-    skycoord.location = obstime.location
-    skycoord.info.name = object.name
-    return skycoord
