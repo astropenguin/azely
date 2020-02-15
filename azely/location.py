@@ -5,7 +5,7 @@ __all__ = ["get_location"]
 from dataclasses import asdict, dataclass
 from datetime import tzinfo
 from pathlib import Path
-from typing import Dict, Tuple
+from typing import Dict
 
 
 # dependent packages
@@ -49,18 +49,13 @@ class Location:
     altitude: str = "0"
 
     @property
-    def coords(self) -> Tuple[float]:
-        return float(self.longitude), float(self.latitude), float(self.altitude)
-
-    @property
     def tzinfo(self) -> tzinfo:
-        coords = self.coords
-        return timezone(tf.timezone_at(lng=coords[0], lat=coords[1]))
+        lon, lat = map(float, (self.longitude, self.latitude))
+        return timezone(tf.timezone_at(lng=lon, lat=lat))
 
-    @property
-    def earthloc(self) -> EarthLocation:
-        coords = self.coords
-        return EarthLocation(lon=coords[0], lat=coords[1], height=coords[2])
+    def to_earthloc(self) -> EarthLocation:
+        lon, lat, alt = map(float, (self.longitude, self.latitude, self.altitude))
+        return EarthLocation(lon=lon, lat=lat, height=alt)
 
 
 # main functions
