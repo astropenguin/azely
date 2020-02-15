@@ -4,18 +4,17 @@ __all__ = ["get_location"]
 # standard library
 from dataclasses import asdict, dataclass
 from datetime import tzinfo
-from pathlib import Path
 from typing import Dict
 
 
 # dependent packages
+import pytz
 import requests
 from astropy.coordinates import EarthLocation
 from geopy import Nominatim
 from geopy.exc import GeocoderServiceError
-from pytz import timezone
 from timezonefinder import TimezoneFinder
-from .utils import AzelyError, TOMLDict, cache_to
+from .utils import AzelyError, cache_to, open_toml
 
 
 # constants
@@ -28,7 +27,6 @@ from .consts import (
 
 DELIMITER = ":"
 IPINFO_URL = "https://ipinfo.io/json"
-TOML_SUFFIX = ".toml"
 
 
 # type aliases
@@ -51,7 +49,7 @@ class Location:
     @property
     def tzinfo(self) -> tzinfo:
         lon, lat = map(float, (self.longitude, self.latitude))
-        return timezone(tf.timezone_at(lng=lon, lat=lat))
+        return pytz.timezone(tf.timezone_at(lng=lon, lat=lat))
 
     def to_earthloc(self) -> EarthLocation:
         lon, lat, alt = map(float, (self.longitude, self.latitude, self.altitude))
@@ -71,16 +69,9 @@ def get_location(query: str = HERE, timeout: int = TIMEOUT) -> Location:
 # helper functions
 def get_location_by_user(query: str) -> LocationDict:
     path, query = query.split(DELIMITER)
-    path = Path(path).with_suffix(TOML_SUFFIX).expanduser()
-
-    if not path.exists():
-        path = AZELY_DIR / path
-
-    if not path.exists():
-        raise AzelyError(f"Failed to find path: {path}")
 
     try:
-        return TOMLDict(path)[query]
+        return open_toml(path, AZELY_DIR)[query]
     except KeyError:
         raise AzelyError(f"Failed to get location: {query}")
 

@@ -9,13 +9,29 @@ from typing import Any, Callable, Dict, Union
 import toml
 
 
+# constants
+TOML_SUFFIX = ".toml"
+
+
 # type aliases
 PathLike = Union[Path, str]
 
 
-# main classes
+# main classes/functions
 class AzelyError(Exception):
     pass
+
+
+def open_toml(path: PathLike, alt_dir: PathLike = "."):
+    path = Path(path).with_suffix(TOML_SUFFIX).expanduser()
+
+    if not path.exists():
+        path = Path(alt_dir) / path
+
+    if not path.exists():
+        raise AzelyError(f"Failed to find path: {path}")
+
+    return TOMLDict(path)
 
 
 class cache_to:
@@ -79,7 +95,7 @@ class set_defaults:
         return sig.replace(parameters=params)
 
 
-# helper functions
+# helper classes/functions
 def ensure_existance(path: PathLike) -> Path:
     path = Path(path)
 
@@ -89,7 +105,6 @@ def ensure_existance(path: PathLike) -> Path:
     return path
 
 
-# helper classes
 class TOMLDict(dict):
     def __init__(self, path: PathLike) -> None:
         self.path = Path(path)
