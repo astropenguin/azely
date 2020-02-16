@@ -6,7 +6,7 @@ from typing import Any, Callable, Dict, Union
 
 
 # dependent packages
-from toml import TomlDecodeError, dumps, load
+from toml import TomlDecodeError, dump, load
 
 
 # constants
@@ -120,7 +120,7 @@ class TOMLDict(dict):
     def update_toml(self) -> None:
         with self.path.open("w") as f:
             try:
-                f.write(dumps(dict(self)))
+                dump(dict(self), f)
             except (TypeError, PermissionError):
                 raise AzelyError(f"Failed to update: {self.path}")
 
