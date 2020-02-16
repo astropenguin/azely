@@ -5,7 +5,7 @@ __all__ = ["compute"]
 
 
 # dependent packages
-from pandas import DataFrame, Series, to_timedelta
+from pandas import DataFrame, Series, Timestamp, to_timedelta
 from pandas.api.extensions import register_dataframe_accessor
 from .utils import set_defaults
 from .location import Location, get_location
@@ -47,9 +47,8 @@ class AsLSTAccessor:
         df = self.accessed
         td_solar = df.index - df.index[0]
         td_sidereal = td_solar * SOLAR_TO_SIDEREAL + df.lst[0]
-        td_sidereal = td_sidereal.floor("1D") + df.lst
+        index = Timestamp(0) + td_sidereal.floor("1D") + df.lst
 
-        index = df.index[0].floor("1D").tz_localize(None) + td_sidereal
         return Time(index, name="Local Sidereal Time")
 
 
