@@ -83,4 +83,4 @@ def compute_from(object: Object, site: Location, time: Time) -> DataFrame:
     lst = skycoord.obstime.sidereal_time("mean")
     lst = to_timedelta(lst.value, unit="h")
 
-    return DataFrame(dict(az=az, el=el, lst=lst), index=time)
+    return DataFrame(dict(az=az, el=el, lst=lst), index=time.to_index())

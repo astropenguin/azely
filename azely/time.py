@@ -39,6 +39,9 @@ class Time(DatetimeIndex):
         utc_naive = self.tz_convert(utc).tz_localize(None)
         return ObsTime(utc_naive, location=earthloc)
 
+    def to_index(self) -> DatetimeIndex:
+        return DatetimeIndex(self)
+
 
 # main functions
 def get_time(
