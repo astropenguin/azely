@@ -1,3 +1,51 @@
+"""Azely's location module.
+
+This module mainly provides (1) `Location` class for location's information
+and (2) `get_location` function to search for location's information and get
+it as an instance of `Location` class.
+
+Location's information (location info, hereafter) is defiend as:
+`Location(name: str, longitude: str, latitude: str, altitude: str = '0')`,
+where units of lon/lat and altitude are deg and meter, respectively.
+
+Location info can be retrieved by the following three ways:
+(1) Guess by IP address (default). Internet connection is required.
+(2) Information from OpenStreetMap. Internet connection is required.
+(3) User-defined information written in a TOML file.
+
+In the case of (1) and (2), the retrieved data is cached in a special
+TOML file (`~/.config/azely/location.toml`) for an offline use.
+
+Examples:
+    To get location info by IP address::
+
+        >>> location = azely.location.get_location()
+
+    or::
+
+        >>> location = azely.location.get_location('here')
+
+    To get location info from OpenStreetMap::
+
+        >>> location = azely.location.get_location('ALMA AOS')
+
+    To get location info from a user-defined TOML file::
+
+        >>> location = azely.location.get_location('user:ASTE')
+
+    The third example assumes that a TOML file, `user.toml`, where
+    the following text is written exists in a current directory
+    or in the Azely's config directory (`~/.config/azely`)::
+
+        [ASTE]
+        name = "ASTE Telescope"
+        longitude = "-67.70317915"
+        latitude = "-22.97163575"
+        altitude = "0"
+
+"""
+
+
 # standard library
 from dataclasses import asdict, dataclass
 from datetime import tzinfo
@@ -45,19 +93,33 @@ class Location:
 
     @property
     def tzinfo(self) -> tzinfo:
+        """Return a location's tzinfo."""
         lon, lat = map(float, (self.longitude, self.latitude))
         return timezone(tf.timezone_at(lng=lon, lat=lat))
 
     def to_dict(self) -> LocationDict:
+        """Convert it to a Python's dictionary."""
         return asdict(self)
 
     def to_earthloc(self) -> EarthLocation:
+        """Convert it to an astropy's earth location."""
         lon, lat, alt = map(float, (self.longitude, self.latitude, self.altitude))
         return EarthLocation(lon=lon, lat=lat, height=alt)
 
 
 # main functions
 def get_location(query: str = HERE, timeout: int = TIMEOUT) -> Location:
+    """Get location's information by various ways.
+
+    Args:
+        query:
+        timeout:
+
+    Returns:
+        location:
+
+    """
+
     if DELIMITER in query:
         return Location(**get_location_by_user(query))
     elif query.lower() == HERE:
