@@ -79,7 +79,6 @@ def compute_from(object: Object, site: Location, time: Time) -> DataFrame:
 
     az = skycoord.altaz.az
     el = skycoord.altaz.alt
-    lst = skycoord.obstime.sidereal_time("mean")
-    lst = to_timedelta(lst.value, unit="h")
+    lst = to_timedelta(obstime.sidereal_time("mean").value, unit="hr")
 
     return DataFrame(dict(az=az, el=el, lst=lst), index=time.to_index())
