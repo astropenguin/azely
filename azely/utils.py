@@ -15,6 +15,7 @@ TOML_SUFFIX = ".toml"
 
 # type aliases
 PathLike = Union[Path, str]
+StrKeyDict = Dict[str, Any]
 
 
 # main classes/functions
@@ -82,7 +83,7 @@ class set_defaults:
         return wrapper
 
     @staticmethod
-    def update(sig: Signature, defaults: Dict[str, Any]) -> Signature:
+    def update(sig: Signature, defaults: StrKeyDict) -> Signature:
         params = []
 
         for param in sig.parameters.values():
@@ -110,7 +111,10 @@ class TOMLDict(dict):
         self.path = Path(path)
         super().__init__(self.load_toml())
 
-    def load_toml(self) -> Dict[str, Any]:
+    def to_dict(self) -> StrKeyDict:
+        return dict(self)
+
+    def load_toml(self) -> StrKeyDict:
         with self.path.open("r") as f:
             try:
                 return load(f)
@@ -120,7 +124,7 @@ class TOMLDict(dict):
     def update_toml(self) -> None:
         with self.path.open("w") as f:
             try:
-                dump(dict(self), f)
+                dump(self.to_dict(), f)
             except (TypeError, PermissionError):
                 raise AzelyError(f"Failed to update: {self.path}")
 
