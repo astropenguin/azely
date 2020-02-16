@@ -1,6 +1,3 @@
-__all__ = ["get_object"]
-
-
 # standard library
 from dataclasses import asdict, dataclass
 from typing import Dict

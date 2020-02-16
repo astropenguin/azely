@@ -1,6 +1,3 @@
-__all__ = ["get_location"]
-
-
 # standard library
 from dataclasses import asdict, dataclass
 from datetime import tzinfo
