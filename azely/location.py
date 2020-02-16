@@ -51,6 +51,9 @@ class Location:
         lon, lat = map(float, (self.longitude, self.latitude))
         return timezone(tf.timezone_at(lng=lon, lat=lat))
 
+    def to_dict(self) -> LocationDict:
+        return asdict(self)
+
     def to_earthloc(self) -> EarthLocation:
         lon, lat, alt = map(float, (self.longitude, self.latitude, self.altitude))
         return EarthLocation(lon=lon, lat=lat, height=alt)
@@ -83,7 +86,7 @@ def get_location_by_query(query: str, timeout: int) -> LocationDict:
     except (AttributeError, GeocoderServiceError):
         raise AzelyError(f"Failed to get location: {query}")
 
-    return asdict(Location(res["namedetails"]["name"], res["lon"], res["lat"]))
+    return Location(res["namedetails"]["name"], res["lon"], res["lat"]).to_dict()
 
 
 @cache_to(AZELY_LOCATION)
@@ -93,4 +96,4 @@ def get_location_by_ip(query: str, timeout: int) -> LocationDict:
     except ConnectionError:
         raise AzelyError("Failed to get location by IP address")
 
-    return asdict(Location(res["city"], *res["loc"].split(",")[::-1]))
+    return Location(res["city"], *res["loc"].split(",")[::-1]).to_dict()

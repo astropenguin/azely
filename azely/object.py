@@ -41,6 +41,9 @@ class Object:
     def is_solar(self) -> bool:
         return self.frame == SOLAR
 
+    def to_dict(self) -> ObjectDict:
+        return asdict(self)
+
     def to_skycoord(self, obstime: ObsTime) -> SkyCoord:
         if self.is_solar():
             skycoord = get_body(self.name, time=obstime)
