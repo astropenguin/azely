@@ -21,6 +21,7 @@ from .consts import (
 
 DELIMITER = ":"
 SOLAR = "solar"
+USER_TOML = "user.toml"
 
 
 # type aliases
@@ -68,7 +69,7 @@ def get_object_by_user(query: str) -> ObjectDict:
     path, query = query.split(DELIMITER)
 
     try:
-        return open_toml(path, AZELY_DIR)[query]
+        return open_toml(path or USER_TOML, AZELY_DIR)[query]
     except KeyError:
         raise AzelyError(f"Failed to get object: {query}")
 

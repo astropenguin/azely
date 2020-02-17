@@ -72,6 +72,7 @@ from .consts import (
 
 DELIMITER = ":"
 IPINFO_URL = "https://ipinfo.io/json"
+USER_TOML = "user.toml"
 
 
 # type aliases
@@ -133,7 +134,7 @@ def get_location_by_user(query: str) -> LocationDict:
     path, query = query.split(DELIMITER)
 
     try:
-        return open_toml(path, AZELY_DIR)[query]
+        return open_toml(path or USER_TOML, AZELY_DIR)[query]
     except KeyError:
         raise AzelyError(f"Failed to get location: {query}")
 
