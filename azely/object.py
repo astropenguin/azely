@@ -75,7 +75,7 @@ def get_object_by_user(query: str) -> ObjectDict:
 
 @cache_to(AZELY_OBJECT)
 def get_object_of_solar(query: str) -> ObjectDict:
-    return asdict(Object(query, SOLAR, "NaN", "NaN"))
+    return Object(query, SOLAR, "NaN", "NaN").to_dict()
 
 
 @cache_to(AZELY_OBJECT)
@@ -88,4 +88,4 @@ def get_object_by_query(query: str, frame: str, timeout: int) -> ObjectDict:
         except ValueError:
             raise AzelyError(f"Failed to parse frame: {frame}")
 
-    return asdict(Object(query, frame, *res.to_string("hmsdms").split()))
+    return Object(query, frame, *res.to_string("hmsdms").split()).to_dict()
