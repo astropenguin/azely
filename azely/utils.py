@@ -31,6 +31,8 @@ StrKeyDict = Dict[str, Any]
 
 # main classes/functions
 class AzelyError(Exception):
+    """Azely's base exception class."""
+
     pass
 
 
