@@ -131,8 +131,8 @@ def get_time(
     where start and end must be separated by `'to'`. The `view` option also works.
 
     Notes:
-        If location is specified, `azely.location.get_location` function
-        is used inside the function, which requires internet connection
+        If location is specified as `view`, then `azely.location.get_location`
+        function is used inside the function, which requires internet connection
         if the location is queried for the first time.
 
     Examples:
