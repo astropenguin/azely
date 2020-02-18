@@ -4,11 +4,11 @@ This module mainly provides `Location` class for location information
 and `get_location` function to search for location information as an
 instance of `Location` class.
 
-Location information is defined as:
+The `Location` class is defined as:
 `Location(name: str, longitude: str, latitude: str, altitude: str = '0')`,
 where units of lon/lat and altitude are deg and meter, respectively.
 
-Location information can be retrieved by the following three ways:
+The `get_location` function retrieves location information from:
 (1) Guess by IP address (by default). Internet connection is required.
 (2) Data from OpenStreetMap. Internet connection is required.
 (3) User-defined location information written in a TOML file.
@@ -90,6 +90,8 @@ osm = Nominatim(user_agent="azely")
 # data classes
 @dataclass(frozen=True)
 class Location:
+    """Azely's location information class."""
+
     name: str
     longitude: str
     latitude: str
@@ -116,7 +118,7 @@ def get_location(query: str = HERE, timeout: int = TIMEOUT) -> Location:
     """Get location information by various ways.
 
     Args:
-        query: Query string (e.g., 'ALMA AOS' or 'user:ASTE'). Default value,
+        query: Query string (e.g., `'ALMA AOS'` or `'user:ASTE'`). Default value,
             'here', is a special one with which the function tries to guess
             location information by an IP address of a client.
         timeout: Query timeout expressed in units of seconds.
@@ -124,12 +126,12 @@ def get_location(query: str = HERE, timeout: int = TIMEOUT) -> Location:
     Returns:
         location: Location information as an instance of `Location` class.
 
-    Location information can be retrieved by the following three ways:
+    This function retrieves location information by the following three ways:
     (1) Guess by IP address (by default). Internet connection is required.
     (2) Data from OpenStreetMap. Internet connection is required.
     (3) User-defined location information written in a TOML file.
 
-    In the case of (1) and (2), obtained location information is cached
+    In the cases of (1) and (2), obtained location information is cached
     in a special TOML file (`~/.config/azely/location.toml`) for an offline use.
 
     In the case of (3), users can define location information in a TOML file

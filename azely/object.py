@@ -4,12 +4,13 @@ This module mainly provides `Object` class for information of an astronomical
 object (object information, hereafter) and `get_object` function to search for
 object information as an instance of `Object` class.
 
-Object information is defiend as
+The `Object` class is defiend as
 `Object(name: str, frame: str, longitude: str, latitude: str)`,
 where frame is a name of equatorial coordinates (e.g., icrs) and lon/lat are values
 of coordinates which must be written with units like 02h42m40.771s/-00d00m47.84s.
 
-Object information can be retrieved by the following two ways:
+
+The `get_object` function retrieves object information from:
 (1) Data from CDS (by default). Internet connection is required.
 (2) User-defined object information written in a TOML file.
 
@@ -78,6 +79,8 @@ ObjectDict = Dict[str, str]
 # data classes
 @dataclass(frozen=True)
 class Object:
+    """Azely's object information class."""
+
     name: str
     frame: str
     longitude: str
@@ -109,14 +112,14 @@ def get_object(query: str, frame: str = FRAME, timeout: int = TIMEOUT) -> Object
     """Get object information by various ways.
 
     Args:
-        query: Query string (e.g., 'NGC1068' or 'user:GC').
+        query: Query string (e.g., `'NGC1068'` or `'user:GC'`).
         frame: Name of equatorial coordinates used in astropy's SkyCoord.
         timeout: Query timeout expressed in units of seconds.
 
     Returns:
         object: Object information as an instance of `Object` class.
 
-    Object information can be retrieved by the following two ways:
+    This function retrieves object information by the following two ways:
     (1) Data from CDS (by default). Internet connection is required.
     (2) User-defined object information written in a TOML file.
 
