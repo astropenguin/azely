@@ -113,14 +113,47 @@ class Location:
 
 # main functions
 def get_location(query: str = HERE, timeout: int = TIMEOUT) -> Location:
-    """Get location's information by various ways.
+    """Get location information by various ways.
 
     Args:
-        query: Query string.
-        timeout:
+        query: Query string (e.g., 'ALMA AOS' or 'user:ASTE'). Default value,
+            'here', is a special one with which the function tries to guess
+            location information by an IP address of a client.
+        timeout: Query timeout expressed in units of seconds.
 
     Returns:
-        location:
+        location: Location information as an instance of `Location` class.
+
+    Location information can be retrieved by the following three ways:
+    (1) Guess by IP address (by default). Internet connection is required.
+    (2) Data from OpenStreetMap. Internet connection is required.
+    (3) User-defined location information written in a TOML file.
+
+    In the case of (1) and (2), obtained location information is cached
+    in a special TOML file (`~/.config/azely/location.toml`) for an offline use.
+
+    In the case of (3), users can define location information in a TOML file
+    (e.g., `user.toml`) which should be put in a current directory or in the
+    Azely's config directory (`~/.config/azely`).
+
+    Then location information can be obtained by `get_location(<query>)`.
+    Use `get_location(<name>:<query>)` for user-defined location information,
+    where `<name>` must be the name of a TOML file without suffix or the full
+    path of it. If it does not exist in a current directory, the function
+    will try to find it in the Azely's config directory (`~/.config/azely`).
+
+    Examples:
+        To get location information by IP address::
+
+            >>> loc = azely.location.get_location('here')
+
+        To get location information from OpenStreetMap::
+
+            >>> loc = azely.location.get_location('ALMA AOS')
+
+        To get location information from `user.toml`::
+
+            >>> loc = azely.location.get_location('user:ASTE')
 
     """
 
@@ -134,6 +167,7 @@ def get_location(query: str = HERE, timeout: int = TIMEOUT) -> Location:
 
 # helper functions
 def get_location_by_user(query: str) -> LocationDict:
+    """Get location information from a user-defined TOML file."""
     path, query = query.split(DELIMITER)
 
     try:
@@ -144,6 +178,7 @@ def get_location_by_user(query: str) -> LocationDict:
 
 @cache_to(AZELY_LOCATION)
 def get_location_by_query(query: str, timeout: int) -> LocationDict:
+    """Get location information from OpenStreetMap."""
     try:
         res = osm.geocode(query, timeout=timeout, namedetails=True).raw
     except (AttributeError, GeocoderServiceError):
@@ -154,6 +189,7 @@ def get_location_by_query(query: str, timeout: int) -> LocationDict:
 
 @cache_to(AZELY_LOCATION)
 def get_location_by_ip(query: str, timeout: int) -> LocationDict:
+    """Get location information from a guess by IP address."""
     try:
         res = api.get(IPINFO_URL, timeout=timeout).json()
     except ConnectionError:

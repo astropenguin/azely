@@ -77,12 +77,15 @@ class Object:
     latitude: str
 
     def is_solar(self) -> bool:
+        """Return True if it is an solar object."""
         return self.frame == SOLAR
 
     def to_dict(self) -> ObjectDict:
+        """Convert it to a Python's dictionary."""
         return asdict(self)
 
     def to_skycoord(self, obstime: ObsTime) -> SkyCoord:
+        """Convert it to an astropy's skycoord with given obstime."""
         if self.is_solar():
             skycoord = get_body(self.name, time=obstime)
         else:
@@ -96,6 +99,48 @@ class Object:
 
 # main functions
 def get_object(query: str, frame: str = FRAME, timeout: int = TIMEOUT) -> Object:
+    """Get object information by various ways.
+
+    Args:
+        query: Query string (e.g., 'NGC1068' or 'user:GC').
+        frame: Name of equatorial coordinates used in astropy's SkyCoord.
+        timeout: Query timeout expressed in units of seconds.
+
+    Returns:
+        object: Object information as an instance of `Object` class.
+
+    Object information can be retrieved by the following two ways:
+    (1) Data from CDS (by default). Internet connection is required.
+    (2) User-defined object information written in a TOML file.
+
+    In the case of (1), obtained object information is cached in a special
+    TOML file (`~/.config/azely/object.toml`) for an offline use.
+
+    In the case of (2), users can define object information in a TOML file
+    (e.g., `user.toml`) which should be put in a current directory or in the
+    Azely's config directory (`~/.config/azely`).
+
+    Then object information can be obtained by `get_object(<query>)`.
+    Use `get_object(<name>:<query>)` for user-defined object information,
+    where `<name>` must be the name of a TOML file without suffix or the full
+    path of it. If it does not exist in a current directory, the function
+    will try to find it in the Azely's config directory (`~/.config/azely`).
+
+    Notes:
+        As `object` is the Python's builtin base class, it might be better
+        to use an alternative variable name (e.g., 'object_' or 'obj')
+        for object information which this function returns.
+
+    Examples:
+        To get object info from CDS::
+
+            >>> obj = azely.object.get_object('NGC1068')
+
+        To get object info from `user.toml`::
+
+            >>> obj = azely.object.get_object('user:GC')
+
+    """
     if DELIMITER in query:
         return Object(**get_object_by_user(query))
     elif query.lower() in solar_system_ephemeris.bodies:
@@ -106,6 +151,7 @@ def get_object(query: str, frame: str = FRAME, timeout: int = TIMEOUT) -> Object
 
 # helper functions
 def get_object_by_user(query: str) -> ObjectDict:
+    """Get object information from a user-defined TOML file."""
     path, query = query.split(DELIMITER)
 
     try:
@@ -116,11 +162,13 @@ def get_object_by_user(query: str) -> ObjectDict:
 
 @cache_to(AZELY_OBJECT)
 def get_object_of_solar(query: str) -> ObjectDict:
+    """Get object information of the solar system."""
     return Object(query, SOLAR, "NaN", "NaN").to_dict()
 
 
 @cache_to(AZELY_OBJECT)
 def get_object_by_query(query: str, frame: str, timeout: int) -> ObjectDict:
+    """Get object information from CDS."""
     with Conf.remote_timeout.set_temp(timeout):
         try:
             res = SkyCoord.from_name(query, frame)
