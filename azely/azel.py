@@ -1,4 +1,45 @@
-# standard library
+"""Azely's azel module (high-level API).
+
+This module mainly provides `compute` function as a high-level API for users
+which computes azimuth/elevation of an astronomical object under given conditions.
+
+The `compute` function (1) gets object, location, and time information, (2) computes
+az/el and LST (local sidereal time), and (3) returns them as a pandas' DataFrame.
+
+Object information can be retrieved either online (CDS) or offline (an user-defined
+TOML file) by query (e.g., `'NGC1068'` or `'Sun'`). Location information can be
+retrieved either online (IP address or OpenStreetMap) or offline (an user-defined
+TOML file) by query (e.g., `'Tokyo'` or `'ALMA AOS'`). Time information can be
+computed from either formatted (e.g., `'2020-01-01'`) and natural language-like
+query (e.g., `'Jan 1st 2020'`). See docstrings of `get_[object|location|time]`
+functions for more detailed query options.
+
+Examples:
+    To compute daily az/el of NGC1068 at ALMA AOS::
+
+        >>> df = azely.compute('NGC1068', 'ALMA AOS', '2020-02-01')
+
+    To compute the same object and location but view from Japan::
+
+        >>> df = azely.compute('NGC1068', 'ALMA AOS', '2020-02-01', view='Tokyo')
+
+    To compute az/el of Sun at noon during an year at Tokyo::
+
+        >>> df = azely.compute('Sun', 'Tokyo', '1/1 12:00 to 12/31 12:00', freq='1D')
+
+As dataframe has `plot` method for matplotlib, plotting the result is so easy::
+
+    >>> df.el.plot() # plot elevation
+
+If users want to use LST instead of time information, use `as_lst` accessor::
+
+    >>> df.as_lst.el.plot()
+
+In order to use LST values as an index of dataframe, LST has pseudo dates which
+start from `1970-01-01`. Please ignore them or hide them by using matplotlib's
+DateFormatter when you plot the result.
+
+"""
 
 
 # dependent packages
@@ -28,6 +69,8 @@ SOLAR_TO_SIDEREAL = 1.002_737_909
 # data accessor
 @register_dataframe_accessor("as_lst")
 class AsLSTAccessor:
+    """Accessor to convert az/el DateFrame index to LST."""
+
     def __init__(self, accessed: DataFrame) -> None:
         self.accessed = accessed
 
