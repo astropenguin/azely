@@ -1,3 +1,14 @@
+"""Azely's utils module.
+
+This module mainly provides lower-level utilities:
+(1) `AzelyError` class as Azely's exception class
+(2) `open_toml` function to open (and update if any) a TOML file
+(3) `cache_to` decorator which caches a return of a function to a TOML file
+(4) `set_defaults` decorator which replaces default values of a function
+
+"""
+
+
 # standard library
 from functools import wraps
 from inspect import Signature, signature
