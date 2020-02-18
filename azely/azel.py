@@ -14,6 +14,10 @@ computed from either formatted (e.g., `'2020-01-01'`) and natural language-like
 query (e.g., `'Jan 1st 2020'`). See docstrings of `get_[object|location|time]`
 functions for more detailed query options.
 
+There are two different locations to be used for a computation:
+(1) `site`: location where az/el of an object is computed.
+(2) `view`: location where time information (timezone) is considered.
+
 Examples:
     To compute daily az/el of NGC1068 at ALMA AOS::
 
