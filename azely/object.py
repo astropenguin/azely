@@ -1,39 +1,46 @@
 """Azely's object module.
 
-This module mainly provides (1) `Object` class for information of an astronomical
-object (object information, hereafter) and (2) `get_object` function to search for
-object information and get it as an instance of `Object` class.
+This module mainly provides `Object` class for information of an astronomical
+object (object information, hereafter) and `get_object` function to search for
+object information as an instance of `Object` class.
 
 Object information is defiend as
 `Object(name: str, frame: str, longitude: str, latitude: str)`,
 where frame is a name of equatorial coordinates (e.g., icrs) and lon/lat are values
 of coordinates which must be written with units like 02h42m40.771s/-00d00m47.84s.
 
-Object info can be retrieved by the following two ways:
+Object information can be retrieved by the following two ways:
 (1) Data from CDS (by default). Internet connection is required.
 (2) User-defined object information written in a TOML file.
 
 In the case of (1), obtained object information is cached in a special
 TOML file (`~/.config/azely/object.toml`) for an offline use.
 
-Examples:
-    To get object info from CDS::
-
-        >>> obj = azely.object.get_object('NGC1068')
-
-    To get object info from a user-defined TOML file::
-
-        >>> obj = azely.object.get_object('user:GC')
-
-The second example assumes that a TOML file, `user.toml`, exists in a
-current directory or in the Azely's config directory (`~/.config/azely`)
-and the following TOML text is written in it::
+In the case of (2), users can define object information in a TOML file
+(e.g., `user.toml`) which should be put in a current directory or in the
+Azely's config directory (`~/.config/azely`). Object information must be
+defined as a table in the TOML file like::
 
     [GC]
     name = "Galactic center"
     frame = "galactic"
     longitude = "0deg"
     latitude = "0deg"
+
+Then object information can be obtained by `get_object(<query>)`.
+Use `get_object(<name>:<query>)` for user-defined object information,
+where `<name>` must be the name of a TOML file without suffix or the full
+path of it. If it does not exist in a current directory, the function
+will try to find it in the Azely's config directory (`~/.config/azely`).
+
+Examples:
+    To get object info from CDS::
+
+        >>> obj = azely.object.get_object('NGC1068')
+
+    To get object info from `user.toml`::
+
+        >>> obj = azely.object.get_object('user:GC')
 
 """
 
