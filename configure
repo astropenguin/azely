@@ -30,7 +30,7 @@ mkdir -p .vscode
 
 cat << EOS > .vscode/settings.json
 {
-    "python.pythonPath": "$(poetry env info -p)/bin/python",
+    "python.pythonPath": "$(poetry run which python)",
     "editor.formatOnSave": true,
     "python.formatting.provider": "black",
     "python.linting.enabled": true,
