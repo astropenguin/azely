@@ -1,8 +1,8 @@
 """Azely's location module.
 
-This module mainly provides (1) `Location` class for location information
-and (2) `get_location` function to search for location information and get
-it as an instance of `Location` class.
+This module mainly provides `Location` class for location information
+and `get_location` function to search for location information as an
+instance of `Location` class.
 
 Location information is defined as:
 `Location(name: str, longitude: str, latitude: str, altitude: str = '0')`,
@@ -16,28 +16,35 @@ Location information can be retrieved by the following three ways:
 In the case of (1) and (2), obtained location information is cached
 in a special TOML file (`~/.config/azely/location.toml`) for an offline use.
 
-Examples:
-    To get location info by IP address::
-
-        >>> loc = azely.location.get_location()
-
-    To get location info from OpenStreetMap::
-
-        >>> loc = azely.location.get_location('ALMA AOS')
-
-    To get location info from a user-defined TOML file::
-
-        >>> loc = azely.location.get_location('user:ASTE')
-
-The third example assumes that a TOML file, `user.toml`, exists in a
-current directory or in the Azely's config directory (`~/.config/azely`)
-and the following TOML text is written in it::
+In the case of (3), users can define location information in a TOML file
+(e.g., `user.toml`) which should be put in a current directory or in the
+Azely's config directory (`~/.config/azely`). Location information must be
+defined as a table in the TOML file like::
 
     [ASTE]
     name = "ASTE Telescope"
     longitude = "-67.70317915"
     latitude = "-22.97163575"
     altitude = "0"
+
+Then location information can be obtained by `get_location(<query>)`.
+Use `get_location(<name>:<query>)` for user-defined location information,
+where `<name>` must be the name of a TOML file without suffix or the full
+path of it. If it does not exist in a current directory, the function
+will try to find it in the Azely's config directory (`~/.config/azely`).
+
+Examples:
+    To get location information by IP address::
+
+        >>> loc = azely.location.get_location('here')
+
+    To get location information from OpenStreetMap::
+
+        >>> loc = azely.location.get_location('ALMA AOS')
+
+    To get location information from `user.toml`::
+
+        >>> loc = azely.location.get_location('user:ASTE')
 
 """
 
