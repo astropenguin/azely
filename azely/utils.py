@@ -1,4 +1,4 @@
-"""Azely's utils module.
+"""Azely's utils module (low-level utilities).
 
 This module mainly provides lower-level utilities:
 (1) `AzelyError` class as Azely's exception class

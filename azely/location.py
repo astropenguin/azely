@@ -1,4 +1,4 @@
-"""Azely's location module.
+"""Azely's location module (mid-level API).
 
 This module mainly provides `Location` class for location information
 and `get_location` function to search for location information as an

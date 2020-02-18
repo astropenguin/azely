@@ -1,4 +1,4 @@
-"""Azely's time module.
+"""Azely's time module (mid-level API).
 
 This module mainly provides `Time` class for date and time information at a
 given location (time information, hereafter) and `get_time` function to obtain

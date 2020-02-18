@@ -1,4 +1,4 @@
-"""Azely's object module.
+"""Azely's object module (mid-level API).
 
 This module mainly provides `Object` class for information of an astronomical
 object (object information, hereafter) and `get_object` function to search for
