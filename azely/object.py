@@ -119,6 +119,9 @@ def get_object(query: str, frame: str = FRAME, timeout: int = TIMEOUT) -> Object
     Returns:
         object: Object information as an instance of `Object` class.
 
+    Raises:
+        AzelyError: Raised if the function fails to get object information.
+
     This function retrieves object information by the following two ways:
     (1) Data from CDS (by default). Internet connection is required.
     (2) User-defined object information written in a TOML file.

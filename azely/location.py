@@ -126,6 +126,9 @@ def get_location(query: str = HERE, timeout: int = TIMEOUT) -> Location:
     Returns:
         location: Location information as an instance of `Location` class.
 
+    Raises:
+        AzelyError: Raised if the function fails to get location information.
+
     This function retrieves location information by the following three ways:
     (1) Guess by IP address (by default). Internet connection is required.
     (2) Data from OpenStreetMap. Internet connection is required.

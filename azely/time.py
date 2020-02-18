@@ -117,6 +117,9 @@ def get_time(
     Returns:
         time: Time information as an instance of `Time` class.
 
+    Raises:
+        AzelyError: Raised if the function fails to parse query or timezone.
+
     The `get_time` function computes time information in several cases:
     (1) Current time (e.g., [2020-01-01 22:32:58+09:00]).
     (2) Time range of today (e.g., [2020-01-01 00:00, ..., 2020-01-02 00:00])
