@@ -5,5 +5,5 @@
 [![Test](https://img.shields.io/github/workflow/status/astropenguin/azely/Test?logo=github&label=Test&style=flat-square)](https://github.com/astropenguin/azely/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?label=License&style=flat-square)](LICENSE)
 
-:zap: Python package for calculation and plotting of astronomical object's azimuth/elevation
+:zap: Computation and plotting of astronomical object's azimuth/elevation
 
