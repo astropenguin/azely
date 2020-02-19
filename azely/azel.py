@@ -133,7 +133,7 @@ def compute(
         timeout: (common option) Query timeout expressed in units of seconds.
 
     Returns:
-        dataframe: Computed objects' az/el and LST at given site and view.
+        Computed dataframe of objects' az/el and LST at given site and view.
 
     Raises:
         AzelyError: Raised if one of mid-level APIs fails to get any information.
@@ -187,7 +187,7 @@ def compute_from(object: Object, site: Location, time: Time) -> DataFrame:
         time: Time information.
 
     Returns:
-        dataframe: Computed objects' az/el and LST at given site and view.
+        Computed dataframe of objects' az/el and LST at given site and view.
 
     Raises:
         AzelyError: Raised if one of mid-level APIs fails to get any information.

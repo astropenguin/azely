@@ -82,10 +82,10 @@ ObjectDict = Dict[str, str]
 class Object:
     """Azely's object information class."""
 
-    name: str
-    frame: str
-    longitude: str
-    latitude: str
+    name: str  #: Object's name.
+    frame: str  #: Name of equatorial coordinates.
+    longitude: str  #: Longitude (e.g., ra or l) with units.
+    latitude: str  #: Latitude (e.g., dec or b) with units.
 
     def is_solar(self) -> bool:
         """Return True if it is an solar object."""
@@ -118,7 +118,7 @@ def get_object(query: str, frame: str = FRAME, timeout: int = TIMEOUT) -> Object
         timeout: Query timeout expressed in units of seconds.
 
     Returns:
-        object: Object information as an instance of `Object` class.
+        Object information as an instance of `Object` class.
 
     Raises:
         AzelyError: Raised if the function fails to get object information.

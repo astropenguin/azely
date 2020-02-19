@@ -116,7 +116,7 @@ def get_time(
         timeout: Query timeout expressed in units of seconds (see notes).
 
     Returns:
-        time: Time information as an instance of `Time` class.
+        Time information as an instance of `Time` class.
 
     Raises:
         AzelyError: Raised if the function fails to parse query or timezone.

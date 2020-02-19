@@ -51,7 +51,7 @@ def open_toml(path: PathLike, alt_dir: PathLike = "."):
             the TOML file if it does not exist in a current directory.
 
     Returns:
-        toml_dict: Dictionary equivalent to the contents of the TOML file.
+        Dictionary equivalent to the contents of the TOML file.
 
     Raises:
         AzelyError: Raised if the TOML file is not found anywhere.

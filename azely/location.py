@@ -93,10 +93,10 @@ osm = Nominatim(user_agent="azely")
 class Location:
     """Azely's location information class."""
 
-    name: str
-    longitude: str
-    latitude: str
-    altitude: str = "0"
+    name: str  #: Location's name.
+    longitude: str  #: Longitude expressed in units of degrees.
+    latitude: str  #: Latitude expressed in units of degrees.
+    altitude: str = "0"  #: Altitude expressed in units of meters.
 
     @property
     def tzinfo(self) -> tzinfo:
@@ -125,7 +125,7 @@ def get_location(query: str = HERE, timeout: int = TIMEOUT) -> Location:
         timeout: Query timeout expressed in units of seconds.
 
     Returns:
-        location: Location information as an instance of `Location` class.
+        Location information as an instance of `Location` class.
 
     Raises:
         AzelyError: Raised if the function fails to get location information.
