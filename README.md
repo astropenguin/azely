@@ -37,3 +37,5 @@ $ pip install azely
 <!-- references -->
 [astropy]: https://astropy.org
 [matplotlib]: https://matplotlib.org
+[pandas]: https://pandas.pydata.org
+[TOML]: https://github.com/toml-lang/toml
