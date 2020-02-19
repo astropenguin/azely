@@ -38,6 +38,7 @@ Examples:
         >>> time = azely.time.get_time('2020-01-01 to 2020-01-05', view='UTC')
 
 """
+__all__ = ["Time", "get_time"]
 
 
 # standard library

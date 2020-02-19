@@ -47,6 +47,7 @@ Examples:
         >>> loc = azely.location.get_location('user:ASTE')
 
 """
+__all__ = ["Location", "get_location"]
 
 
 # standard library

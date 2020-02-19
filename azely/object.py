@@ -44,6 +44,7 @@ Examples:
         >>> obj = azely.object.get_object('user:GC')
 
 """
+__all__ = ["Object", "get_object"]
 
 
 # standard library

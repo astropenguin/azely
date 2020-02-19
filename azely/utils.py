@@ -7,6 +7,7 @@ This module provides series of utility related to exception and I/O:
 (4) `set_defaults` decorator which replaces default values of a function
 
 """
+__all__ = ["AzelyError", "open_toml", "cache_to", "set_defaults"]
 
 
 # standard library
