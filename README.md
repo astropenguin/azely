@@ -17,3 +17,6 @@ In fact Azely offers one-liner to compute and plot, for example, one-day elevati
 >>> azely.compute('Sun', 'ALMA AOS', '2020-01-01').el.plot()
 ```
 
+<!-- references -->
+[astropy]: https://astropy.org
+[matplotlib]: https://matplotlib.org
