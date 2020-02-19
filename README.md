@@ -44,13 +44,13 @@ $ pip install azely
 ### Compute function
 
 ```python
->>> df = azely.compute(object: str, site: str, time: str, view: str = "", ...)
+>>> df = azely.compute(object, site, time, view, ...)
 ```
 
-- **object:**
-- **site:**
-- **time:**
-- **view:**
+- **object (str):**
+- **site (str):**
+- **time (str):**
+- **view (str, optional):**
 
 ### Output DataFrame
 
