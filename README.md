@@ -47,10 +47,28 @@ $ pip install azely
 >>> df = azely.compute(object, site, time, view, ...)
 ```
 
-- **object (str):**
-- **site (str):**
-- **time (str):**
-- **view (str, optional):**
+This means that `azely` will `compute` az/el of `object` observed from `site` at (on) `time` in `view`.
+For example, the following code means that Azely will compute az/el of Sun observed from ALMA AOS on Jan. 1st 2020 in UTC.
+
+```python
+>>> df = azely.compute('Sun', 'ALMA AOS', '2020-01-01', 'UTC')
+```
+
+| Parameter | Acceptable format | Description | Examples |
+| --- | --- | --- | --- |
+| `object` | `<obj. name>` | query for object to be searched | `'Sun'`, `'NGC1068'` |
+| | `<toml>:<obj. name>` | user-defined object to be loaded (see below) | `'user.toml:M42'`, `'user:M42'` (also valid) |
+| `site` | `'here'` (default) | current location (guess by IP address) | - |
+| | `<loc. name>` | query for location to be searched | `'ALMA AOS'`, `'Tokyo'` |
+| | `<toml>:<loc. name>` | user-defined location to be loaded (see below) | `'user.toml:ASTE'`, `'user:ASTE'` (also valid) |
+| `time` | `'now'` (default) | current time | - |
+| | `'today'` | one-day time range today | - |
+| | `<time>` | start time of one-day time range | `'2020-01-01'`, `'1/1 12:00'`, `'Jan. 1st'` |
+| | `<time> to <time>` | start and end of time range | `'1/1 to 1/3'`, `'Jan. 1st to Jan. 3rd'` |
+| `view` | `''` (default) | timezone of `site` is used | - |
+| | `<tz name>` | name of timezone database | `'Asia/Tokyo'`, `'UTC'` |
+| | `<loc. name>` | query for location from which timezone is identified | same as above |
+| | `<toml>:<loc. name>` | user-defined location from which timezone is identified | same as above |
 
 ### Output DataFrame
 
