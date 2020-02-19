@@ -4,7 +4,7 @@ This module mainly provides `compute` function as a high-level API for users
 which computes azimuth/elevation of an astronomical object under given conditions.
 
 The `compute` function (1) gets object, location, and time information, (2) computes
-az/el and LST (local sidereal time), and (3) returns them as a pandas' DataFrame.
+az/el and LST (local sidereal time), and (3) returns them as a pandas DataFrame.
 
 Object information can be obtained either online (CDS) or offline (an user-defined
 TOML file) by query (e.g., `'NGC1068'` or `'Sun'`). Location information can be
@@ -121,7 +121,7 @@ def compute(
         view: Query string for timezone information at the view. (e.g., `'Asia/Tokyo'`,
             `'UTC'`, or `Tokyo`). By default (`''`),  timezone at the site is used.
         frame: (object option) Name of equatorial coordinates used in astropy's SkyCoord.
-        freq: (time option) Frequency of time samples as the same format of pandas' offset
+        freq: (time option) Frequency of time samples as the same format of pandas offset
             aliases (e.g., `'1D'` -> 1 day, `'3H'` -> 3 hours, `'10T'` -> 10 minutes).
         dayfirst: (time option) Whether to interpret the first value in an ambiguous
             3-integer date (e.g., `'01-02-03'`) as the day. If True, for example,
@@ -139,7 +139,7 @@ def compute(
         AzelyError: Raised if one of mid-level APIs fails to get any information.
 
     The `compute` function (1) gets object, location, and time information, (2) computes
-    az/el and LST (local sidereal time), and (3) returns them as a pandas' DataFrame.
+    az/el and LST (local sidereal time), and (3) returns them as a pandas DataFrame.
 
     Object information can be obtained either online (CDS) or offline (an user-defined
     TOML file) by query (e.g., `'NGC1068'` or `'Sun'`). Location information can be

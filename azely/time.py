@@ -83,7 +83,7 @@ class Time(DatetimeIndex):
         return ObsTime(utc_naive, location=earthloc)
 
     def to_index(self) -> DatetimeIndex:
-        """Convert it to a pandas' DatetimeIndex."""
+        """Convert it to a pandas DatetimeIndex."""
         return DatetimeIndex(self)
 
 
@@ -104,7 +104,7 @@ def get_time(
             or time range today is computed, respectively.
         view: Name of timezone (e.g., `'Asia/Tokyo'` or `'UTC'`) or location
             with which timezone can be identified (e.g., `'Tokyo'`).
-        freq: Frequency of time samples as the same format of pandas' offset aliases
+        freq: Frequency of time samples as the same format of pandas offset aliases
             (e.g., `'1D'` -> 1 day, `'3H'` -> 3 hours, `'10T'` -> 10 minutes).
         dayfirst: Whether to interpret the first value in an ambiguous 3-integer
             date (e.g., `'01-02-03'`) as the day. If True, for example,
