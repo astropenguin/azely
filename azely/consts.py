@@ -1,3 +1,10 @@
+"""Azely's consts module (constants).
+
+This module provides static constants used for default values of functions
+and constants indicating Azely's directory/files, which are dinamically
+determined by some environment variables of client.
+
+"""
 # standard library
 from os import environ, getenv
 from pathlib import Path
