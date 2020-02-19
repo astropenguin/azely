@@ -56,8 +56,9 @@ $ pip install azely
 
 ```python
 >>> df = azely.compute('Sun', 'ALMA AOS', '2020-01-01')
->>> df
-
+>>> print(df)
+```
+```
                                    az         el             lst
 America/Santiago
 2020-01-01 00:00:00-03:00  208.032099 -38.557365 05:09:57.683037
