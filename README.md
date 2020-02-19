@@ -7,3 +7,13 @@
 
 :zap: Computation and plotting of astronomical object's azimuth/elevation
 
+## TL;DR
+
+Azely (pronounced as "as-elie") is a Python package for computation and plotting of horizontal coordinates (azimuth and elevation) of astronomical objects at given location and time.
+While computation and plotting are realized by [astropy] and [matplotlib], what Azely provides is high-level API to use them easily.
+In fact Azely offers one-liner to compute and plot, for example, one-day elevation of the Sun:
+
+```python
+>>> azely.compute('Sun', 'ALMA AOS', '2020-01-01').el.plot()
+```
+
