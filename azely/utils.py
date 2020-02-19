@@ -105,6 +105,7 @@ class cache_to:
     the results are cached to `cache.toml` like::
 
         # cache.toml
+
         aaa = "aaa!"
         bbb = "bbb!"
         ccc = "ccc!"
@@ -151,6 +152,7 @@ class set_defaults:
     Suppose the content of `defaults.toml` is like::
 
         # defaults.toml
+
         a = 1
         b = 2
 

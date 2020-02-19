@@ -22,6 +22,7 @@ Azely's config directory (`~/.config/azely`). Location information must be
 defined as a table in the TOML file like::
 
     # user.toml
+
     [ASTE]
     name = "ASTE Telescope"
     longitude = "-67.70317915"
