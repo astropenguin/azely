@@ -8,7 +8,7 @@ The `Location` class is defined as:
 `Location(name: str, longitude: str, latitude: str, altitude: str = '0')`,
 where units of lon/lat and altitude are deg and meter, respectively.
 
-The `get_location` function retrieves location information from:
+The `get_location` function acquires location information from:
 (1) Guess by IP address (by default). Internet connection is required.
 (2) Data from OpenStreetMap. Internet connection is required.
 (3) User-defined location information written in a TOML file.
@@ -132,7 +132,7 @@ def get_location(query: str = HERE, timeout: int = TIMEOUT) -> Location:
     Raises:
         AzelyError: Raised if the function fails to get location information.
 
-    This function retrieves location information by the following three ways:
+    This function acquires location information by the following three ways:
     (1) Guess by IP address (by default). Internet connection is required.
     (2) Data from OpenStreetMap. Internet connection is required.
     (3) User-defined location information written in a TOML file.

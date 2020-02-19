@@ -6,9 +6,9 @@ which computes azimuth/elevation of an astronomical object under given condition
 The `compute` function (1) gets object, location, and time information, (2) computes
 az/el and LST (local sidereal time), and (3) returns them as a pandas' DataFrame.
 
-Object information can be retrieved either online (CDS) or offline (an user-defined
+Object information can be obtained either online (CDS) or offline (an user-defined
 TOML file) by query (e.g., `'NGC1068'` or `'Sun'`). Location information can be
-retrieved either online (IP address or OpenStreetMap) or offline (an user-defined
+obtained either online (IP address or OpenStreetMap) or offline (an user-defined
 TOML file) by query (e.g., `'Tokyo'` or `'ALMA AOS'`). Time information can be
 computed from either formatted (e.g., `'2020-01-01'`) and natural language-like
 query (e.g., `'Jan 1st 2020'`). See docstrings of `get_[object|location|time]`
@@ -141,9 +141,9 @@ def compute(
     The `compute` function (1) gets object, location, and time information, (2) computes
     az/el and LST (local sidereal time), and (3) returns them as a pandas' DataFrame.
 
-    Object information can be retrieved either online (CDS) or offline (an user-defined
+    Object information can be obtained either online (CDS) or offline (an user-defined
     TOML file) by query (e.g., `'NGC1068'` or `'Sun'`). Location information can be
-    retrieved either online (IP address or OpenStreetMap) or offline (an user-defined
+    obtained either online (IP address or OpenStreetMap) or offline (an user-defined
     TOML file) by query (e.g., `'Tokyo'` or `'ALMA AOS'`). Time information can be
     computed from either formatted (e.g., `'2020-01-01'`) and natural language-like
     query (e.g., `'Jan 1st 2020'`). See docstrings of `get_[object|location|time]`

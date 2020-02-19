@@ -10,7 +10,7 @@ where frame is a name of equatorial coordinates (e.g., icrs) and lon/lat are val
 of coordinates which must be written with units like 02h42m40.771s/-00d00m47.84s.
 
 
-The `get_object` function retrieves object information from:
+The `get_object` function acquires object information from:
 (1) Data from CDS (by default). Internet connection is required.
 (2) User-defined object information written in a TOML file.
 
@@ -125,7 +125,7 @@ def get_object(query: str, frame: str = FRAME, timeout: int = TIMEOUT) -> Object
     Raises:
         AzelyError: Raised if the function fails to get object information.
 
-    This function retrieves object information by the following two ways:
+    This function acquires object information by the following two ways:
     (1) Data from CDS (by default). Internet connection is required.
     (2) User-defined object information written in a TOML file.
 
