@@ -14,7 +14,7 @@ While computation and plotting are realized by [astropy] and [matplotlib], what 
 In fact Azely offers one-liner to compute and plot, for example, one-day elevation of the Sun:
 
 ```python
->>> azely.compute('Sun', 'ALMA AOS', '2020-01-01').el.plot()
+>>> azely.compute('Sun', 'ALMA AOS', '2020-01-01').el.plot(ylim=(0, 90))
 ```
 
 ## Features
