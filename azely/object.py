@@ -22,6 +22,7 @@ In the case of (2), users can define object information in a TOML file
 Azely's config directory (`~/.config/azely`). Object information must be
 defined as a table in the TOML file like::
 
+    # user.toml
     [GC]
     name = "Galactic center"
     frame = "galactic"

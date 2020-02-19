@@ -104,6 +104,7 @@ class cache_to:
     would take ~30 seconds to finish. But at the same time,
     the results are cached to `cache.toml` like::
 
+        # cache.toml
         aaa = "aaa!"
         bbb = "bbb!"
         ccc = "ccc!"
@@ -147,8 +148,9 @@ class set_defaults:
         ... def func(a: int, b: int = 0) -> int:
         ...     return a + b
 
-    Suppose the contents of `defaults.toml` is like::
+    Suppose the content of `defaults.toml` is like::
 
+        # defaults.toml
         a = 1
         b = 2
 
