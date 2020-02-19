@@ -24,6 +24,16 @@ In fact Azely offers one-liner to compute and plot, for example, one-day elevati
 - **Web information acquisition:** Azely can automatically acquire object and location information (i.e., longitude and latitude) from online services (e.g., catalogues or maps). Obtained information is cached in a local [TOML] file for an offline use.
 - **User-defined information:** Azely also offers to use user-defined object and location information written in a [TOML] file.
 
+## Requirements
+
+- Python: 3.6, 3.7, or 3.8
+
+## Installation
+
+```shell
+$ pip install azely
+```
+
 <!-- references -->
 [astropy]: https://astropy.org
 [matplotlib]: https://matplotlib.org
