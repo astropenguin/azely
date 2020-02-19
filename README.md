@@ -17,6 +17,13 @@ In fact Azely offers one-liner to compute and plot, for example, one-day elevati
 >>> azely.compute('Sun', 'ALMA AOS', '2020-01-01').el.plot()
 ```
 
+## Features
+
+- **High-level API:** Azely provides a simple yet powerful `compute()` function. Users can complete most of operation with it (e.g., information acquisition and computation).
+- **Handy output:** Azely's output (from `compute()`) is [pandas] DataFrame, a de facto standard data structure of Python. Users can convert it to other formats like CSV and plot it by [matplotlib] using builtin methods.
+- **Web information acquisition:** Azely can automatically acquire object and location information (i.e., longitude and latitude) from online services (e.g., catalogues or maps). Obtained information is cached in a local [TOML] file for an offline use.
+- **User-defined information:** Azely also offers to use user-defined object and location information written in a [TOML] file.
+
 <!-- references -->
 [astropy]: https://astropy.org
 [matplotlib]: https://matplotlib.org
