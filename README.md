@@ -120,6 +120,8 @@ ax.legend()
 fig.show()
 ```
 
+![example.png](https://raw.githubusercontent.com/astropenguin/azely/docs/images/example.png)
+
 ## Advanced usage
 
 ### Plotting in local sidereal time
