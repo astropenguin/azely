@@ -9,12 +9,12 @@
 
 ## TL;DR
 
-Azely (pronounced as "as-elie") is a Python package for computation and plotting of horizontal coordinates (azimuth and elevation) of astronomical objects at given location and time.
+Azely (pronounced as "as-elie") is a Python package for computation and plotting of horizontal coordinates (azimuth and elevation; az/el, hereafter) of astronomical objects at given location and time.
 While computation and plotting are realized by [astropy] and [matplotlib], what Azely provides is high-level API to use them easily.
-In fact Azely offers one-liner to compute and plot, for example, one-day elevation of the Sun:
+In fact Azely offers one-liner to compute and plot, for example, one-day elevation of the Sun in Tokyo:
 
 ```python
->>> azely.compute('Sun', 'ALMA AOS', '2020-01-01').el.plot(ylim=(0, 90))
+>>> azely.compute('Sun', 'Tokyo', 'today').el.plot(ylim=(0, 90))
 ```
 
 ## Features
@@ -37,64 +37,88 @@ $ pip install azely
 
 ## Basic usage
 
-```python
->>> import azely
-```
+This section covers basic az/el computation using `compute()` function.
 
 ### Compute function
 
+Azely's `compute()` function receives the following parameters and returns [pandas] DataFrame (`df`):
+
 ```python
->>> df = azely.compute(object, site, time, view, ...)
+>>> df = azely.compute(object, site, time, view, **options)
 ```
 
 This means that `azely` will `compute` az/el of `object` observed from `site` at (on) `time` in `view`.
-For example, the following code means that Azely will compute az/el of Sun observed from ALMA AOS on Jan. 1st 2020 in UTC.
+For example, the following code will compute az/el of Sun observed from ALMA AOS on Jan. 1st 2020 in Tokyo.
 
 ```python
->>> df = azely.compute('Sun', 'ALMA AOS', '2020-01-01', 'UTC')
+>>> df = azely.compute('Sun', 'ALMA AOS', '2020-01-01', 'Tokyo')
 ```
+
+Acceptable formats of each parameter and examples are as follows.
 
 | Parameter | Acceptable format | Description | Examples |
 | --- | --- | --- | --- |
-| `object` | `<obj. name>` | query for object to be searched | `'Sun'`, `'NGC1068'` |
+| `object` | `<obj. name>` | name of object to be searched | `'Sun'`, `'NGC1068'` |
 | | `<toml>:<obj. name>` | user-defined object to be loaded (see below) | `'user.toml:M42'`, `'user:M42'` (also valid) |
 | `site` | `'here'` (default) | current location (guess by IP address) | - |
-| | `<loc. name>` | query for location to be searched | `'ALMA AOS'`, `'Tokyo'` |
+| | `<loc. name>` | name of location to be searched | `'ALMA AOS'`, `'Tokyo'` |
 | | `<toml>:<loc. name>` | user-defined location to be loaded (see below) | `'user.toml:ASTE'`, `'user:ASTE'` (also valid) |
-| `time` | `'now'` (default) | current time | - |
-| | `'today'` | one-day time range today | - |
+| `time` | `'now'` (default) | get current time | - |
+| | `'today'` | get one-day time range today | - |
 | | `<time>` | start time of one-day time range | `'2020-01-01'`, `'1/1 12:00'`, `'Jan. 1st'` |
 | | `<time> to <time>` | start and end of time range | `'1/1 to 1/3'`, `'Jan. 1st to Jan. 3rd'` |
-| `view` | `''` (default) | timezone of `site` is used | - |
+| `view` | `''` (default) | use timezone of `site` | - |
 | | `<tz name>` | name of timezone database | `'Asia/Tokyo'`, `'UTC'` |
-| | `<loc. name>` | query for location from which timezone is identified | same as above |
+| | `<loc. name>` | name of location from which timezone is identified | same as above |
 | | `<toml>:<loc. name>` | user-defined location from which timezone is identified | same as above |
 
 ### Output DataFrame
 
-```python
->>> df = azely.compute('Sun', 'ALMA AOS', '2020-01-01')
->>> print(df)
+The output DataFrame contains az/el expressed in units of degrees and local sidereal time (LST) at `site` indexed by time in `view`:
+
 ```
-```
-                                   az         el             lst
-America/Santiago
-2020-01-01 00:00:00-03:00  208.032099 -38.557365 05:09:57.683037
-2020-01-01 00:10:00-03:00  205.386419 -39.591843 05:19:59.325780
-2020-01-01 00:20:00-03:00  202.642248 -40.528580 05:30:00.968522
-2020-01-01 00:30:00-03:00  199.804512 -41.361909 05:40:02.611264
-2020-01-01 00:40:00-03:00  196.880119 -42.086416 05:50:04.254007
-...                               ...        ...             ...
-2020-01-01 23:20:00-03:00  217.754580 -33.555103 04:33:47.666959
-2020-01-01 23:30:00-03:00  215.521080 -34.928337 04:43:49.309701
-2020-01-01 23:40:00-03:00  213.185460 -36.226931 04:53:50.952444
-2020-01-01 23:50:00-03:00  210.746470 -37.445323 05:03:52.595186
-2020-01-02 00:00:00-03:00  208.204042 -38.577785 05:13:54.237928
+                                  az         el             lst
+Asia/Tokyo
+2020-01-01 00:00:00+09:00  94.820323  68.416756 17:07:59.405556
+2020-01-01 00:10:00+09:00  94.333979  70.709575 17:18:01.048298
+2020-01-01 00:20:00+09:00  93.856123  73.003864 17:28:02.691044
+2020-01-01 00:30:00+09:00  93.388695  75.299436 17:38:04.333786
+2020-01-01 00:40:00+09:00  92.935403  77.596109 17:48:05.976529
+...                              ...        ...             ...
+2020-01-01 23:20:00+09:00  96.711830  59.146249 16:31:49.389513
+2020-01-01 23:30:00+09:00  96.185941  61.431823 16:41:51.032256
+2020-01-01 23:40:00+09:00  95.664855  63.719668 16:51:52.674998
+2020-01-01 23:50:00+09:00  95.147951  66.009577 17:01:54.317740
+2020-01-02 00:00:00+09:00  94.634561  68.301349 17:11:55.960483
 
 [145 rows x 3 columns]
 ```
 
-### Examples
+### Example
+
+Here is a sample code which will plot one-day elevation of the Sun and candidates of black hole shadow observations at ALMA AOS in UTC.
+
+```python
+import azely
+import matplotlib.pyplot as plt
+plt.style.use('seaborn-whitegrid')
+
+fig, ax = plt.subplots(figsize=(12, 4))
+
+site = 'ALMA AOS'
+time = 'Apr. 11th 2017'
+view = 'UTC'
+
+for obj in ('Sun', 'Sgr A*', 'M87', 'M104', 'Cen A'):
+    df = azely.compute(obj, site, time, view)
+    df.el.plot(ax=ax, label=obj)
+
+ax.set_title(f'site: {site}, view: {view}, time: {time}')
+ax.set_ylabel('Elevation (deg)')
+ax.set_ylim(0, 90)
+ax.legend()
+fig.show()
+```
 
 ## Advanced usage
 
