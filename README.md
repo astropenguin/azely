@@ -96,7 +96,7 @@ Asia/Tokyo
 
 ### Example
 
-Here is a sample code which will plot one-day elevation of the Sun and candidates of black hole shadow observations at ALMA AOS in UTC.
+Here is a sample code which will plot one-day elevation of the Sun and candidates of black hole shadow observations at ALMA AOS on Apr. 11th 2017 in UTC.
 
 ```python
 import azely
