@@ -11,6 +11,7 @@ __all__ = ["AzelyError", "open_toml", "cache_to", "set_defaults"]
 
 
 # standard library
+import re
 from functools import wraps
 from inspect import Signature, signature
 from pathlib import Path
@@ -93,7 +94,7 @@ class cache_to:
         ... def func(query: str) -> str:
         ...     # simulates a long-time processing
         ...     time.sleep(10)
-        ...     return query + '!'
+        ...     return query
 
     Then the following function calls::
 
@@ -106,12 +107,15 @@ class cache_to:
 
         # cache.toml
 
-        aaa = "aaa!"
-        bbb = "bbb!"
-        ccc = "ccc!"
+        aaa = "aaa"
+        bbb = "bbb"
+        ccc = "ccc"
 
     Then the second calls would take much shorter time because
     cached values are simply read and returned by the decorator.
+    If a query argument is given with '!' at the beginning of it
+    (e.g., `'!aaa'`), cached values are forcibly updated by an
+    immediate call of the original function.
 
     """
 
@@ -121,16 +125,22 @@ class cache_to:
 
     def __call__(self, func: Callable) -> Callable:
         sig = signature(func)
+        pattern = re.compile(r"^(!\s*)(!\w+)$")
 
         @wraps(func)
         def wrapper(*args, **kwargs):
             bound = sig.bind(*args, **kwargs)
             bound.apply_defaults()
             query = bound.arguments[self.query]
+            need_update = pattern.search(query)
+
+            if need_update:
+                query = need_update.groups()[1]
+                bound.arguments[self.query] = query
 
             with TOMLDict(self.path) as cache:
-                if query not in cache:
-                    item = func(*args, **kwargs)
+                if query not in cache or need_update:
+                    item = func(*bound.args, **bound.kwargs)
                     cache.update({query: item})
 
                 return cache[query]
