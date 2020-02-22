@@ -48,8 +48,7 @@ __all__ = ["compute"]
 
 
 # dependent packages
-from pandas import DataFrame, Series, Timestamp, to_timedelta
-from pandas.api.extensions import register_dataframe_accessor
+from pandas import DataFrame, DatetimeIndex, Timestamp, to_timedelta
 from .utils import set_defaults
 from .location import Location, get_location
 from .object import Object, get_object
@@ -71,30 +70,33 @@ from .consts import (
 SOLAR_TO_SIDEREAL = 1.002_737_909
 
 
-# data accessor
-@register_dataframe_accessor("as_lst")
-class AsLSTAccessor:
-    """Accessor to convert az/el DateFrame index to LST."""
+# data class
+class AzEl(DataFrame):
+    """Subclass of pandas DataFrame with special properties for Azely."""
 
-    def __init__(self, accessed: DataFrame) -> None:
-        self.accessed = accessed
-
-    @property
-    def az(self) -> Series:
-        return self.accessed.set_index(self.index).az
+    #: allowed custom attributes
+    _metadata = ["object", "site"]
 
     @property
-    def el(self) -> Series:
-        return self.accessed.set_index(self.index).el
+    def in_lst(self):
+        """Convert time index to LST."""
+        td = self.index - self.index[0]
+        td_lst = td * SOLAR_TO_SIDEREAL + self.lst[0]
+        td_lst = td_lst.floor("1D") + self.lst
+
+        lst = Timestamp(0) + td_lst
+        name = "Local Sidereal Time"
+        return self.set_index(DatetimeIndex(lst, name=name))
 
     @property
-    def index(self) -> Time:
-        df = self.accessed
-        td_solar = df.index - df.index[0]
-        td_sidereal = td_solar * SOLAR_TO_SIDEREAL + df.lst[0]
-        index = Timestamp(0) + td_sidereal.floor("1D") + df.lst
+    def in_utc(self):
+        """Convert time index to UTC."""
+        return self.set_index(self.index.tz_convert("UTC"))
 
-        return Time(index, name="Local Sidereal Time")
+    @property
+    def _constructor(self):
+        """Constructor of class."""
+        return AzEl
 
 
 # main functions
