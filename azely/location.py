@@ -53,6 +53,7 @@ __all__ = ["Location", "get_location"]
 
 
 # standard library
+import re
 from dataclasses import asdict, dataclass
 from datetime import tzinfo
 from typing import Dict
@@ -88,6 +89,7 @@ LocationDict = Dict[str, str]
 # query instances
 tf = TimezoneFinder()
 osm = Nominatim(user_agent="azely")
+re_here = re.compile(r"^!\s*" + HERE)
 
 
 # data classes
@@ -167,7 +169,7 @@ def get_location(query: str = HERE, timeout: int = TIMEOUT) -> Location:
 
     if DELIMITER in query:
         return Location(**get_location_by_user(query))
-    elif query.lower() == HERE:
+    elif re_here.search(query.lower()):
         return Location(**get_location_by_ip(query, timeout))
     else:
         return Location(**get_location_by_query(query, timeout))
