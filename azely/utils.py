@@ -125,7 +125,7 @@ class cache_to:
 
     def __call__(self, func: Callable) -> Callable:
         sig = signature(func)
-        pattern = re.compile(r"^(!\s*)(!\w+)$")
+        pattern = re.compile(r"^(!\s*)([!\w]+)$")
 
         @wraps(func)
         def wrapper(*args, **kwargs):
