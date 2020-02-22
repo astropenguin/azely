@@ -124,13 +124,88 @@ fig.show()
 
 ## Advanced usage
 
+This section describes advanced usage of Azely by special DataFrame accessor and local [TOML] files.
+Note that Azely will create a config directory, `$XDG_CONFIG_HOME/azely` (if the environment variable exists) or `~/.config/azely`, after importing `azely` for the first time.
+[TOML] files for configuration (`config.toml`) and cached information (`object.toml`, `location.toml`) will be automatically created in it.
+
 ### Plotting in local sidereal time
+
+The `compute()` function does not accept local sidereal time (LST) as `view` (i.e., `view='LST'`) because LST has no information on year and date.
+Instead an output DataFrame has `as_lst` accessor which provides az/el with a LST index converted from the original time index.
+For example, the following code will plot elevation of an object in LST:
+
+```python
+>>> df.as_lst.el.plot()
+```
+
+In order to use LST values as an index of DataFrame, LST has pseudo dates which
+start from `1970-01-01`. Please ignore them or hide them by using [matplotlib] DateFormatter when you plot the result.
+Here is a sample script which has JST time axis at the bottom and LST axis at the top of a figure, respectively.
+
+```python
+import matplotlib.dates as mdates
+
+df = azely.compute('Sun', 'Tokyo', '2020-01-01')
+
+fig, ax = plt.subplots(figsize=(12, 4))
+twin = ax.twiny()
+
+df.el.plot(ax=ax, label="Sun")
+df.as_lst.el.plot(ax=twin, alpha=0)
+
+ax.set_ylabel("Elevation (deg)")
+ax.set_ylim(0, 90)
+ax.legend()
+
+formatter = mdates.DateFormatter('%H:%M')
+twin.xaxis.set_major_formatter(formatter)
+fig.autofmt_xdate(rotation=0)
+```
 
 ### User-defined information
 
+Azely offers to use user-defined information from a [TOML] file.
+Here is a sample TOML file (e.g., `user.toml`) which has custom object and location informaiton.
+
+```
+# user.toml
+
+[ASTE]
+name = "ASTE Telescope"
+longitude = "-67.70317915"
+latitude = "-22.97163575"
+altitude = "0"
+
+[GC]
+name = "Galactic center"
+frame = "galactic"
+longitude = "0deg"
+latitude = "0deg"
+```
+
+If it is located in a current directory or in the Azely's config directory, users can use the information like:
+
+```python
+>>> df = azely.compute('user:GC', 'user:ASTE', '2020-01-01')
+```
+
 ### Cached information
 
-### Customization
+Object and location information obtained from online services is cached to [TOML] files (`object.toml`, `location.toml`) in the Azely's config directory with the same format as user-defined files.
+
+### Customizing defualt values
+
+Users can modify default values of the `compute()` function by editing the Azely's config [TOML] file (`config.toml`) like:
+
+```
+# config.toml
+
+[compute]
+site = "Tokyo"
+time = "today"
+```
+
+Then `compute('Sun')` becomes equivalent to `compute('Sun', 'Tokyo', 'today')`.
 
 ## References
 
