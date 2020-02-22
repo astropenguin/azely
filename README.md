@@ -136,11 +136,11 @@ Note that Azely will create a config directory, `$XDG_CONFIG_HOME/azely` (if the
 ### Plotting in local sidereal time
 
 The `compute()` function does not accept local sidereal time (LST) as `view` (i.e., `view='LST'`) because LST has no information on year and date.
-Instead an output DataFrame has `as_lst` accessor which provides az/el with a LST index converted from the original time index.
+Instead an output DataFrame has `in_lst` property which provides az/el with a LST index converted from the original time index.
 For example, the following code will plot elevation of an object in LST:
 
 ```python
->>> df.as_lst.el.plot()
+>>> df.in_lst.el.plot()
 ```
 
 In order to use LST values as an index of DataFrame, LST has pseudo dates which
@@ -156,7 +156,7 @@ fig, ax = plt.subplots(figsize=(12, 4))
 twin = ax.twiny()
 
 df.el.plot(ax=ax, label="Sun")
-df.as_lst.el.plot(ax=twin, alpha=0)
+df.in_lst.el.plot(ax=twin, alpha=0)
 
 ax.set_ylabel("Elevation (deg)")
 ax.set_ylim(0, 90)

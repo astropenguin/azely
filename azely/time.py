@@ -52,7 +52,7 @@ from astropy.coordinates import EarthLocation
 from astropy.time import Time as ObsTime
 from dateutil.parser import parse
 from pandas import DatetimeIndex, date_range
-from pytz import UnknownTimeZoneError, timezone, utc
+from pytz import UnknownTimeZoneError, timezone
 from .utils import AzelyError
 from .location import get_location
 
@@ -74,17 +74,18 @@ DELIMITER = "to"
 class Time(DatetimeIndex):
     """Azely's time information class."""
 
-    def __new__(cls, *args, **kwargs):
-        return super().__new__(cls, *args, **kwargs)
-
     def to_obstime(self, earthloc: EarthLocation) -> ObsTime:
         """Convert it to an astropy's time (obstime)."""
-        utc_naive = self.tz_convert(utc).tz_localize(None)
-        return ObsTime(utc_naive, location=earthloc)
+        return ObsTime(self.tz_convert(None), location=earthloc)
 
     def to_index(self) -> DatetimeIndex:
         """Convert it to a pandas DatetimeIndex."""
         return DatetimeIndex(self)
+
+    @property
+    def _constructor(self):
+        """Constructor of class."""
+        return Time
 
 
 # main functions
