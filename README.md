@@ -37,13 +37,14 @@ $ pip install azely
 
 ## Basic usage
 
-This section covers basic az/el computation using `compute()` function.
+This section describes basic az/el computation using `compute()` function.
 
 ### Compute function
 
 Azely's `compute()` function receives the following parameters and returns [pandas] DataFrame (`df`):
 
 ```python
+>>> import azely
 >>> df = azely.compute(object, site, time, view, **options)
 ```
 
@@ -69,13 +70,16 @@ Acceptable formats of each parameter and examples are as follows.
 | | `<time> to <time>` | start and end of time range | `'1/1 to 1/3'`, `'Jan. 1st to Jan. 3rd'` |
 | `view` | `''` (default) | use timezone of `site` | - |
 | | `<tz name>` | name of timezone database | `'Asia/Tokyo'`, `'UTC'` |
-| | `<loc. name>` | name of location from which timezone is identified | same as above |
-| | `<toml>:<loc. name>` | user-defined location from which timezone is identified | same as above |
+| | `<loc. name>` | name of location from which timezone is identified | same as `site`'s examples |
+| | `<toml>:<loc. name>` | user-defined location from which timezone is identified | same as `site`'s examples |
 
 ### Output DataFrame
 
 The output DataFrame contains az/el expressed in units of degrees and local sidereal time (LST) at `site` indexed by time in `view`:
 
+```python
+>>> print(df)
+```
 ```
                                   az         el             lst
 Asia/Tokyo
@@ -96,7 +100,7 @@ Asia/Tokyo
 
 ### Example
 
-Here is a sample code which will plot one-day elevation of the Sun and candidates of black hole shadow observations at ALMA AOS on Apr. 11th 2017 in UTC.
+Here is a sample script which will plot one-day elevation of the Sun and candidates of black hole shadow observations at ALMA AOS on Apr. 11th 2017 in UTC.
 
 ```python
 import azely
@@ -117,6 +121,7 @@ ax.set_title(f'site: {site}, view: {view}, time: {time}')
 ax.set_ylabel('Elevation (deg)')
 ax.set_ylim(0, 90)
 ax.legend()
+
 fig.show()
 ```
 
