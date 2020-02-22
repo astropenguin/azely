@@ -202,4 +202,7 @@ def compute_from(object: Object, site: Location, time: Time) -> DataFrame:
     el = skycoord.altaz.alt
     lst = to_timedelta(obstime.sidereal_time("mean").value, unit="hr")
 
-    return DataFrame(dict(az=az, el=el, lst=lst), index=time.to_index())
+    azel = AzEl(dict(az=az, el=el, lst=lst), index=time.to_index())
+    azel.object = object
+    azel.site = site
+    return azel
