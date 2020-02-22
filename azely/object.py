@@ -159,7 +159,7 @@ def get_object(query: str, frame: str = FRAME, timeout: int = TIMEOUT) -> Object
     """
     if DELIMITER in query:
         return Object(**get_object_by_user(query))
-    elif query.lower() in solar_system_ephemeris.bodies:
+    elif query.lower().lstrip("! ") in solar_system_ephemeris.bodies:
         return Object(**get_object_of_solar(query))
     else:
         return Object(**get_object_by_query(query, frame, timeout))

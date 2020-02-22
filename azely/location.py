@@ -167,7 +167,7 @@ def get_location(query: str = HERE, timeout: int = TIMEOUT) -> Location:
 
     if DELIMITER in query:
         return Location(**get_location_by_user(query))
-    elif query.lower() == HERE:
+    elif query.lower().lstrip("! ") == HERE:
         return Location(**get_location_by_ip(query, timeout))
     else:
         return Location(**get_location_by_query(query, timeout))
