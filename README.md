@@ -200,7 +200,7 @@ Object and location information obtained from online services is cached to [TOML
 
 ### Customizing defualt values
 
-Users can modify default values of the `compute()` function by editing the Azely's config [TOML] file (`config.toml`) like:
+Users can modify default values of the `compute()` function by editing the Azely's config [TOML] file (`config.toml`) in the Azely's config directory like:
 
 ```
 # config.toml
