@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "azely"
 version = "0.4.3"
-description = "Python package for calculation and plotting of astronomical object's azimuth/elevation"
+description = "Computation and plotting of astronomical object's azimuth/elevation"
 authors = ["Akio Taniguchi <taniguchi@a.phys.nagoya-u.ac.jp>"]
 license = "MIT"
 
@@ -27,6 +27,8 @@ ipython = "^7.12.0"
 jupyter = "^1.0.0"
 jupyterlab = "^1.2.6"
 pytest = "^5.3.5"
+sphinx = "^2.4.2"
+sphinx-rtd-theme = "^0.4.3"
 
 [build-system]
 requires = ["poetry>=0.12"]
