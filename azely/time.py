@@ -74,9 +74,6 @@ DELIMITER = "to"
 class Time(DatetimeIndex):
     """Azely's time information class."""
 
-    def __new__(cls, *args, **kwargs):
-        return super().__new__(cls, *args, **kwargs)
-
     def to_obstime(self, earthloc: EarthLocation) -> ObsTime:
         """Convert it to an astropy's time (obstime)."""
         utc_naive = self.tz_convert(utc).tz_localize(None)
@@ -85,6 +82,11 @@ class Time(DatetimeIndex):
     def to_index(self) -> DatetimeIndex:
         """Convert it to a pandas DatetimeIndex."""
         return DatetimeIndex(self)
+
+    @property
+    def _constructor(self):
+        """Constructor of class."""
+        return Time
 
 
 # main functions
