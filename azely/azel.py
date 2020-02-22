@@ -31,15 +31,15 @@ Examples:
 
         >>> df = azely.compute('Sun', 'Tokyo', '1/1 12:00 to 12/31 12:00', freq='1D')
 
-As dataframe has `plot` method for matplotlib, plotting the result is so easy::
+As DataFrame has `plot` method for matplotlib, plotting the result is so easy::
 
     >>> df.el.plot() # plot elevation
 
-If users want to use LST instead of time information, use `as_lst` accessor::
+If users want to use LST instead of time information, use `in_lst` property::
 
-    >>> df.as_lst.el.plot()
+    >>> df.in_lst.el.plot()
 
-In order to use LST values as an index of dataframe, LST has pseudo dates which
+In order to use LST values as an index of DataFrame, LST has pseudo dates which
 start from `1970-01-01`. Please ignore them or hide them by using matplotlib's
 DateFormatter when you plot the result.
 
@@ -111,7 +111,7 @@ def compute(
     dayfirst: bool = DAYFIRST,
     yearfirst: bool = YEARFIRST,
     timeout: int = TIMEOUT,
-) -> DataFrame:
+) -> AzEl:
     """Compute az/el and local sidereal time (LST) of an astronomical object.
 
     Args:
@@ -135,7 +135,7 @@ def compute(
         timeout: (common option) Query timeout expressed in units of seconds.
 
     Returns:
-        Computed dataframe of objects' az/el and LST at given site and view.
+        Computed DataFrame of object's az/el and LST at given site and view.
 
     Raises:
         AzelyError: Raised if one of mid-level APIs fails to get any information.
@@ -177,7 +177,7 @@ def compute(
 
 
 # helper functions
-def compute_from(object: Object, site: Location, time: Time) -> DataFrame:
+def compute_from(object: Object, site: Location, time: Time) -> AzEl:
     """Compute az/el and local sidereal time (LST) of an astronomical object.
 
     Similar to `compute` function, but this function receives instances
@@ -189,7 +189,7 @@ def compute_from(object: Object, site: Location, time: Time) -> DataFrame:
         time: Time information.
 
     Returns:
-        Computed dataframe of objects' az/el and LST at given site and view.
+        Computed DataFrame of object's az/el and LST at given site and view.
 
     Raises:
         AzelyError: Raised if one of mid-level APIs fails to get any information.
