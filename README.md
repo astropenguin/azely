@@ -125,7 +125,7 @@ ax.legend()
 fig.show()
 ```
 
-![example.png](https://raw.githubusercontent.com/astropenguin/azely/docs/images/example.png)
+![example.png](https://raw.githubusercontent.com/astropenguin/azely/master/docs/images/example.png)
 
 ## Advanced usage
 
