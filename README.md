@@ -144,8 +144,8 @@ For example, the following code will plot elevation of an object in LST:
 >>> df.in_lst.el.plot()
 ```
 
-In order to use LST values as an index of DataFrame, LST has pseudo dates which
-start from `1970-01-01`. Please ignore them or hide them by using [matplotlib] DateFormatter when you plot the result.
+In order to use LST values as an index of DataFrame, LST has pseudo dates which start from `1970-01-01`.
+Please ignore them or hide them by using [matplotlib] DateFormatter when you plot the result.
 Here is a sample script which has JST time axis at the bottom and LST axis at the top of a figure, respectively.
 
 ```python
