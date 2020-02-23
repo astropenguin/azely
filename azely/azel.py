@@ -44,7 +44,7 @@ start from `1970-01-01`. Please ignore them or hide them by using matplotlib's
 DateFormatter when you plot the result.
 
 """
-__all__ = ["compute"]
+__all__ = ["AzEl", "compute"]
 
 
 # dependent packages
