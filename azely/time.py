@@ -163,9 +163,9 @@ def get_time(
     except UnknownTimeZoneError:
         tzinfo = get_location(view, timeout).tzinfo
 
-    if query == NOW:
+    if query.lower() == NOW:
         return Time(get_time_now(tzinfo))
-    elif query == TODAY:
+    elif query.lower() == TODAY:
         return Time(get_time_today(freq, tzinfo))
     else:
         parser = partial(parse, dayfirst=dayfirst, yearfirst=yearfirst)
