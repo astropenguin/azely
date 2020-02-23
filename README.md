@@ -4,6 +4,7 @@
 [![Python](https://img.shields.io/pypi/pyversions/azely.svg?label=Python&color=yellow&style=flat-square)](https://pypi.org/pypi/azely/)
 [![Test](https://img.shields.io/github/workflow/status/astropenguin/azely/Test?logo=github&label=Test&style=flat-square)](https://github.com/astropenguin/azely/actions)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?label=License&style=flat-square)](LICENSE)
+[![DOI](https://img.shields.io/badge/DOI-10.5281/zenodo.3680060-blue?style=flat-square)](https://doi.org/10.5281/zenodo.3680060)
 
 :zap: Computation and plotting of astronomical object's azimuth/elevation
 
