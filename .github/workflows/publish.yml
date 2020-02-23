@@ -2,7 +2,7 @@ name: Publish
 
 on:
   release:
-    types: [created]
+    types: [created, edited]
 
 jobs:
   publish:
@@ -23,8 +23,6 @@ jobs:
           poetry publish --username $USERNAME --password $PASSWORD
   docs:
     runs-on: ubuntu-latest
-    env:
-      PERSONAL_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
     steps:
       - uses: actions/checkout@v2
       - name: Setup Python
@@ -40,7 +38,7 @@ jobs:
       - name: Deploy docs
         uses: peaceiris/actions-gh-pages@v3
         with:
-          personal_token: $PERSONAL_TOKEN
+          personal_token: ${{ secrets.PERSONAL_TOKEN }}
           publish_branch: gh-pages
           publish_dir: ./docs/_build
           force_orphan: true
