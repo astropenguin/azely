@@ -19,7 +19,6 @@ jobs:
       - name: Publish package
         run: |
           pip install poetry
-          poetry install
           poetry build
           poetry publish --username $USERNAME --password $PASSWORD
   docs:
@@ -35,6 +34,7 @@ jobs:
       - name: Build docs
         run: |
           pip install poetry
+          poetry install
           poetry run sphinx-apidoc -f -o docs/_apidoc azely
           poetry run sphinx-build docs docs/_build
       - name: Deploy docs
