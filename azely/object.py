@@ -179,7 +179,7 @@ def get_object_by_user(query: str) -> ObjectDict:
 @cache_to(AZELY_OBJECT)
 def get_object_of_solar(query: str) -> ObjectDict:
     """Get object information of the solar system."""
-    return Object(query, SOLAR, "NaN", "NaN").to_dict()
+    return Object(query.capitalize(), SOLAR, "", "").to_dict()
 
 
 @cache_to(AZELY_OBJECT)
