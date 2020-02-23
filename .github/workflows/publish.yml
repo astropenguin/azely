@@ -19,6 +19,7 @@ jobs:
       - name: Publish package
         run: |
           pip install poetry
+          poetry install
           poetry build
           poetry publish --username $USERNAME --password $PASSWORD
   docs:
