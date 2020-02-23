@@ -1,24 +1,24 @@
 """Azely's time module (mid-level API).
 
-This module mainly provides `Time` class for date and time information at a
-given location (time information, hereafter) and `get_time` function to obtain
-time information as an instance of `Time` class.
+This module mainly provides ``Time`` class for date and time information at a
+given location (time information, hereafter) and ``get_time`` function to obtain
+time information as an instance of ``Time`` class.
 
-The `Time` class is subclass of `pandas.DatetimeIndex` and expressed like:
-`Time(['2020-02-18'], dtype='datetime64[ns, Asia/Tokyo]', name='Asia/Tokyo', freq='D')`.
+The ``Time`` class is subclass of ``pandas.DatetimeIndex`` and expressed like:
+``Time(['2020-02-18'], dtype='datetime64[ns, Asia/Tokyo]', name='Asia/Tokyo', freq='D')``.
 
-The `get_time` function computes time information in several cases:
+The ``get_time`` function computes time information in several cases:
 (1) Current time (e.g., [2020-01-01 22:32:58+09:00]).
 (2) Time range today (e.g., [2020-01-01 00:00, ..., 2020-01-02 00:00])
 (3) Time range of given date and length (by query)
 
-In the cases of (1) and (2), special queries, `'now'` and `'today'`, must be
-specified, respectively. The `view` option specifies a timezone where
+In the cases of (1) and (2), special queries, ``'now'`` and ``'today'``, must be
+specified, respectively. The ``view`` option specifies a timezone where
 time (range) is considered (timezone or location name can be accepted).
 
-In the case of (3), formatted query (e.g., `'2020-01-01 to 2020-01-05'`)
-or natural language-like query can be used (e.g., `'Jan. 1st to Jan. 5th'`),
-where start and end must be separated by `'to'`. The `view` option also works.
+In the case of (3), formatted query (e.g., ``'2020-01-01 to 2020-01-05'``)
+or natural language-like query can be used (e.g., ``'Jan. 1st to Jan. 5th'``),
+where start and end must be separated by ``'to'``. The ``view`` option also works.
 
 Examples:
     To get current time in Tokyo (by default)::
@@ -100,43 +100,43 @@ def get_time(
     """Get time information by various ways.
 
     Args:
-        query: Query string (e.g., `'2020-01-01 to 2020-01-05'`). If `'now'`
-            (by default) or `'today'` is specified, then current time
+        query: Query string (e.g., ``'2020-01-01 to 2020-01-05'``). If ``'now'``
+            (by default) or ``'today'`` is specified, then current time
             or time range today is computed, respectively.
-        view: Name of timezone (e.g., `'Asia/Tokyo'` or `'UTC'`) or location
-            with which timezone can be identified (e.g., `'Tokyo'`).
+        view: Name of timezone (e.g., ``'Asia/Tokyo'`` or ``'UTC'``) or location
+            with which timezone can be identified (e.g., ``'Tokyo'``).
         freq: Frequency of time samples as the same format of pandas offset aliases
-            (e.g., `'1D'` -> 1 day, `'3H'` -> 3 hours, `'10T'` -> 10 minutes).
+            (e.g., ``'1D'`` -> 1 day, ``'3H'`` -> 3 hours, ``'10T'`` -> 10 minutes).
         dayfirst: Whether to interpret the first value in an ambiguous 3-integer
-            date (e.g., `'01-02-03'`) as the day. If True, for example,
-            `'01-02-03'` is treated as Feb. 1st 2003.
+            date (e.g., ``'01-02-03'``) as the day. If True, for example,
+            ``'01-02-03'`` is treated as Feb. 1st 2003.
         yearfirst: Whether to interpret the first value in an ambiguous 3-integer
-            date (e.g., `'01-02-03'`) as the year. If True, for example,
-            `'01-02-03'` is treated as Feb. 3rd 2001. If `dayfirst` is also `True`,
+            date (e.g., ``'01-02-03'``) as the year. If True, for example,
+            ``'01-02-03'`` is treated as Feb. 3rd 2001. If ``dayfirst`` is also ``True``,
             then it will be Mar. 2nd 2001.
         timeout: Query timeout expressed in units of seconds (see notes).
 
     Returns:
-        Time information as an instance of `Time` class.
+        Time information as an instance of ``Time`` class.
 
     Raises:
         AzelyError: Raised if the function fails to parse query or timezone.
 
-    The `get_time` function computes time information in several cases:
+    The ``get_time`` function computes time information in several cases:
     (1) Current time (e.g., [2020-01-01 22:32:58+09:00]).
     (2) Time range of today (e.g., [2020-01-01 00:00, ..., 2020-01-02 00:00])
     (3) Time range of given date and length (by query)
 
-    In the cases of (1) and (2), special queries, `'now'` and `'today'`, must be
-    specified, respectively. The `view` option specifies a timezone where
+    In the cases of (1) and (2), special queries, ``'now'`` and ``'today'``, must be
+    specified, respectively. The ``view`` option specifies a timezone where
     time (range) is considered (timezone or location name can be accepted).
 
-    In the case of (3), formatted query (e.g., `'2020-01-01 to 2020-01-05'`)
-    or natural language-like query can be used (e.g., `'Jan. 1st to Jan. 5th'`),
-    where start and end must be separated by `'to'`. The `view` option also works.
+    In the case of (3), formatted query (e.g., ``'2020-01-01 to 2020-01-05'``)
+    or natural language-like query can be used (e.g., ``'Jan. 1st to Jan. 5th'``),
+    where start and end must be separated by ``'to'``. The ``view`` option also works.
 
     Notes:
-        If location is specified as `view`, then `azely.location.get_location`
+        If location is specified as ``view``, then ``azely.location.get_location``
         function is used inside the function, which requires internet connection
         if the location is queried for the first time.
 

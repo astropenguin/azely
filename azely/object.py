@@ -1,25 +1,25 @@
 """Azely's object module (mid-level API).
 
-This module mainly provides `Object` class for information of an astronomical
-object (object information, hereafter) and `get_object` function to search for
-object information as an instance of `Object` class.
+This module mainly provides ``Object`` class for information of an astronomical
+object (object information, hereafter) and ``get_object`` function to search for
+object information as an instance of ``Object`` class.
 
-The `Object` class is defiend as
-`Object(name: str, frame: str, longitude: str, latitude: str)`,
+The ``Object`` class is defiend as
+``Object(name: str, frame: str, longitude: str, latitude: str)``,
 where frame is a name of equatorial coordinates (e.g., icrs) and lon/lat are values
 of coordinates which must be written with units like 02h42m40.771s/-00d00m47.84s.
 
 
-The `get_object` function acquires object information from:
+The ``get_object`` function acquires object information from:
 (1) Data from CDS (by default). Internet connection is required.
 (2) User-defined object information written in a TOML file.
 
 In the case of (1), obtained object information is cached in a special
-TOML file (`~/.config/azely/objects.toml`) for an offline use.
+TOML file (``~/.config/azely/objects.toml``) for an offline use.
 
 In the case of (2), users can define object information in a TOML file
-(e.g., `user.toml`) which should be put in a current directory or in the
-Azely's config directory (`~/.config/azely`). Object information must be
+(e.g., ``user.toml``) which should be put in a current directory or in the
+Azely's config directory (``~/.config/azely``). Object information must be
 defined as a table in the TOML file like::
 
     # user.toml
@@ -30,18 +30,18 @@ defined as a table in the TOML file like::
     longitude = "0deg"
     latitude = "0deg"
 
-Then object information can be obtained by `get_object(<query>)`.
-Use `get_object(<name>:<query>)` for user-defined object information,
-where `<name>` must be the name of a TOML file without suffix or the full
+Then object information can be obtained by ``get_object(<query>)``.
+Use ``get_object(<name>:<query>)`` for user-defined object information,
+where ``<name>`` must be the name of a TOML file without suffix or the full
 path of it. If it does not exist in a current directory, the function
-will try to find it in the Azely's config directory (`~/.config/azely`).
+will try to find it in the Azely's config directory (``~/.config/azely``).
 
 Examples:
     To get object info from CDS::
 
         >>> obj = azely.object.get_object('NGC1068')
 
-    To get object info from `user.toml`::
+    To get object info from ``user.toml``::
 
         >>> obj = azely.object.get_object('user:GC')
 
@@ -115,12 +115,12 @@ def get_object(query: str, frame: str = FRAME, timeout: int = TIMEOUT) -> Object
     """Get object information by various ways.
 
     Args:
-        query: Query string (e.g., `'NGC1068'` or `'user:GC'`).
+        query: Query string (e.g., ``'NGC1068'`` or ``'user:GC'``).
         frame: Name of equatorial coordinates used in astropy's SkyCoord.
         timeout: Query timeout expressed in units of seconds.
 
     Returns:
-        Object information as an instance of `Object` class.
+        Object information as an instance of ``Object`` class.
 
     Raises:
         AzelyError: Raised if the function fails to get object information.
@@ -130,20 +130,20 @@ def get_object(query: str, frame: str = FRAME, timeout: int = TIMEOUT) -> Object
     (2) User-defined object information written in a TOML file.
 
     In the case of (1), obtained object information is cached in a special
-    TOML file (`~/.config/azely/objects.toml`) for an offline use.
+    TOML file (``~/.config/azely/objects.toml``) for an offline use.
 
     In the case of (2), users can define object information in a TOML file
-    (e.g., `user.toml`) which should be put in a current directory or in the
-    Azely's config directory (`~/.config/azely`).
+    (e.g., ``user.toml``) which should be put in a current directory or in the
+    Azely's config directory (``~/.config/azely``).
 
-    Then object information can be obtained by `get_object(<query>)`.
-    Use `get_object(<name>:<query>)` for user-defined object information,
-    where `<name>` must be the name of a TOML file without suffix or the full
+    Then object information can be obtained by ``get_object(<query>)``.
+    Use ``get_object(<name>:<query>)`` for user-defined object information,
+    where ``<name>`` must be the name of a TOML file without suffix or the full
     path of it. If it does not exist in a current directory, the function
-    will try to find it in the Azely's config directory (`~/.config/azely`).
+    will try to find it in the Azely's config directory (``~/.config/azely``).
 
     Notes:
-        As `object` is the Python's builtin base class, it might be better
+        As ``object`` is the Python's builtin base class, it might be better
         to use an alternative variable name (e.g., 'object_' or 'obj')
         for object information which this function returns.
 
@@ -152,7 +152,7 @@ def get_object(query: str, frame: str = FRAME, timeout: int = TIMEOUT) -> Object
 
             >>> obj = azely.object.get_object('NGC1068')
 
-        To get object info from `user.toml`::
+        To get object info from ``user.toml``::
 
             >>> obj = azely.object.get_object('user:GC')
 

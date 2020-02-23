@@ -1,24 +1,24 @@
 """Azely's location module (mid-level API).
 
-This module mainly provides `Location` class for location information
-and `get_location` function to search for location information as an
-instance of `Location` class.
+This module mainly provides ``Location`` class for location information
+and ``get_location`` function to search for location information as an
+instance of ``Location`` class.
 
-The `Location` class is defined as:
-`Location(name: str, longitude: str, latitude: str, altitude: str = '0')`,
+The ``Location`` class is defined as:
+``Location(name: str, longitude: str, latitude: str, altitude: str = '0')``,
 where units of lon/lat and altitude are deg and meter, respectively.
 
-The `get_location` function acquires location information from:
+The ``get_location`` function acquires location information from:
 (1) Guess by IP address (by default). Internet connection is required.
 (2) Data from OpenStreetMap. Internet connection is required.
 (3) User-defined location information written in a TOML file.
 
 In the case of (1) and (2), obtained location information is cached
-in a special TOML file (`~/.config/azely/locations.toml`) for an offline use.
+in a special TOML file (``~/.config/azely/locations.toml``) for an offline use.
 
 In the case of (3), users can define location information in a TOML file
-(e.g., `user.toml`) which should be put in a current directory or in the
-Azely's config directory (`~/.config/azely`). Location information must be
+(e.g., ``user.toml``) which should be put in a current directory or in the
+Azely's config directory (``~/.config/azely``). Location information must be
 defined as a table in the TOML file like::
 
     # user.toml
@@ -29,11 +29,11 @@ defined as a table in the TOML file like::
     latitude = "-22.97163575"
     altitude = "0"
 
-Then location information can be obtained by `get_location(<query>)`.
-Use `get_location(<name>:<query>)` for user-defined location information,
-where `<name>` must be the name of a TOML file without suffix or the full
+Then location information can be obtained by ``get_location(<query>)``.
+Use ``get_location(<name>:<query>)`` for user-defined location information,
+where ``<name>`` must be the name of a TOML file without suffix or the full
 path of it. If it does not exist in a current directory, the function
-will try to find it in the Azely's config directory (`~/.config/azely`).
+will try to find it in the Azely's config directory (``~/.config/azely``).
 
 Examples:
     To get location information by IP address::
@@ -44,7 +44,7 @@ Examples:
 
         >>> loc = azely.location.get_location('ALMA AOS')
 
-    To get location information from `user.toml`::
+    To get location information from ``user.toml``::
 
         >>> loc = azely.location.get_location('user:ASTE')
 
@@ -121,13 +121,13 @@ def get_location(query: str = HERE, timeout: int = TIMEOUT) -> Location:
     """Get location information by various ways.
 
     Args:
-        query: Query string (e.g., `'ALMA AOS'` or `'user:ASTE'`). Default value,
+        query: Query string (e.g., ``'ALMA AOS'`` or ``'user:ASTE'``). Default value,
             'here', is a special one with which the function tries to guess
             location information by an IP address of a client.
         timeout: Query timeout expressed in units of seconds.
 
     Returns:
-        Location information as an instance of `Location` class.
+        Location information as an instance of ``Location`` class.
 
     Raises:
         AzelyError: Raised if the function fails to get location information.
@@ -138,17 +138,17 @@ def get_location(query: str = HERE, timeout: int = TIMEOUT) -> Location:
     (3) User-defined location information written in a TOML file.
 
     In the cases of (1) and (2), obtained location information is cached
-    in a special TOML file (`~/.config/azely/locations.toml`) for an offline use.
+    in a special TOML file (``~/.config/azely/locations.toml``) for an offline use.
 
     In the case of (3), users can define location information in a TOML file
-    (e.g., `user.toml`) which should be put in a current directory or in the
-    Azely's config directory (`~/.config/azely`).
+    (e.g., ``user.toml``) which should be put in a current directory or in the
+    Azely's config directory (``~/.config/azely``).
 
-    Then location information can be obtained by `get_location(<query>)`.
-    Use `get_location(<name>:<query>)` for user-defined location information,
-    where `<name>` must be the name of a TOML file without suffix or the full
+    Then location information can be obtained by ``get_location(<query>)``.
+    Use ``get_location(<name>:<query>)`` for user-defined location information,
+    where ``<name>`` must be the name of a TOML file without suffix or the full
     path of it. If it does not exist in a current directory, the function
-    will try to find it in the Azely's config directory (`~/.config/azely`).
+    will try to find it in the Azely's config directory (``~/.config/azely``).
 
     Examples:
         To get location information by IP address::
@@ -159,7 +159,7 @@ def get_location(query: str = HERE, timeout: int = TIMEOUT) -> Location:
 
             >>> loc = azely.location.get_location('ALMA AOS')
 
-        To get location information from `user.toml`::
+        To get location information from ``user.toml``::
 
             >>> loc = azely.location.get_location('user:ASTE')
 

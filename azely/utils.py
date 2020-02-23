@@ -1,10 +1,10 @@
 """Azely's utils module (low-level utilities).
 
 This module provides series of utility related to exception and I/O:
-(1) `AzelyError` class as Azely's base exception class
-(2) `open_toml` function to open (and update if any) a TOML file
-(3) `cache_to` decorator which caches returns of a function to a TOML file
-(4) `set_defaults` decorator which replaces default values of a function
+(1) ``AzelyError`` class as Azely's base exception class
+(2) ``open_toml`` function to open (and update if any) a TOML file
+(3) ``cache_to`` decorator which caches returns of a function to a TOML file
+(4) ``set_defaults`` decorator which replaces default values of a function
 
 """
 __all__ = ["AzelyError", "open_toml", "cache_to", "set_defaults"]
@@ -42,13 +42,13 @@ class AzelyError(Exception):
 def open_toml(path: PathLike, alt_dir: PathLike = "."):
     """Open a TOML file and get contents as a dictionary.
 
-    If this function is used in a `with` context management,
+    If this function is used in a ``with`` context management,
     any updates to the dictionary is also reflected on the TOML file.
 
     Args:
         path: Path or filename (without suffix) of a TOML file.
             If the latter is specified and if it does not exist in a current
-            directory, then the function tries to find it in `alt_dir`.
+            directory, then the function tries to find it in ``alt_dir``.
         alt_dir: Path of a directory where the function tries to find
             the TOML file if it does not exist in a current directory.
 
@@ -59,7 +59,7 @@ def open_toml(path: PathLike, alt_dir: PathLike = "."):
         AzelyError: Raised if the TOML file is not found anywhere.
 
     Examples:
-        To simply open a TOML file (for example, `./user.toml`)::
+        To simply open a TOML file (for example, ``./user.toml``)::
 
             >>> dic = azely.utils.open_toml('user.toml')
 
@@ -104,7 +104,7 @@ class cache_to:
         >>> func('ccc')
 
     would take ~30 seconds to finish. But at the same time,
-    the results are cached to `cache.toml` like::
+    the results are cached to ``cache.toml`` like::
 
         # cache.toml
 
@@ -115,7 +115,7 @@ class cache_to:
     Then the second calls would take much shorter time because
     cached values are simply read and returned by the decorator.
     If a query argument is given with '!' at the beginning of it
-    (e.g., `'!aaa'`), cached values are forcibly updated by an
+    (e.g., ``'!aaa'``), cached values are forcibly updated by an
     immediate call of the original function.
 
     """
@@ -160,7 +160,7 @@ class set_defaults:
         ... def func(a: int, b: int = 0) -> int:
         ...     return a + b
 
-    Suppose the content of `defaults.toml` is like::
+    Suppose the content of ``defaults.toml`` is like::
 
         # defaults.toml
 
