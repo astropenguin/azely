@@ -19,6 +19,7 @@ from typing import Any, Callable, Dict, Union
 
 
 # dependent packages
+from requests.utils import CaseInsensitiveDict
 from toml import TomlDecodeError, dump, load
 
 
@@ -226,7 +227,7 @@ def ensure_existance(path: PathLike) -> Path:
     return path
 
 
-class TOMLDict(dict):
+class TOMLDict(CaseInsensitiveDict):
     """Open and update a TOML file as a dictionary."""
 
     def __init__(self, path: PathLike) -> None:
