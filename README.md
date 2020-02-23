@@ -132,7 +132,7 @@ fig.show()
 
 This section describes advanced usage of Azely by special DataFrame accessor and local [TOML] files.
 Note that Azely will create a config directory, `$XDG_CONFIG_HOME/azely` (if the environment variable exists) or `~/.config/azely`, after importing `azely` for the first time.
-[TOML] files for configuration (`config.toml`) and cached information (`object.toml`, `location.toml`) will be automatically created in it.
+[TOML] files for configuration (`config.toml`) and cached information (`objects.toml`, `locations.toml`) will be automatically created in it.
 
 ### Plotting in local sidereal time
 
@@ -197,7 +197,7 @@ If it is located in a current directory or in the Azely's config directory, user
 
 ### Cached information
 
-Object and location information obtained from online services is cached to [TOML] files (`object.toml`, `location.toml`) in the Azely's config directory with the same format as user-defined files.
+Object and location information obtained from online services is cached to [TOML] files (`objects.toml`, `locations.toml`) in the Azely's config directory with the same format as user-defined files.
 If a query argument is given with `'!'` at the beginning of it, then the cached values are forcibly updated by a new acquisition.
 This is useful, for example, when users want to update a current location:
 

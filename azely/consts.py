@@ -49,5 +49,5 @@ def get_azely_dir() -> Path:
 
 AZELY_DIR = get_azely_dir()
 AZELY_CONFIG = AZELY_DIR / "config.toml"
-AZELY_OBJECT = AZELY_DIR / "object.toml"
-AZELY_LOCATION = AZELY_DIR / "location.toml"
+AZELY_OBJECT = AZELY_DIR / "objects.toml"
+AZELY_LOCATION = AZELY_DIR / "locations.toml"

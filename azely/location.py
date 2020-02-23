@@ -14,7 +14,7 @@ The `get_location` function acquires location information from:
 (3) User-defined location information written in a TOML file.
 
 In the case of (1) and (2), obtained location information is cached
-in a special TOML file (`~/.config/azely/location.toml`) for an offline use.
+in a special TOML file (`~/.config/azely/locations.toml`) for an offline use.
 
 In the case of (3), users can define location information in a TOML file
 (e.g., `user.toml`) which should be put in a current directory or in the
@@ -138,7 +138,7 @@ def get_location(query: str = HERE, timeout: int = TIMEOUT) -> Location:
     (3) User-defined location information written in a TOML file.
 
     In the cases of (1) and (2), obtained location information is cached
-    in a special TOML file (`~/.config/azely/location.toml`) for an offline use.
+    in a special TOML file (`~/.config/azely/locations.toml`) for an offline use.
 
     In the case of (3), users can define location information in a TOML file
     (e.g., `user.toml`) which should be put in a current directory or in the

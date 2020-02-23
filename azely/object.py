@@ -15,7 +15,7 @@ The `get_object` function acquires object information from:
 (2) User-defined object information written in a TOML file.
 
 In the case of (1), obtained object information is cached in a special
-TOML file (`~/.config/azely/object.toml`) for an offline use.
+TOML file (`~/.config/azely/objects.toml`) for an offline use.
 
 In the case of (2), users can define object information in a TOML file
 (e.g., `user.toml`) which should be put in a current directory or in the
@@ -130,7 +130,7 @@ def get_object(query: str, frame: str = FRAME, timeout: int = TIMEOUT) -> Object
     (2) User-defined object information written in a TOML file.
 
     In the case of (1), obtained object information is cached in a special
-    TOML file (`~/.config/azely/object.toml`) for an offline use.
+    TOML file (`~/.config/azely/objects.toml`) for an offline use.
 
     In the case of (2), users can define object information in a TOML file
     (e.g., `user.toml`) which should be put in a current directory or in the
