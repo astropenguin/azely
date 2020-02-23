@@ -156,7 +156,7 @@ df = azely.compute('Sun', 'Tokyo', '2020-01-01')
 fig, ax = plt.subplots(figsize=(12, 4))
 twin = ax.twiny()
 
-df.el.plot(ax=ax, label="Sun")
+df.el.plot(ax=ax, label=df.object.name)
 df.in_lst.el.plot(ax=twin, alpha=0)
 
 ax.set_ylabel("Elevation (deg)")
