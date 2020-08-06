@@ -21,7 +21,7 @@ direnv allow .
 
 cat << EOS >> .env
 AZELY_DIR=${PWD}/.azely
-PYTHONSTARTUP=${PWD}/startup.py
+PYTHONSTARTUP=${PWD}/etc/startup.py
 EOS
 
 
