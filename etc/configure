@@ -1,41 +1,50 @@
 #!/bin/bash
+set -eu
 
 
-# check dependencies
+# Configure Python environment
 if ! type poetry >/dev/null 2>&1
 then
-    echo "poetry is not installed"
+    echo "Poetry is not installed"
     exit 1
 fi
 
-if ! type direnv >/dev/null 2>&1
+poetry install
+
+
+# Configure VS Code
+if ! type code >/dev/null 2>&1
 then
-    echo "direnv is not installed"
+    echo "VS Code (code) is not installed"
     exit 1
 fi
 
-
-# set environment valiables
-echo "dotenv" > .envrc
-direnv allow .
-
-cat << EOS >> .env
-AZELY_DIR=${PWD}/.azely
-PYTHONSTARTUP=${PWD}/etc/startup.py
-EOS
-
-
-# set VS Code settings
+code --install-extension ms-python.python
 mkdir -p .vscode
 
 cat << EOS > .vscode/settings.json
 {
-    "python.pythonPath": "$(poetry run which python)",
     "editor.formatOnSave": true,
     "python.formatting.provider": "black",
     "python.linting.enabled": true,
     "python.linting.lintOnSave": true,
     "python.linting.flake8Enabled": true,
     "python.linting.pylintEnabled": false,
+    "python.pythonPath": "$(poetry run which python)",
 }
 EOS
+
+
+# Configure environment variables
+if ! type direnv >/dev/null 2>&1
+then
+    echo "direnv is not installed"
+    exit 1
+fi
+
+cat << EOS > .envrc
+export AZELY_DIR=${PWD}/.azely
+export PYTHONSTARTUP=${PWD}/etc/startup.py
+EOS
+
+direnv allow .envrc
