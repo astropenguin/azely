@@ -23,7 +23,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
-          pip install --user poetry
+          pip install poetry
           poetry install
       - name: Lint with flake8
         run: poetry run flake8 azely
