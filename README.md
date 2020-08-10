@@ -198,11 +198,11 @@ If it is located in a current directory or in the Azely's config directory, user
 ### Cached information
 
 Object and location information obtained from online services is cached to [TOML] files (`objects.toml`, `locations.toml`) in the Azely's config directory with the same format as user-defined files.
-If a query argument is given with `'!'` at the beginning of it, then the cached values are forcibly updated by a new acquisition.
+If a query argument is given with `'!'` at the end of it, then the cached values are forcibly updated by a new acquisition.
 This is useful, for example, when users want to update a current location:
 
 ```python
->>> df = azely.compute('Sun', '!here', '2020-01-01')
+>>> df = azely.compute('Sun', 'here!', '2020-01-01')
 ```
 
 ### Customizing defualt values

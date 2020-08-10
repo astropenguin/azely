@@ -18,7 +18,7 @@ expected = Location(
 
 # test functions
 def test_location_by_query():
-    assert get_location(f"!{expected.name}") == expected
+    assert get_location(f"{expected.name}!") == expected
 
 
 def test_location_by_user():

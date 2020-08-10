@@ -158,6 +158,8 @@ def get_time(
             >>> time = azely.time.get_time('2020-01-01 to 2020-01-05', view='UTC')
 
     """
+    query = query.strip()
+
     try:
         tzinfo = timezone(view)
     except UnknownTimeZoneError:
