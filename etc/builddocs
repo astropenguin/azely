@@ -1,0 +1,5 @@
+#!/bin/bash
+set -eu
+
+sphinx-apidoc -f -o docs/_apidoc azely
+sphinx-build docs docs/_build
