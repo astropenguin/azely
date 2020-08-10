@@ -214,10 +214,10 @@ Users can modify default values of the `compute()` function by editing the Azely
 
 [compute]
 site = "Tokyo"
-time = "today"
+time = "now"
 ```
 
-Then `compute('Sun')` becomes equivalent to `compute('Sun', 'Tokyo', 'today')`.
+Then `compute('Sun')` becomes equivalent to `compute('Sun', 'Tokyo', 'now')`.
 
 ## References
 
