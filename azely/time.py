@@ -21,7 +21,7 @@ or natural language-like query can be used (e.g., ``'Jan. 1st to Jan. 5th'``),
 where start and end must be separated by ``'to'``. The ``view`` option also works.
 
 Examples:
-    To get current time in Tokyo (by default)::
+    To get current time in Tokyo::
 
         >>> time = azely.time.get_time('now', view="Tokyo")
 
@@ -100,9 +100,9 @@ def get_time(
     """Get time information by various ways.
 
     Args:
-        query: Query string (e.g., ``'2020-01-01 to 2020-01-05'``). If ``'now'``
-            (by default) or ``'today'`` is specified, then current time
-            or time range today is computed, respectively.
+        query: Query string (e.g., ``'2020-01-01 to 2020-01-05'``).
+            If ``'today'`` (by default) or ``'now'`` is specified,
+            then time range of today or current time is computed, respectively.
         view: Name of timezone (e.g., ``'Asia/Tokyo'`` or ``'UTC'``) or location
             with which timezone can be identified (e.g., ``'Tokyo'``).
         freq: Frequency of time samples as the same format of pandas offset aliases
@@ -141,7 +141,7 @@ def get_time(
         if the location is queried for the first time.
 
     Examples:
-        To get current time in Tokyo (by default)::
+        To get current time in Tokyo::
 
             >>> time = azely.time.get_time('now', view="Tokyo")
 
