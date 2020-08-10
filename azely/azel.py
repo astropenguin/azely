@@ -60,10 +60,10 @@ from .consts import (
     AZELY_CONFIG,
     DAYFIRST,
     HERE,
-    NOW,
     FRAME,
     FREQ,
     TIMEOUT,
+    TODAY,
     YEARFIRST,
 )
 
@@ -104,7 +104,7 @@ class AzEl(DataFrame):
 def compute(
     object: str,
     site: str = HERE,
-    time: str = NOW,
+    time: str = TODAY,
     view: str = "",
     frame: str = FRAME,
     freq: str = FREQ,

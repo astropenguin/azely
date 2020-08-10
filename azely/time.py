@@ -90,7 +90,7 @@ class Time(DatetimeIndex):
 
 # main functions
 def get_time(
-    query: str = NOW,
+    query: str = TODAY,
     view: str = HERE,
     freq: str = FREQ,
     dayfirst: bool = DAYFIRST,
