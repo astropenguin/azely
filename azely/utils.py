@@ -121,7 +121,7 @@ class cache_to:
     """
 
     def __init__(self, path: PathLike, query: str = "query") -> None:
-        self.path = ensure_existance(path)
+        self.path = ensure_existence(path)
         self.query = query
 
     def __call__(self, func: Callable) -> Callable:
@@ -181,7 +181,7 @@ class set_defaults:
     """
 
     def __init__(self, path: PathLike, key: str = "") -> None:
-        self.path = ensure_existance(path)
+        self.path = ensure_existence(path)
         self.key = key
 
     def __call__(self, func: Callable) -> Callable:
@@ -217,7 +217,7 @@ class set_defaults:
 
 
 # helper classes/functions
-def ensure_existance(path: PathLike) -> Path:
+def ensure_existence(path: PathLike) -> Path:
     """Make path of file exist."""
     path = Path(path)
 
