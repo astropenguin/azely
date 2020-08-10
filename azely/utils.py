@@ -115,8 +115,8 @@ class cache_to:
 
     Then the second calls would take much shorter time because
     cached values are simply read and returned by the decorator.
-    If a query argument is given with '!' at the beginning of it
-    (e.g., ``'!aaa'``), cached values are forcibly updated by an
+    If a query argument is given with '!' at the end of it
+    (e.g., ``'aaa!'``), cached values are forcibly updated by an
     immediate call of the original function.
 
     """
