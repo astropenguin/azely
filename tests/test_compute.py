@@ -41,7 +41,7 @@ Asia/Tokyo,az,el,lst
 
 # test functions
 def test_compute():
-    result = compute("!NGC1068", "!ALMA AOS", "2020-02-01", view="Tokyo", freq="1H")
+    result = compute("NGC1068!", "ALMA AOS!", "2020-02-01", view="Tokyo", freq="1H")
     expected = pd.read_csv(StringIO(data), index_col=0)
     expected = expected.set_index(result.index)
 

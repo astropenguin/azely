@@ -164,10 +164,11 @@ def get_location(query: str = HERE, timeout: int = TIMEOUT) -> Location:
             >>> loc = azely.location.get_location('user:ASTE')
 
     """
+    query = query.strip()
 
     if DELIMITER in query:
         return Location(**get_location_by_user(query))
-    elif query.lower().lstrip("! ") == HERE:
+    elif query.lower().rstrip("!") == HERE:
         return Location(**get_location_by_ip(query, timeout))
     else:
         return Location(**get_location_by_query(query, timeout))

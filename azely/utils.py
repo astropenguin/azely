@@ -25,6 +25,7 @@ from toml import TomlDecodeError, dump, load
 
 # constants
 TOML_SUFFIX = ".toml"
+QUERY_PATTERN = r"^\s*([\w\s]*\w)\s*!$"
 
 
 # type aliases
@@ -120,23 +121,24 @@ class cache_to:
 
     """
 
+    pattern = re.compile(QUERY_PATTERN)
+
     def __init__(self, path: PathLike, query: str = "query") -> None:
         self.path = ensure_existence(path)
         self.query = query
 
     def __call__(self, func: Callable) -> Callable:
         sig = signature(func)
-        pattern = re.compile(r"^(!\s*)([!\w]+)$")
 
         @wraps(func)
         def wrapper(*args, **kwargs):
             bound = sig.bind(*args, **kwargs)
             bound.apply_defaults()
             query = bound.arguments[self.query]
-            need_update = pattern.search(query)
+            need_update = self.pattern.search(query)
 
             if need_update:
-                query = need_update.groups()[1]
+                query = need_update.groups()[0]
                 bound.arguments[self.query] = query
 
             with TOMLDict(self.path) as cache:

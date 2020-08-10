@@ -157,9 +157,11 @@ def get_object(query: str, frame: str = FRAME, timeout: int = TIMEOUT) -> Object
             >>> obj = azely.object.get_object('user:GC')
 
     """
+    query = query.strip()
+
     if DELIMITER in query:
         return Object(**get_object_by_user(query))
-    elif query.lower().lstrip("! ") in solar_system_ephemeris.bodies:
+    elif query.lower().rstrip("!") in solar_system_ephemeris.bodies:
         return Object(**get_object_of_solar(query))
     else:
         return Object(**get_object_by_query(query, frame, timeout))

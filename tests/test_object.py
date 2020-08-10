@@ -17,11 +17,11 @@ expected_icrs = Object(
 
 # test functions
 def test_object_of_solar():
-    assert get_object(f"!{expected_solar.name}") == expected_solar
+    assert get_object(f"{expected_solar.name}!") == expected_solar
 
 
 def test_object_by_query():
-    assert get_object(f"!{expected_icrs.name}") == expected_icrs
+    assert get_object(f"{expected_icrs.name}!") == expected_icrs
 
 
 def test_location_by_user():
