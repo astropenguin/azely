@@ -85,13 +85,13 @@ class AzEl(DataFrame):
         td_lst = td_lst.floor("1D") + self.lst
 
         lst = Timestamp(0) + td_lst
-        name = "Local Sidereal Time"
-        return self.set_index(DatetimeIndex(lst, name=name))
+        return self.set_index(DatetimeIndex(lst, name="LST"))
 
     @property
     def in_utc(self):
         """Convert time index to UTC."""
-        return self.set_index(self.index.tz_convert("UTC"))
+        utc = self.index.tz_convert("UTC")
+        return self.set_index(DatetimeIndex(utc, name="UTC"))
 
     @property
     def _constructor(self):
