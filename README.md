@@ -15,7 +15,7 @@ While computation and plotting are realized by [astropy] and [matplotlib], what 
 In fact Azely offers one-liner to compute and plot, for example, one-day elevation of the Sun in Tokyo:
 
 ```python
->>> azely.compute('Sun', 'Tokyo', 'today').el.plot(ylim=(0, 90))
+>>> azely.compute('Sun', 'Tokyo').el.plot(ylim=(0, 90))
 ```
 
 ## Features
@@ -65,8 +65,8 @@ Acceptable formats of each parameter and examples are as follows.
 | `site` | `'here'` (default) | current location (guess by IP address) | - |
 | | `<loc. name>` | name of location to be searched | `'ALMA AOS'`, `'Tokyo'` |
 | | `<toml>:<loc. name>` | user-defined location to be loaded (see below) | `'user.toml:ASTE'`, `'user:ASTE'` (also valid) |
-| `time` | `'now'` (default) | get current time | - |
-| | `'today'` | get one-day time range today | - |
+| `time` | `'today'` (default) | get one-day time range of today | - |
+| | `'now'` | get current time | - |
 | | `<time>` | start time of one-day time range | `'2020-01-01'`, `'1/1 12:00'`, `'Jan. 1st'` |
 | | `<time> to <time>` | start and end of time range | `'1/1 to 1/3'`, `'Jan. 1st to Jan. 3rd'` |
 | `view` | `''` (default) | use timezone of `site` | - |
