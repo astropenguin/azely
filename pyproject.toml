@@ -12,8 +12,8 @@ keywords = [
 authors = ["Akio Taniguchi <taniguchi@a.phys.nagoya-u.ac.jp>"]
 license = "MIT"
 readme = "README.md"
-homepage = "https://github.com/astropenguin/azely"
-documentation = "https://astropenguin.github.io/azely"
+homepage = "https://github.com/astropenguin/azely/"
+documentation = "https://astropenguin.github.io/azely/"
 
 [tool.poetry.dependencies]
 python = "^3.6"
@@ -34,9 +34,9 @@ black = "^19.10b0"
 flake8 = "^3.8"
 ipython = "^7.16"
 jupyterlab = "^2.2"
+pydata-sphinx-theme = "^0.3"
 pytest = "^6.0"
-sphinx = "^3.1"
-sphinx-rtd-theme = "^0.5"
+sphinx = "^3.2"
 
 [build-system]
 requires = ["poetry>=0.12"]
