@@ -1,5 +1,6 @@
 #!/bin/bash
 set -eu
 
+pandoc --column 500 -f markdown -t rst -o docs/readme.rst README.md
 sphinx-apidoc -f -o docs/_apidoc azely
 sphinx-build docs docs/_build
