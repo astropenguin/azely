@@ -114,6 +114,21 @@ def compute(
 ) -> AzEl:
     """Compute az/el and local sidereal time (LST) of an astronomical object.
 
+    The ``compute`` function (1) gets object, location, and time information, (2) computes
+    az/el and LST (local sidereal time), and (3) returns them as a pandas DataFrame.
+
+    Object information can be obtained either online (CDS) or offline (an user-defined
+    TOML file) by query (e.g., ``'NGC1068'`` or ``'Sun'``). Location information can be
+    obtained either online (IP address or OpenStreetMap) or offline (an user-defined
+    TOML file) by query (e.g., ``'Tokyo'`` or ``'ALMA AOS'``). Time information can be
+    computed from either formatted (e.g., ``'2020-01-01'``) and natural language-like
+    query (e.g., ``'Jan 1st 2020'``). See docstrings of ``get_[object|location|time]``
+    functions for more detailed query options.
+
+    There are two different locations to be used for a computation:
+    (1) ``site``: location where az/el of an object is computed.
+    (2) ``view``: location where time information (timezone) is considered.
+
     Args:
         object: Query string for object information (e.g., ``'Sun'`` or ``'NGC1068'``).
             Spacify ``'user:NGC1068'`` if users want to get information from ``user.toml``.
@@ -139,21 +154,6 @@ def compute(
 
     Raises:
         AzelyError: Raised if one of mid-level APIs fails to get any information.
-
-    The ``compute`` function (1) gets object, location, and time information, (2) computes
-    az/el and LST (local sidereal time), and (3) returns them as a pandas DataFrame.
-
-    Object information can be obtained either online (CDS) or offline (an user-defined
-    TOML file) by query (e.g., ``'NGC1068'`` or ``'Sun'``). Location information can be
-    obtained either online (IP address or OpenStreetMap) or offline (an user-defined
-    TOML file) by query (e.g., ``'Tokyo'`` or ``'ALMA AOS'``). Time information can be
-    computed from either formatted (e.g., ``'2020-01-01'``) and natural language-like
-    query (e.g., ``'Jan 1st 2020'``). See docstrings of ``get_[object|location|time]``
-    functions for more detailed query options.
-
-    There are two different locations to be used for a computation:
-    (1) ``site``: location where az/el of an object is computed.
-    (2) ``view``: location where time information (timezone) is considered.
 
     Examples:
         To compute daily az/el of NGC1068 at ALMA AOS::
