@@ -17,3 +17,7 @@ from .location import get_location
 from .object import get_object
 from .time import get_time
 from .azel import compute
+
+
+# for sphinx docs
+__all__ = dir()
