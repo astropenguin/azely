@@ -18,7 +18,7 @@ In fact Azely offers one-liner to compute and plot, for example, one-day elevati
 >>> azely.compute('Sun', 'Tokyo').el.plot(ylim=(0, 90))
 ```
 
-![one-liner.svg](https://raw.githubusercontent.com/astropenguin/azely/master/docs/_static/one-liner.svg)
+![one-liner.svg](https://raw.githubusercontent.com/astropenguin/azely/v0.6.0/docs/_static/one-liner.svg)
 
 ## Features
 
@@ -30,7 +30,7 @@ In fact Azely offers one-liner to compute and plot, for example, one-day elevati
 ## Requirements
 
 - **Python:** 3.6, 3.7, or 3.8 (tested by author)
-- **Dependencies:** See [pyproject.toml](https://github.com/astropenguin/azely/blob/master/pyproject.toml)
+- **Dependencies:** See [pyproject.toml](https://github.com/astropenguin/azely/blob/v0.6.0/pyproject.toml)
 
 ## Installation
 
@@ -128,7 +128,7 @@ ax.legend()
 fig.show()
 ```
 
-![multiple-objects.svg](https://raw.githubusercontent.com/astropenguin/azely/master/docs/_static/multiple-objects.svg)
+![multiple-objects.svg](https://raw.githubusercontent.com/astropenguin/azely/v0.6.0/docs/_static/multiple-objects.svg)
 
 ## Advanced usage
 
@@ -169,7 +169,7 @@ twin.xaxis.set_major_formatter(formatter)
 fig.autofmt_xdate(rotation=0)
 ```
 
-![lst-axis.svg](https://raw.githubusercontent.com/astropenguin/azely/master/docs/_static/lst-axis.svg)
+![lst-axis.svg](https://raw.githubusercontent.com/astropenguin/azely/v0.6.0/docs/_static/lst-axis.svg)
 
 ### User-defined information
 
