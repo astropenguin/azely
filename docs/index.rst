@@ -3,4 +3,5 @@
 .. toctree::
    :hidden:
 
-   _apidoc/modules
+   Home <self>
+   Package guide <_apidoc/azely>
