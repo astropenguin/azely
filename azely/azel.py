@@ -78,6 +78,11 @@ class AzEl(DataFrame):
     _metadata = ["object", "site"]
 
     @property
+    def alt(self):
+        """Alias of ``dataframe.el``."""
+        return self.el
+
+    @property
     def in_lst(self):
         """Convert time index to LST."""
         td = self.index - self.index[0]
