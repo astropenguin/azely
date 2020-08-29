@@ -18,6 +18,8 @@ In fact Azely offers one-liner to compute and plot, for example, one-day elevati
 >>> azely.compute('Sun', 'Tokyo').el.plot(ylim=(0, 90))
 ```
 
+![one-liner.svg](https://raw.githubusercontent.com/astropenguin/azely/master/docs/_static/one-liner.svg)
+
 ## Features
 
 - **High-level API:** Azely provides a simple yet powerful `compute()` function. Users can complete most of operation with it (e.g., information acquisition and computation).
@@ -126,7 +128,7 @@ ax.legend()
 fig.show()
 ```
 
-![example.png](https://raw.githubusercontent.com/astropenguin/azely/master/docs/images/example.png)
+![multiple-objects.svg](https://raw.githubusercontent.com/astropenguin/azely/master/docs/_static/multiple-objects.svg)
 
 ## Advanced usage
 
@@ -151,11 +153,10 @@ Here is a sample script which has JST time axis at the bottom and LST axis at th
 ```python
 import matplotlib.dates as mdates
 
-df = azely.compute('Sun', 'Tokyo', '2020-01-01')
-
 fig, ax = plt.subplots(figsize=(12, 4))
 twin = ax.twiny()
 
+df = azely.compute('Sun', 'Tokyo', '2020-01-01')
 df.el.plot(ax=ax, label=df.object.name)
 df.in_lst.el.plot(ax=twin, alpha=0)
 
@@ -167,6 +168,8 @@ formatter = mdates.DateFormatter('%H:%M')
 twin.xaxis.set_major_formatter(formatter)
 fig.autofmt_xdate(rotation=0)
 ```
+
+![lst-axis.svg](https://raw.githubusercontent.com/astropenguin/azely/master/docs/_static/lst-axis.svg)
 
 ### User-defined information
 
