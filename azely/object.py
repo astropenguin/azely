@@ -144,7 +144,7 @@ def get_object(query: str, frame: str = FRAME, timeout: int = TIMEOUT) -> Object
 
     Notes:
         As ``object`` is the Python's builtin base class, it might be better
-        to use an alternative variable name (e.g., 'object_' or 'obj')
+        to use an alternative variable name (e.g., ``object_`` or ``obj``)
         for object information which this function returns.
 
     Examples:
