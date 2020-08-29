@@ -1,9 +1,3 @@
-import os
-import sys
-
-sys.path.insert(0, os.path.abspath("../"))
-
-
 # Project information
 project = "Azely"
 copyright = "2017-2020, Akio Taniguchi"
