@@ -25,9 +25,9 @@ jobs:
         run: |
           pip install poetry
           poetry install
-      - name: Lint with flake8
+      - name: Lint by flake8
         run: poetry run flake8 azely
-      - name: Format with flake8
+      - name: Format by flake8
         run: poetry run black --check azely
-      - name: Test with pytest
-        run : poetry run pytest tests
+      - name: Test by pytest
+        run : poetry run pytest -v tests

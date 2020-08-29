@@ -6,6 +6,10 @@ determined by some environment variables of client.
 
 """
 __all__ = [
+    "AZELY_DIR",
+    "AZELY_CONFIG",
+    "AZELY_OBJECT",
+    "AZELY_LOCATION",
     "DAYFIRST",
     "FRAME",
     "FREQ",
@@ -14,10 +18,6 @@ __all__ = [
     "TIMEOUT",
     "TODAY",
     "YEARFIRST",
-    "AZELY_DIR",
-    "AZELY_CONFIG",
-    "AZELY_OBJECT",
-    "AZELY_LOCATION",
 ]
 
 
@@ -27,14 +27,14 @@ from pathlib import Path
 
 
 # constants (static)
-DAYFIRST = False
-FRAME = "icrs"
-FREQ = "10T"
-HERE = "here"
-NOW = "now"
-TIMEOUT = 10
-TODAY = "today"
-YEARFIRST = False
+DAYFIRST = False  #: Default value for the ``dayfirst`` argument.
+FRAME = "icrs"  #: Default value for the ``frame`` argument.
+FREQ = "10T"  #: Default value for the ``freq`` argument.
+HERE = "here"  #: Special value for getting location information by current IP address.
+NOW = "now"  #: Special value for getting current time information.
+TIMEOUT = 10  #: Default value for the ``timeout`` argument.
+TODAY = "today"  #: Special value for getting today's time information.
+YEARFIRST = False  #: Default value for the ``yearfirst`` argument.
 
 
 # constants (dynamic)

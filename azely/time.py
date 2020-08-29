@@ -99,6 +99,19 @@ def get_time(
 ) -> Time:
     """Get time information by various ways.
 
+    The ``get_time`` function computes time information in several cases:
+    (1) Current time (e.g., [2020-01-01 22:32:58+09:00]).
+    (2) Time range of today (e.g., [2020-01-01 00:00, ..., 2020-01-02 00:00])
+    (3) Time range of given date and length (by query)
+
+    In the cases of (1) and (2), special queries, ``'now'`` and ``'today'``, must be
+    specified, respectively. The ``view`` option specifies a timezone where
+    time (range) is considered (timezone or location name can be accepted).
+
+    In the case of (3), formatted query (e.g., ``'2020-01-01 to 2020-01-05'``)
+    or natural language-like query can be used (e.g., ``'Jan. 1st to Jan. 5th'``),
+    where start and end must be separated by ``'to'``. The ``view`` option also works.
+
     Args:
         query: Query string (e.g., ``'2020-01-01 to 2020-01-05'``).
             If ``'today'`` (by default) or ``'now'`` is specified,
@@ -121,19 +134,6 @@ def get_time(
 
     Raises:
         AzelyError: Raised if the function fails to parse query or timezone.
-
-    The ``get_time`` function computes time information in several cases:
-    (1) Current time (e.g., [2020-01-01 22:32:58+09:00]).
-    (2) Time range of today (e.g., [2020-01-01 00:00, ..., 2020-01-02 00:00])
-    (3) Time range of given date and length (by query)
-
-    In the cases of (1) and (2), special queries, ``'now'`` and ``'today'``, must be
-    specified, respectively. The ``view`` option specifies a timezone where
-    time (range) is considered (timezone or location name can be accepted).
-
-    In the case of (3), formatted query (e.g., ``'2020-01-01 to 2020-01-05'``)
-    or natural language-like query can be used (e.g., ``'Jan. 1st to Jan. 5th'``),
-    where start and end must be separated by ``'to'``. The ``view`` option also works.
 
     Notes:
         If location is specified as ``view``, then ``azely.location.get_location``

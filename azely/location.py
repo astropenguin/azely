@@ -120,18 +120,6 @@ class Location:
 def get_location(query: str = HERE, timeout: int = TIMEOUT) -> Location:
     """Get location information by various ways.
 
-    Args:
-        query: Query string (e.g., ``'ALMA AOS'`` or ``'user:ASTE'``). Default value,
-            'here', is a special one with which the function tries to guess
-            location information by an IP address of a client.
-        timeout: Query timeout expressed in units of seconds.
-
-    Returns:
-        Location information as an instance of ``Location`` class.
-
-    Raises:
-        AzelyError: Raised if the function fails to get location information.
-
     This function acquires location information by the following three ways:
     (1) Guess by IP address (by default). Internet connection is required.
     (2) Data from OpenStreetMap. Internet connection is required.
@@ -149,6 +137,18 @@ def get_location(query: str = HERE, timeout: int = TIMEOUT) -> Location:
     where ``<name>`` must be the name of a TOML file without suffix or the full
     path of it. If it does not exist in a current directory, the function
     will try to find it in the Azely's config directory (``~/.config/azely``).
+
+    Args:
+        query: Query string (e.g., ``'ALMA AOS'`` or ``'user:ASTE'``).
+            Default value, 'here', is a special one with which the function
+            tries to guess location information by an IP address of a client.
+        timeout: Query timeout expressed in units of seconds.
+
+    Returns:
+        Location information as an instance of ``Location`` class.
+
+    Raises:
+        AzelyError: Raised if the function fails to get location information.
 
     Examples:
         To get location information by IP address::

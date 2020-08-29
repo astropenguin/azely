@@ -18,6 +18,7 @@ jobs:
           python-version: 3.7
       - name: Install dependencies
         run: |
+          sudo apt install pandoc
           pip install poetry
           poetry install
       - name: Build docs

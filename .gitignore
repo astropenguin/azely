@@ -4,10 +4,6 @@
 .envrc
 .env
 
-# Sphinx docs
-docs/_build
-docs/_apidoc
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -71,6 +67,8 @@ instance/
 .scrapy
 
 # Sphinx documentation
+docs/readme.rst
+docs/_apidoc
 docs/_build/
 
 # PyBuilder

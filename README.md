@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?label=License&style=flat-square)](LICENSE)
 [![DOI](https://img.shields.io/badge/DOI-10.5281/zenodo.3680060-blue?style=flat-square)](https://doi.org/10.5281/zenodo.3680060)
 
-:zap: Computation and plotting of astronomical object's azimuth/elevation
+Computation and plotting of azimuth and elevation for astronomical objects
 
 ## TL;DR
 
@@ -17,6 +17,8 @@ In fact Azely offers one-liner to compute and plot, for example, one-day elevati
 ```python
 >>> azely.compute('Sun', 'Tokyo').el.plot(ylim=(0, 90))
 ```
+
+![one-liner.svg](https://raw.githubusercontent.com/astropenguin/azely/master/docs/_static/one-liner.svg)
 
 ## Features
 
@@ -62,14 +64,14 @@ Acceptable formats of each parameter and examples are as follows.
 | --- | --- | --- | --- |
 | `object` | `<obj. name>` | name of object to be searched | `'Sun'`, `'NGC1068'` |
 | | `<toml>:<obj. name>` | user-defined object to be loaded (see below) | `'user.toml:M42'`, `'user:M42'` (also valid) |
-| `site` | `'here'` (default) | current location (guess by IP address) | - |
+| `site` | `'here'` (default) | current location (guess by IP address) | |
 | | `<loc. name>` | name of location to be searched | `'ALMA AOS'`, `'Tokyo'` |
 | | `<toml>:<loc. name>` | user-defined location to be loaded (see below) | `'user.toml:ASTE'`, `'user:ASTE'` (also valid) |
-| `time` | `'today'` (default) | get one-day time range of today | - |
-| | `'now'` | get current time | - |
+| `time` | `'today'` (default) | get one-day time range of today | |
+| | `'now'` | get current time | |
 | | `<time>` | start time of one-day time range | `'2020-01-01'`, `'1/1 12:00'`, `'Jan. 1st'` |
 | | `<time> to <time>` | start and end of time range | `'1/1 to 1/3'`, `'Jan. 1st to Jan. 3rd'` |
-| `view` | `''` (default) | use timezone of `site` | - |
+| `view` | `''` (default) | use timezone of `site` | |
 | | `<tz name>` | name of timezone database | `'Asia/Tokyo'`, `'UTC'` |
 | | `<loc. name>` | name of location from which timezone is identified | same as `site`'s examples |
 | | `<toml>:<loc. name>` | user-defined location from which timezone is identified | same as `site`'s examples |
@@ -126,7 +128,7 @@ ax.legend()
 fig.show()
 ```
 
-![example.png](https://raw.githubusercontent.com/astropenguin/azely/master/docs/images/example.png)
+![multiple-objects.svg](https://raw.githubusercontent.com/astropenguin/azely/master/docs/_static/multiple-objects.svg)
 
 ## Advanced usage
 
@@ -151,11 +153,10 @@ Here is a sample script which has JST time axis at the bottom and LST axis at th
 ```python
 import matplotlib.dates as mdates
 
-df = azely.compute('Sun', 'Tokyo', '2020-01-01')
-
 fig, ax = plt.subplots(figsize=(12, 4))
 twin = ax.twiny()
 
+df = azely.compute('Sun', 'Tokyo', '2020-01-01')
 df.el.plot(ax=ax, label=df.object.name)
 df.in_lst.el.plot(ax=twin, alpha=0)
 
@@ -167,6 +168,8 @@ formatter = mdates.DateFormatter('%H:%M')
 twin.xaxis.set_major_formatter(formatter)
 fig.autofmt_xdate(rotation=0)
 ```
+
+![lst-axis.svg](https://raw.githubusercontent.com/astropenguin/azely/master/docs/_static/lst-axis.svg)
 
 ### User-defined information
 

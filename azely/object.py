@@ -114,17 +114,6 @@ class Object:
 def get_object(query: str, frame: str = FRAME, timeout: int = TIMEOUT) -> Object:
     """Get object information by various ways.
 
-    Args:
-        query: Query string (e.g., ``'NGC1068'`` or ``'user:GC'``).
-        frame: Name of equatorial coordinates used in astropy's SkyCoord.
-        timeout: Query timeout expressed in units of seconds.
-
-    Returns:
-        Object information as an instance of ``Object`` class.
-
-    Raises:
-        AzelyError: Raised if the function fails to get object information.
-
     This function acquires object information by the following two ways:
     (1) Data from CDS (by default). Internet connection is required.
     (2) User-defined object information written in a TOML file.
@@ -142,9 +131,20 @@ def get_object(query: str, frame: str = FRAME, timeout: int = TIMEOUT) -> Object
     path of it. If it does not exist in a current directory, the function
     will try to find it in the Azely's config directory (``~/.config/azely``).
 
+    Args:
+        query: Query string (e.g., ``'NGC1068'`` or ``'user:GC'``).
+        frame: Name of equatorial coordinates used in astropy's SkyCoord.
+        timeout: Query timeout expressed in units of seconds.
+
+    Returns:
+        Object information as an instance of ``Object`` class.
+
+    Raises:
+        AzelyError: Raised if the function fails to get object information.
+
     Notes:
         As ``object`` is the Python's builtin base class, it might be better
-        to use an alternative variable name (e.g., 'object_' or 'obj')
+        to use an alternative variable name (e.g., ``object_`` or ``obj``)
         for object information which this function returns.
 
     Examples:
