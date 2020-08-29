@@ -83,7 +83,7 @@ The output DataFrame contains az/el expressed in units of degrees and local side
 ```python
 >>> print(df)
 ```
-```
+```plaintext
                                   az         el             lst
 Asia/Tokyo
 2020-01-01 00:00:00+09:00  94.820323  68.416756 17:07:59.405556
@@ -124,8 +124,6 @@ ax.set_title(f'site: {site}, view: {view}, time: {time}')
 ax.set_ylabel('Elevation (deg)')
 ax.set_ylim(0, 90)
 ax.legend()
-
-fig.show()
 ```
 
 ![multiple-objects.svg](https://raw.githubusercontent.com/astropenguin/azely/v0.6.0/docs/_static/multiple-objects.svg)
