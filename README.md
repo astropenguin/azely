@@ -231,4 +231,4 @@ Then `compute('Sun')` becomes equivalent to `compute('Sun', 'Tokyo', 'now')`.
 [Astropy]: https://astropy.org
 [Matplotlib]: https://matplotlib.org
 [pandas]: https://pandas.pydata.org
-[TOML]: https://github.com/toml-lang/toml
+[TOML]: https://toml.io
