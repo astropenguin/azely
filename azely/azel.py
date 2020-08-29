@@ -173,11 +173,11 @@ def compute(
     site_ = get_location(site, timeout)
     time_ = get_time(time, view or site, freq, dayfirst, yearfirst, timeout)
 
-    return compute_from(object_, site_, time_)
+    return _compute(object_, site_, time_)
 
 
 # helper functions
-def compute_from(object: Object, site: Location, time: Time) -> AzEl:
+def _compute(object: Object, site: Location, time: Time) -> AzEl:
     """Compute az/el and local sidereal time (LST) of an astronomical object.
 
     Similar to ``compute`` function, but this function receives instances
