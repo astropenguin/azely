@@ -11,7 +11,7 @@ Computation and plotting of azimuth and elevation for astronomical objects
 ## TL;DR
 
 Azely (pronounced as "as-elie") is a Python package for computation and plotting of horizontal coordinates (azimuth and elevation; az/el, hereafter) of astronomical objects at given location and time.
-While computation and plotting are realized by [astropy] and [matplotlib], what Azely provides is high-level API to use them easily.
+While computation and plotting are realized by [Astropy] and [Matplotlib], what Azely provides is high-level API to use them easily.
 In fact Azely offers one-liner to compute and plot, for example, one-day elevation of the Sun in Tokyo:
 
 ```python
@@ -23,7 +23,7 @@ In fact Azely offers one-liner to compute and plot, for example, one-day elevati
 ## Features
 
 - **High-level API:** Azely provides a simple yet powerful `compute()` function. Users can complete most of operation with it (e.g., information acquisition and computation).
-- **Handy output:** Azely's output (from `compute()`) is [pandas] DataFrame, a de facto standard data structure of Python. Users can convert it to other formats like CSV and plot it by [matplotlib] using builtin methods.
+- **Handy output:** Azely's output (from `compute()`) is [pandas] DataFrame, a de facto standard data structure of Python. Users can convert it to other formats like CSV and plot it by [Matplotlib] using builtin methods.
 - **Web information acquisition:** Azely can automatically acquire object and location information (i.e., longitude and latitude) from online services (e.g., catalogues or maps). Obtained information is cached in a local [TOML] file for an offline use.
 - **User-defined information:** Azely also offers to use user-defined object and location information written in a [TOML] file.
 
@@ -147,7 +147,7 @@ For example, the following code will plot elevation of an object in LST:
 ```
 
 In order to use LST values as an index of DataFrame, LST has pseudo dates which start from `1970-01-01`.
-Please ignore them or hide them by using [matplotlib] DateFormatter when you plot the result.
+Please ignore them or hide them by using [Matplotlib] DateFormatter when you plot the result.
 Here is a sample script which has JST time axis at the bottom and LST axis at the top of a figure, respectively.
 
 ```python
@@ -224,13 +224,13 @@ Then `compute('Sun')` becomes equivalent to `compute('Sun', 'Tokyo', 'now')`.
 
 ## References
 
-- [astropy]
-- [matplotlib]
+- [Astropy]
+- [Matplotlib]
 - [pandas]
 - [TOML]
 
 <!-- references -->
-[astropy]: https://astropy.org
-[matplotlib]: https://matplotlib.org
+[Astropy]: https://astropy.org
+[Matplotlib]: https://matplotlib.org
 [pandas]: https://pandas.pydata.org
 [TOML]: https://github.com/toml-lang/toml
