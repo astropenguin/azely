@@ -30,4 +30,4 @@ jobs:
       - name: Format by flake8
         run: poetry run black --check azely
       - name: Test by pytest
-        run : poetry run pytest tests
+        run : poetry run pytest -v tests
