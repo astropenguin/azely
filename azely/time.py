@@ -4,8 +4,8 @@ This module mainly provides ``Time`` class for date and time information at a
 given location (time information, hereafter) and ``get_time`` function to obtain
 time information as an instance of ``Time`` class.
 
-The ``Time`` class is subclass of ``pandas.DatetimeIndex`` and expressed like:
-``Time(['2020-02-18'], dtype='datetime64[ns, Asia/Tokyo]', name='Asia/Tokyo', freq='D')``.
+The ``Time`` class is subclass of ``pandas.DatetimeIndex`` and expressed like
+``Time(['2020-02-18'], dtype='datetime64[ns, Asia/Tokyo]', freq='D')``.
 
 The ``get_time`` function computes time information in several cases:
 (1) Current time (e.g., [2020-01-01 22:32:58+09:00]).
@@ -125,8 +125,8 @@ def get_time(
             ``'01-02-03'`` is treated as Feb. 1st 2003.
         yearfirst: Whether to interpret the first value in an ambiguous 3-integer
             date (e.g., ``'01-02-03'``) as the year. If True, for example,
-            ``'01-02-03'`` is treated as Feb. 3rd 2001. If ``dayfirst`` is also ``True``,
-            then it will be Mar. 2nd 2001.
+            ``'01-02-03'`` is treated as Feb. 3rd 2001.
+            If ``dayfirst`` is also ``True``, then it will be Mar. 2nd 2001.
         timeout: Query timeout expressed in units of seconds (see notes).
 
     Returns:

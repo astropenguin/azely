@@ -173,7 +173,7 @@ def compute(
 
             >>> df = azely.compute('Sun', 'Tokyo', '1/1 12:00 to 12/31 12:00', freq='1D')
 
-    """
+    """  # noqa: E501
     object_ = get_object(object, frame, timeout)
     site_ = get_location(site, timeout)
     time_ = get_time(time, view or site, freq, dayfirst, yearfirst, timeout)
