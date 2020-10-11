@@ -154,7 +154,7 @@ class cache_to:
 class set_defaults:
     """Decorator which replaces default values of a function.
 
-    The alternative defualt values are read from a TOML file.
+    The alternative default values are read from a TOML file.
     Suppose there is a function with some parameters
     and it is decorated by this function::
 

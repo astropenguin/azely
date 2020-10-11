@@ -136,9 +136,9 @@ def compute(
 
     Args:
         object: Query string for object information (e.g., ``'Sun'`` or ``'NGC1068'``).
-            Spacify ``'user:NGC1068'`` if users want to get information from ``user.toml``.
+            Specify ``'user:NGC1068'`` if users want to get information from ``user.toml``.
         site: Query string for location information at a site (e.g., ``'Tokyo'``).
-            Spacify ``'user:Tokyo'`` if users want to get information from ``user.toml``.
+            Specify ``'user:Tokyo'`` if users want to get information from ``user.toml``.
         time: Query string for time information at a view (e.g., ``'2020-01-01'``).
         view: Query string for timezone information at the view. (e.g., ``'Asia/Tokyo'``,
             ``'UTC'``, or ``Tokyo``). By default (``''``),  timezone at the site is used.
