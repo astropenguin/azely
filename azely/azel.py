@@ -136,9 +136,9 @@ def compute(
 
     Args:
         object: Query string for object information (e.g., ``'Sun'`` or ``'NGC1068'``).
-            Spacify ``'user:NGC1068'`` if users want to get information from ``user.toml``.
+            Specify ``'user:NGC1068'`` if users want to get information from ``user.toml``.
         site: Query string for location information at a site (e.g., ``'Tokyo'``).
-            Spacify ``'user:Tokyo'`` if users want to get information from ``user.toml``.
+            Specify ``'user:Tokyo'`` if users want to get information from ``user.toml``.
         time: Query string for time information at a view (e.g., ``'2020-01-01'``).
         view: Query string for timezone information at the view. (e.g., ``'Asia/Tokyo'``,
             ``'UTC'``, or ``Tokyo``). By default (``''``),  timezone at the site is used.
@@ -173,7 +173,7 @@ def compute(
 
             >>> df = azely.compute('Sun', 'Tokyo', '1/1 12:00 to 12/31 12:00', freq='1D')
 
-    """
+    """  # noqa: E501
     object_ = get_object(object, frame, timeout)
     site_ = get_location(site, timeout)
     time_ = get_time(time, view or site, freq, dayfirst, yearfirst, timeout)

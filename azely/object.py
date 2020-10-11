@@ -4,7 +4,7 @@ This module mainly provides ``Object`` class for information of an astronomical
 object (object information, hereafter) and ``get_object`` function to search for
 object information as an instance of ``Object`` class.
 
-The ``Object`` class is defiend as
+The ``Object`` class is defined as
 ``Object(name: str, frame: str, longitude: str, latitude: str)``,
 where frame is a name of equatorial coordinates (e.g., icrs) and lon/lat are values
 of coordinates which must be written with units like 02h42m40.771s/-00d00m47.84s.

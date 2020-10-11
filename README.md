@@ -206,7 +206,7 @@ This is useful, for example, when users want to update a current location:
 >>> df = azely.compute('Sun', 'here!', '2020-01-01')
 ```
 
-### Customizing defualt values
+### Customizing default values
 
 Users can modify default values of the `compute()` function by editing the Azely's config [TOML] file (`config.toml`) in the Azely's config directory like:
 
