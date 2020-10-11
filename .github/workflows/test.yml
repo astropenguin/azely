@@ -23,6 +23,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies
         run: |
+          sudo apt install pandoc
           pip install poetry
           poetry install
       - name: Lint by Flake8
@@ -31,3 +32,5 @@ jobs:
         run: poetry run black --check docs tests azely
       - name: Test by pytest
         run : poetry run pytest -v tests
+      - name: Build docs
+        run: poetry run scripts/docs
