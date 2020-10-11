@@ -1,6 +1,10 @@
 # How to contribute
 
 Thank you for contributing Azely!
+If you have some ideas to propose, please follow the contribution guide.
+We use [GitHub flow][github-flow] for developing the project.
+The first section describes how to contribute with it.
+The second and third sections explain how to prepare a local development environment and our automated workflows in GitHub Actions, respectively.
 
 ## Contributing with GitHub flow
 
@@ -28,6 +32,8 @@ They are necessary to pass the status checks when you create a pull request.
 If you add a new feature, please also make sure that you prepare tests for it.
 For example, if you add the plotting module (`azely/plot.py`), write the series of test functions in `tests/test_plot.py`.
 
+If you write a Python docstring, follow [the Google style][napoleon-google] so that it is automatically converted to a part of API docs by Sphinx.
+
 ### Open a Pull Request
 
 When your code is ready, [create a pull request (PR)][pull-requests] to merge with the master branch.
@@ -42,6 +48,7 @@ After passing them, your code will be merged with the master branch.
 That's it!
 Thank you for your contribution!
 
+[github-flow]: https://guides.github.com/introduction/flow/
 [issues]: https://github.com/astropenguin/azely/issues?q=is%3Aissue
 [pull-requests]: https://github.com/astropenguin/azely/pulls?q=is%3Apr
 [github-actions]: https://github.com/astropenguin/azely/actions
