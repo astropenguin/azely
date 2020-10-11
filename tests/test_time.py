@@ -4,7 +4,13 @@ from azely.time import get_time
 
 
 # constants
-expected = pd.date_range("2020-01-01", "2020-01-07", None, freq="10T", tz="Asia/Tokyo")
+expected = pd.date_range(
+    "2020-01-01",
+    "2020-01-07",
+    None,
+    freq="10T",
+    tz="Asia/Tokyo",
+)
 
 
 # test functions
