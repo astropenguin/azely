@@ -8,10 +8,18 @@ from toml import dump
 
 
 # constants
-expected_solar = Object(name="Sun", frame="solar", longitude="", latitude="")
+expected_solar = Object(
+    name="Sun",
+    frame="solar",
+    longitude="",
+    latitude="",
+)
 
 expected_icrs = Object(
-    name="NGC1068", frame="icrs", longitude="02h42m40.771s", latitude="-00d00m47.84s",
+    name="NGC1068",
+    frame="icrs",
+    longitude="02h42m40.771s",
+    latitude="-00d00m47.84s",
 )
 
 
