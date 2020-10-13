@@ -26,7 +26,7 @@ Using a simple verb in the present tense is preferable.
 $ git commit -m "#31 Add plot functions"
 ```
 
-Please make sure that your code (1) is formatted by Black, (2) is checked by Flake8 with the bundled config file (`.flake8`), and (3) passes the tests (`tests/test_*.py`) run by pytest.
+Please make sure that your code (1) is formatted by [Black][black], (2) is checked by [Flake8][flake8] with the bundled config file (`.flake8`), and (3) passes the tests (`tests/test_*.py`) run by [pytest][pytest].
 They are necessary to pass the status checks when you create a pull request.
 
 If you add a new feature, please also make sure that you prepare tests for it.
@@ -66,6 +66,7 @@ $ scripts/setup
 ```
 
 Then the config directories (`.vscode` and `.azely`) will be created at the root of the repository (but ignored by `.gitignore`).
+
 [github-flow]: https://guides.github.com/introduction/flow/
 [issues]: https://github.com/astropenguin/azely/issues?q=is%3Aissue
 [pull-requests]: https://github.com/astropenguin/azely/pulls?q=is%3Apr
@@ -74,3 +75,6 @@ Then the config directories (`.vscode` and `.azely`) will be created at the root
 [poetry]: https://python-poetry.org/
 [direnv]: https://direnv.net/
 [vs-code]: https://code.visualstudio.com/
+[black]: https://black.readthedocs.io/en/stable/
+[flake8]: https://flake8.pycqa.org/en/latest/
+[pytest]: https://docs.pytest.org/en/stable/
