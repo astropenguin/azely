@@ -52,3 +52,4 @@ Thank you for your contribution!
 [issues]: https://github.com/astropenguin/azely/issues?q=is%3Aissue
 [pull-requests]: https://github.com/astropenguin/azely/pulls?q=is%3Apr
 [github-actions]: https://github.com/astropenguin/azely/actions
+[napoleon-google]: https://www.sphinx-doc.org/en/master/usage/extensions/example_google.html#example-google
