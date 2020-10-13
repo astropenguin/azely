@@ -6,6 +6,7 @@ We use [GitHub flow][github-flow] for developing and managing the project.
 The first section describes how to contribute with it.
 The second and third sections explain how to prepare a local development environment and our automated workflows in GitHub Actions, respectively.
 
+
 ## Contributing with GitHub flow
 
 ### Create a branch
@@ -57,8 +58,6 @@ After cloning the repository you forked, you can setup the environment by the fo
 $ poetry install
 ```
 
-<!-- Since Azely has an environment variable to specify the directory of configs (`AZELY_DIR`; see also README), you may want to use it -->
-
 If you use [VS Code][vs-code] and [direnv][direnv], the following command will also setup the settings of VS Code for Python and an environment variable to specify the config directory of Azely (`AZELY_DIR`; see also README), respectively.
 
 ```shell
@@ -67,10 +66,41 @@ $ scripts/setup
 
 Then the config directories (`.vscode` and `.azely`) will be created at the root of the repository (but ignored by `.gitignore`).
 
+
+## GitHub Actions
+
+### Testing, linting, and formatting
+
+We have [a test workflow][test-workflow] for testing, linting, and formatting the code.
+It is used for status checks when a pull request is created.
+If you would like to check them in local, the following commands are almost equivalent (the difference is the workflow is run under multiple Python versions).
+
+```shell
+$ poetry run pytest
+$ poetry run flake8 docs tests azely
+$ poetry run black --check docs tests azely
+```
+
+### Publish to PyPI
+
+We have [a PyPI workflow][pypi-workflow] for publishing the package to [PyPI][pypi].
+When [a release is created][release], the workflow is triggered and the package is automatically built and uploaded to PyPI.
+
+### Deploy docs
+
+We have [a GitHub Pages workflow][gh-pages-workflow] for publishing the HTML docs.
+When [a release is created][release], the workflow is triggered and the docs are automatically built and deployed to [the gh-pages branch][gh-pages-branch].
+
+
 [github-flow]: https://guides.github.com/introduction/flow/
+[release]: https://github.com/astropenguin/azely/releases
 [issues]: https://github.com/astropenguin/azely/issues?q=is%3Aissue
 [pull-requests]: https://github.com/astropenguin/azely/pulls?q=is%3Apr
 [github-actions]: https://github.com/astropenguin/azely/actions
+[test-workflow]: https://github.com/astropenguin/azely/blob/master/.github/workflows/test.yml
+[pypi-workflow]: https://github.com/astropenguin/azely/blob/master/.github/workflows/pypi.yml
+[gh-pages-workflow]: https://github.com/astropenguin/azely/blob/master/.github/workflows/gh-pages.yml
+[gh-pages-branch]: https://github.com/astropenguin/azely/tree/gh-pages
 [napoleon-google]: https://www.sphinx-doc.org/en/master/usage/extensions/example_google.html#example-google
 [poetry]: https://python-poetry.org/
 [direnv]: https://direnv.net/
@@ -78,3 +108,4 @@ Then the config directories (`.vscode` and `.azely`) will be created at the root
 [black]: https://black.readthedocs.io/en/stable/
 [flake8]: https://flake8.pycqa.org/en/latest/
 [pytest]: https://docs.pytest.org/en/stable/
+[pypi]: https://pypi.org/project/azely/
