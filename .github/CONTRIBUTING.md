@@ -33,7 +33,7 @@ They are necessary to pass the status checks when you create a pull request.
 If you add a new feature, please also make sure that you prepare tests for it.
 For example, if you add the plotting module (`azely/plot.py`), write the series of test functions in `tests/test_plot.py`.
 
-If you write a Python docstring, follow [the Google style][napoleon-google] so that it is automatically converted to a part of API docs by Sphinx.
+If you write a Python docstring, follow [the Google style][napoleon-google] so that it is automatically converted to a part of API docs by [Sphinx][sphinx].
 
 ### Open a Pull Request
 
@@ -107,5 +107,6 @@ When [a release is created][release], the workflow is triggered and the docs are
 [pypi-workflow]: https://github.com/astropenguin/azely/blob/master/.github/workflows/pypi.yml
 [pytest]: https://docs.pytest.org/en/stable/
 [release]: https://github.com/astropenguin/azely/releases
+[sphinx]: https://www.sphinx-doc.org/en/master/
 [test-workflow]: https://github.com/astropenguin/azely/blob/master/.github/workflows/test.yml
 [vs-code]: https://code.visualstudio.com/
