@@ -28,7 +28,7 @@ $ git commit -m "#31 Add plot functions"
 ```
 
 Please make sure that your code (1) is formatted by [Black][black], (2) is checked by [Flake8][flake8] with the bundled config file (`.flake8`), and (3) passes the tests (`tests/test_*.py`) run by [pytest][pytest].
-They are necessary to pass the status checks when you create a pull request.
+They are necessary to pass the status checks when you create a pull request (see also [the section of GitHub Actions](#github-actions)).
 
 If you add a new feature, please also make sure that you prepare tests for it.
 For example, if you add the plotting module (`azely/plot.py`), write the series of test functions in `tests/test_plot.py`.
