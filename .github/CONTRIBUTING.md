@@ -2,7 +2,7 @@
 
 Thank you for contributing Azely!
 If you have some ideas to propose, please follow the contribution guide.
-We use [GitHub flow][github-flow] for developing the project.
+We use [GitHub flow][github-flow] for developing and managing the project.
 The first section describes how to contribute with it.
 The second and third sections explain how to prepare a local development environment and our automated workflows in GitHub Actions, respectively.
 
