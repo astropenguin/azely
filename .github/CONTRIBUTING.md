@@ -73,7 +73,7 @@ Then the config directories (`.vscode` and `.azely`) will be created at the root
 
 We have [a test workflow][test-workflow] for testing, linting, and formatting the code.
 It is used for status checks when a pull request is created.
-If you would like to check them in local, the following commands are almost equivalent (the difference is the workflow is run under multiple Python versions).
+If you would like to check them in local, the following commands are almost equivalent (the difference is that the workflow is run under multiple Python versions).
 
 ```shell
 $ poetry run pytest
