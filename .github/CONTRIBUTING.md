@@ -48,8 +48,29 @@ After passing them, your code will be merged with the master branch.
 That's it!
 Thank you for your contribution!
 
+## Development environment
+
+We manage the development environment (i.e., Python and its dependencies) with [Poetry][poetry].
+After cloning the repository you forked, you can setup the environment by the following command.
+
+```shell
+$ poetry install
+```
+
+<!-- Since Azely has an environment variable to specify the directory of configs (`AZELY_DIR`; see also README), you may want to use it -->
+
+If you use [VS Code][vs-code] and [direnv][direnv], the following command will also setup the settings of VS Code for Python and an environment variable to specify the config directory of Azely (`AZELY_DIR`; see also README), respectively.
+
+```shell
+$ scripts/setup
+```
+
+Then the config directories (`.vscode` and `.azely`) will be created at the root of the repository (but ignored by `.gitignore`).
 [github-flow]: https://guides.github.com/introduction/flow/
 [issues]: https://github.com/astropenguin/azely/issues?q=is%3Aissue
 [pull-requests]: https://github.com/astropenguin/azely/pulls?q=is%3Apr
 [github-actions]: https://github.com/astropenguin/azely/actions
 [napoleon-google]: https://www.sphinx-doc.org/en/master/usage/extensions/example_google.html#example-google
+[poetry]: https://python-poetry.org/
+[direnv]: https://direnv.net/
+[vs-code]: https://code.visualstudio.com/
