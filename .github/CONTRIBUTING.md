@@ -92,20 +92,20 @@ We have [a GitHub Pages workflow][gh-pages-workflow] for publishing the HTML doc
 When [a release is created][release], the workflow is triggered and the docs are automatically built and deployed to [the gh-pages branch][gh-pages-branch].
 
 
-[github-flow]: https://guides.github.com/introduction/flow/
-[release]: https://github.com/astropenguin/azely/releases
-[issues]: https://github.com/astropenguin/azely/issues?q=is%3Aissue
-[pull-requests]: https://github.com/astropenguin/azely/pulls?q=is%3Apr
-[github-actions]: https://github.com/astropenguin/azely/actions
-[test-workflow]: https://github.com/astropenguin/azely/blob/master/.github/workflows/test.yml
-[pypi-workflow]: https://github.com/astropenguin/azely/blob/master/.github/workflows/pypi.yml
+[black]: https://black.readthedocs.io/en/stable/
+[direnv]: https://direnv.net/
+[flake8]: https://flake8.pycqa.org/en/latest/
 [gh-pages-workflow]: https://github.com/astropenguin/azely/blob/master/.github/workflows/gh-pages.yml
 [gh-pages-branch]: https://github.com/astropenguin/azely/tree/gh-pages
+[github-actions]: https://github.com/astropenguin/azely/actions
+[github-flow]: https://guides.github.com/introduction/flow/
+[issues]: https://github.com/astropenguin/azely/issues?q=is%3Aissue
 [napoleon-google]: https://www.sphinx-doc.org/en/master/usage/extensions/example_google.html#example-google
 [poetry]: https://python-poetry.org/
-[direnv]: https://direnv.net/
-[vs-code]: https://code.visualstudio.com/
-[black]: https://black.readthedocs.io/en/stable/
-[flake8]: https://flake8.pycqa.org/en/latest/
-[pytest]: https://docs.pytest.org/en/stable/
+[pull-requests]: https://github.com/astropenguin/azely/pulls?q=is%3Apr
 [pypi]: https://pypi.org/project/azely/
+[pypi-workflow]: https://github.com/astropenguin/azely/blob/master/.github/workflows/pypi.yml
+[pytest]: https://docs.pytest.org/en/stable/
+[release]: https://github.com/astropenguin/azely/releases
+[test-workflow]: https://github.com/astropenguin/azely/blob/master/.github/workflows/test.yml
+[vs-code]: https://code.visualstudio.com/
