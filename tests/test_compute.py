@@ -46,4 +46,4 @@ def test_compute():
     expected = expected.set_index(result.index)
 
     columns = ["az", "el"]
-    assert_frame_equal(result[columns], expected[columns], check_less_precise=True)
+    assert_frame_equal(result[columns], expected[columns], atol=1e-3)

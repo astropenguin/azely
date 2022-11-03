@@ -18,8 +18,8 @@ expected_solar = Object(
 expected_icrs = Object(
     name="NGC1068",
     frame="icrs",
-    longitude="02h42m40.771s",
-    latitude="-00d00m47.84s",
+    longitude="02h42m40.70916694s",
+    latitude="-00d00m47.8596902s",
 )
 
 
