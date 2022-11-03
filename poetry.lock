@@ -257,32 +257,6 @@ unicode = ["unicodedata2 (>=14.0.0)"]
 woff = ["brotli (>=1.0.1)", "brotlicffi (>=0.8.0)", "zopfli (>=0.1.4)"]
 
 [[package]]
-name = "geographiclib"
-version = "1.52"
-description = "The geodesic routines from GeographicLib"
-category = "main"
-optional = false
-python-versions = "*"
-
-[[package]]
-name = "geopy"
-version = "1.23.0"
-description = "Python Geocoding Toolbox"
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-geographiclib = ">=1.49,<2"
-
-[package.extras]
-dev = ["contextlib2", "coverage", "flake8 (>=3.6.0,<3.7.0)", "isort (>=4.3.4,<4.4.0)", "mock", "pytest (>=3.10)", "readme-renderer", "six", "sphinx", "sphinx-rtd-theme (>=0.4.0)", "statistics"]
-dev-docs = ["readme-renderer", "sphinx", "sphinx-rtd-theme (>=0.4.0)"]
-dev-lint = ["contextlib2", "flake8 (>=3.6.0,<3.7.0)", "isort (>=4.3.4,<4.4.0)", "mock", "six"]
-dev-test = ["contextlib2", "coverage", "mock", "pytest (>=3.10)", "six", "statistics"]
-timezone = ["pytz"]
-
-[[package]]
 name = "h3"
 version = "3.7.4"
 description = "Hierarchical hexagonal geospatial indexing system"
@@ -1179,7 +1153,7 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.7.1, <3.11"
-content-hash = "0d1eaaaae519a1f10b7fa45e5c111490a871e765406c0ab09742a3fb71a68c9f"
+content-hash = "c057923ff3cbae0f8bcd5ce1732655566d1010c311e58490f66e2562d54dd382"
 
 [metadata.files]
 alabaster = [
@@ -1387,14 +1361,6 @@ executing = [
 fonttools = [
     {file = "fonttools-4.38.0-py3-none-any.whl", hash = "sha256:820466f43c8be8c3009aef8b87e785014133508f0de64ec469e4efb643ae54fb"},
     {file = "fonttools-4.38.0.zip", hash = "sha256:2bb244009f9bf3fa100fc3ead6aeb99febe5985fa20afbfbaa2f8946c2fbdaf1"},
-]
-geographiclib = [
-    {file = "geographiclib-1.52-py3-none-any.whl", hash = "sha256:8f441c527b0b8a26cd96c965565ff0513d1e4d9952b704bf449409e5015c77b7"},
-    {file = "geographiclib-1.52.tar.gz", hash = "sha256:ac400d672b8954b0306bca890b088bb8ba2a757dc8133cca0b878f34b33b2740"},
-]
-geopy = [
-    {file = "geopy-1.23.0-py2.py3-none-any.whl", hash = "sha256:5dee9af0d1ad7019d2483a5f519ba415eaebc4010f271651790876d911a542f2"},
-    {file = "geopy-1.23.0.tar.gz", hash = "sha256:62f14aaacbac313576167d4abdd74c667c04a64ccba4a9ef4599bf8954c998fc"},
 ]
 h3 = [
     {file = "h3-3.7.4-cp27-cp27m-macosx_10_9_x86_64.whl", hash = "sha256:e61d3c6b1b66072f5b74d46dbee7df29daac6ce9738b9a6223a67dc577114515"},
