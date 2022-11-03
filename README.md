@@ -1,36 +1,36 @@
-# Azely
+# azely
 
-[![PyPI](https://img.shields.io/pypi/v/azely.svg?label=PyPI&style=flat-square)](https://pypi.org/pypi/azely/)
-[![Python](https://img.shields.io/pypi/pyversions/azely.svg?label=Python&color=yellow&style=flat-square)](https://pypi.org/pypi/azely/)
-[![Test](https://img.shields.io/github/workflow/status/astropenguin/azely/Test?logo=github&label=Test&style=flat-square)](https://github.com/astropenguin/azely/actions)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg?label=License&style=flat-square)](LICENSE)
-[![DOI](https://img.shields.io/badge/DOI-10.5281/zenodo.3680060-blue?style=flat-square)](https://doi.org/10.5281/zenodo.3680060)
+[![Release](https://img.shields.io/pypi/v/azely?label=Release&color=cornflowerblue&style=flat-square)](https://pypi.org/project/azely/)
+[![Python](https://img.shields.io/pypi/pyversions/azely?label=Python&color=cornflowerblue&style=flat-square)](https://pypi.org/project/azely/)
+[![Downloads](https://img.shields.io/pypi/dm/azely?label=Downloads&color=cornflowerblue&style=flat-square)](https://pepy.tech/project/azely)
+[![DOI](https://img.shields.io/badge/DOI-10.5281/zenodo.3680060-cornflowerblue?style=flat-square)](https://doi.org/10.5281/zenodo.3680060)
+[![Tests](https://img.shields.io/github/workflow/status/astropenguin/azely/Tests?label=Tests&style=flat-square)](https://github.com/astropenguin/azely/actions)
 
 Computation and plotting of azimuth and elevation for astronomical objects
 
 ## TL;DR
 
 Azely (pronounced as "as-elie") is a Python package for computation and plotting of horizontal coordinates (azimuth and elevation; az/el, hereafter) of astronomical objects at given location and time.
-While computation and plotting are realized by [Astropy] and [Matplotlib], what Azely provides is high-level API to use them easily.
-In fact Azely offers one-liner to compute and plot, for example, one-day elevation of the Sun in Tokyo:
+While computation and plotting are realized by [Astropy] and [Matplotlib], what azely provides is high-level API to use them easily.
+In fact azely offers one-liner to compute and plot, for example, one-day elevation of the Sun in Tokyo:
 
 ```python
 >>> azely.compute('Sun', 'Tokyo').el.plot(ylim=(0, 90))
 ```
 
-![one-liner.svg](https://raw.githubusercontent.com/astropenguin/azely/v0.6.0/docs/_static/one-liner.svg)
+![one-liner.svg](https://raw.githubusercontent.com/astropenguin/azely/v0.7.0/docs/_static/one-liner.svg)
 
 ## Features
 
-- **High-level API:** Azely provides a simple yet powerful `compute()` function. Users can complete most of operation with it (e.g., information acquisition and computation).
-- **Handy output:** Azely's output (from `compute()`) is [pandas] DataFrame, a de facto standard data structure of Python. Users can convert it to other formats like CSV and plot it by [Matplotlib] using builtin methods.
-- **Web information acquisition:** Azely can automatically acquire object and location information (i.e., longitude and latitude) from online services (e.g., catalogues or maps). Obtained information is cached in a local [TOML] file for an offline use.
-- **User-defined information:** Azely also offers to use user-defined object and location information written in a [TOML] file.
+- **High-level API:** azely provides a simple yet powerful `compute()` function. Users can complete most of operation with it (e.g., information acquisition and computation).
+- **Handy output:** azely's output (from `compute()`) is [pandas] DataFrame, a de facto standard data structure of Python. Users can convert it to other formats like CSV and plot it by [Matplotlib] using builtin methods.
+- **Web information acquisition:** azely can automatically acquire object and location information (i.e., longitude and latitude) from online services (e.g., catalogues or maps). Obtained information is cached in a local [TOML] file for an offline use.
+- **User-defined information:** azely also offers to use user-defined object and location information written in a [TOML] file.
 
 ## Requirements
 
-- **Python:** 3.6, 3.7, or 3.8 (tested by author)
-- **Dependencies:** See [pyproject.toml](https://github.com/astropenguin/azely/blob/v0.6.0/pyproject.toml)
+- **Python:** 3.7, 3.8, 3.9, and 3.10 (tested by author)
+- **Dependencies:** See [pyproject.toml](https://github.com/astropenguin/azely/blob/v0.7.0/pyproject.toml)
 
 ## Installation
 
@@ -126,12 +126,12 @@ ax.set_ylim(0, 90)
 ax.legend()
 ```
 
-![multiple-objects.svg](https://raw.githubusercontent.com/astropenguin/azely/v0.6.0/docs/_static/multiple-objects.svg)
+![multiple-objects.svg](https://raw.githubusercontent.com/astropenguin/azely/v0.7.0/docs/_static/multiple-objects.svg)
 
 ## Advanced usage
 
-This section describes advanced usage of Azely by special DataFrame accessor and local [TOML] files.
-Note that Azely will create a config directory, `$XDG_CONFIG_HOME/azely` (if the environment variable exists) or `~/.config/azely`, after importing `azely` for the first time.
+This section describes advanced usage of azely by special DataFrame accessor and local [TOML] files.
+Note that azely will create a config directory, `$XDG_CONFIG_HOME/azely` (if the environment variable exists) or `~/.config/azely`, after importing `azely` for the first time.
 [TOML] files for configuration (`config.toml`) and cached information (`objects.toml`, `locations.toml`) will be automatically created in it.
 
 ### Plotting in local sidereal time
@@ -167,7 +167,7 @@ twin.xaxis.set_major_formatter(formatter)
 fig.autofmt_xdate(rotation=0)
 ```
 
-![lst-axis.svg](https://raw.githubusercontent.com/astropenguin/azely/v0.6.0/docs/_static/lst-axis.svg)
+![lst-axis.svg](https://raw.githubusercontent.com/astropenguin/azely/v0.7.0/docs/_static/lst-axis.svg)
 
 ### User-defined information
 
@@ -190,7 +190,7 @@ longitude = "0deg"
 latitude = "0deg"
 ```
 
-If it is located in a current directory or in the Azely's config directory, users can use the information like:
+If it is located in a current directory or in the azely's config directory, users can use the information like:
 
 ```python
 >>> df = azely.compute('user:GC', 'user:ASTE', '2020-01-01')
@@ -198,7 +198,7 @@ If it is located in a current directory or in the Azely's config directory, user
 
 ### Cached information
 
-Object and location information obtained from online services is cached to [TOML] files (`objects.toml`, `locations.toml`) in the Azely's config directory with the same format as user-defined files.
+Object and location information obtained from online services is cached to [TOML] files (`objects.toml`, `locations.toml`) in the azely's config directory with the same format as user-defined files.
 If a query argument is given with `'!'` at the end of it, then the cached values are forcibly updated by a new acquisition.
 This is useful, for example, when users want to update a current location:
 
@@ -208,7 +208,7 @@ This is useful, for example, when users want to update a current location:
 
 ### Customizing default values
 
-Users can modify default values of the `compute()` function by editing the Azely's config [TOML] file (`config.toml`) in the Azely's config directory like:
+Users can modify default values of the `compute()` function by editing the azely's config [TOML] file (`config.toml`) in the azely's config directory like:
 
 ```
 # config.toml
@@ -219,13 +219,6 @@ time = "now"
 ```
 
 Then `compute('Sun')` becomes equivalent to `compute('Sun', 'Tokyo', 'now')`.
-
-## References
-
-- [Astropy]
-- [Matplotlib]
-- [pandas]
-- [TOML]
 
 <!-- references -->
 [Astropy]: https://astropy.org
