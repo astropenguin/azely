@@ -60,8 +60,8 @@ from typing import Dict
 
 # dependent packages
 from astropy.coordinates import EarthLocation
-from geopy import Nominatim
-from geopy.exc import GeocoderServiceError
+from astropy.coordinates.name_resolve import NameResolveError
+from astropy.utils.data import conf
 from pytz import timezone
 from requests import ConnectionError, api
 from timezonefinder import TimezoneFinder
@@ -87,7 +87,6 @@ LocationDict = Dict[str, str]
 
 # query instances
 tf = TimezoneFinder()
-osm = Nominatim(user_agent="azely")
 
 
 # data classes
@@ -188,12 +187,17 @@ def get_location_by_user(query: str) -> LocationDict:
 @cache_to(AZELY_LOCATION)
 def get_location_by_query(query: str, timeout: int) -> LocationDict:
     """Get location information from OpenStreetMap."""
-    try:
-        res = osm.geocode(query, timeout=timeout, namedetails=True).raw
-    except (AttributeError, GeocoderServiceError):
-        raise AzelyError(f"Failed to get location: {query}")
+    original_remote_timeout = conf.remote_timeout
 
-    return Location(res["namedetails"]["name"], res["lon"], res["lat"]).to_dict()
+    try:
+        conf.remote_timeout = timeout
+        res = EarthLocation.of_address(query)
+    except NameResolveError:
+        raise AzelyError(f"Failed to get location: {query}")
+    finally:
+        conf.remote_timeout = original_remote_timeout
+
+    return Location(query, str(res.lon.value), str(res.lat.value)).to_dict()
 
 
 @cache_to(AZELY_LOCATION)
