@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "azely"
-version = "0.6.0"
+version = "0.7.0"
 description = "Computation and plotting of azimuth and elevation for astronomical objects"
 authors = ["Akio Taniguchi <taniguchi@a.phys.nagoya-u.ac.jp>"]
 keywords = [ "astronomy", "azimuth", "elevation", "ephemeris", "sidereal-time" ]

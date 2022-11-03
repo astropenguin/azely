@@ -2,7 +2,7 @@
 project = "Azely"
 copyright = "2017-2020, Akio Taniguchi"
 author = "Akio Taniguchi"
-release = "0.6.0"
+release = "0.7.0"
 
 
 # General configuration
