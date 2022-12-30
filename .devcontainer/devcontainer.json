@@ -1,5 +1,5 @@
 {
-    "name": "pandas-dataclasses",
+    "name": "azely",
     "build": {
         "context": "..",
         "dockerfile": "Dockerfile"
