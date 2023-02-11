@@ -23,7 +23,7 @@ toml = "^0.10"
 
 [tool.poetry.dev-dependencies]
 black = "^22.12"
-ipython = "^8.7"
+ipython = "^8.10"
 matplotlib = "^3.6"
 myst-parser = "^0.18"
 pydata-sphinx-theme = "^0.12"
