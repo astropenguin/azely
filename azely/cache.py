@@ -7,11 +7,12 @@ from dataclasses import asdict
 from functools import wraps
 from inspect import Signature
 from pathlib import Path
-from typing import Any, Callable, Iterator, Optional, TypeVar, Union, get_type_hints
+from typing import Any, Callable, Iterator, Optional, TypeVar, Union
 
 
 # dependencies
 from tomlkit import TOMLDocument, dump, load
+from .consts import AZELY_DIR
 
 
 # type hints
@@ -21,7 +22,7 @@ TCallable = TypeVar("TCallable", bound=Callable[..., Any])
 
 def cache(func: TCallable) -> TCallable:
     """Cache dataclass objects in a TOML file."""
-    dataclass = get_type_hints(func)["return"]
+    dataclass = func.__annotations__["return"]
     signature = Signature.from_callable(func)
 
     @wraps(func)
@@ -36,13 +37,27 @@ def cache(func: TCallable) -> TCallable:
         if cache is None:
             return func(*args, **kwargs)
 
-        with open_toml(cache) as doc:
+        with open_toml(resolve(cache)) as doc:
             if update or query not in doc:
                 doc[query] = asdict(func(*args, **kwargs))
 
             return dataclass(**doc[query].unwrap())
 
     return wrapper  # type: ignore
+
+
+def resolve(toml: PathLike) -> Path:
+    """Resolve the path of a TOML file."""
+    if (toml := Path(toml).expanduser().resolve()).exists():
+        return toml
+
+    if (toml := toml.with_suffix(".toml")).exists():
+        return toml
+
+    if (toml := AZELY_DIR / toml.name).exists():
+        return toml
+
+    raise FileNotFoundError(f"{toml} could not be found.")
 
 
 @contextmanager
