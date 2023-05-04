@@ -6,6 +6,7 @@ __author__ = "Akio Taniguchi"
 # submodules
 from . import consts
 from . import cache
+from . import query
 from . import utils
 from . import location
 from . import object
