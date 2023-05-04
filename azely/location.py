@@ -65,7 +65,9 @@ from astropy.utils.data import conf
 from pytz import timezone
 from requests import ConnectionError, api
 from timezonefinder import TimezoneFinder
-from .utils import AzelyError, cache_to, open_toml
+from .cache import PathLike, cache
+from .query import parse
+from .utils import AzelyError
 
 
 # constants
@@ -76,17 +78,9 @@ from .consts import (
     TIMEOUT,
 )
 
-DELIMITER = ":"
+
 IPINFO_URL = "https://ipinfo.io/json"
-USER_TOML = "user.toml"
-
-
-# type aliases
-LocationDict = Dict[str, str]
-
-
-# query instances
-tf = TimezoneFinder()
+TF = TimezoneFinder()
 
 
 # data classes
@@ -103,9 +97,9 @@ class Location:
     def tzinfo(self) -> tzinfo:
         """Return a location's tzinfo."""
         lon, lat = map(float, (self.longitude, self.latitude))
-        return timezone(tf.timezone_at(lng=lon, lat=lat))
+        return timezone(TF.timezone_at(lng=lon, lat=lat))  # type: ignore
 
-    def to_dict(self) -> LocationDict:
+    def to_dict(self) -> Dict[str, str]:
         """Convert it to a Python's dictionary."""
         return asdict(self)
 
@@ -163,49 +157,56 @@ def get_location(query: str = HERE, timeout: int = TIMEOUT) -> Location:
             >>> loc = azely.location.get_location('user:ASTE')
 
     """
-    query = query.strip()
+    parsed = parse(query)
 
-    if DELIMITER in query:
-        return Location(**get_location_by_user(query))
-    elif query.lower().rstrip("!") == HERE:
-        return Location(**get_location_by_ip(query, timeout))
+    if parsed.query.lower() == HERE:
+        return get_location_by_ip(
+            query=parsed.query,
+            cache=parsed.source or AZELY_LOCATION,
+            update=parsed.update,
+            timeout=timeout,
+        )
     else:
-        return Location(**get_location_by_query(query, timeout))
+        return get_location_by_name(
+            query=parsed.query,
+            cache=parsed.source or AZELY_LOCATION,
+            update=parsed.update,
+            timeout=timeout,
+        )
 
 
-# helper functions
-def get_location_by_user(query: str) -> LocationDict:
-    """Get location information from a user-defined TOML file."""
-    path, query = query.split(DELIMITER)
-
-    try:
-        return open_toml(path or USER_TOML, AZELY_DIR)[query]
-    except KeyError:
-        raise AzelyError(f"Failed to get location: {query}")
-
-
-@cache_to(AZELY_LOCATION)
-def get_location_by_query(query: str, timeout: int) -> LocationDict:
-    """Get location information from OpenStreetMap."""
-    original_remote_timeout = conf.remote_timeout
-
-    try:
-        conf.remote_timeout = timeout
-        res = EarthLocation.of_address(query)
-    except NameResolveError:
-        raise AzelyError(f"Failed to get location: {query}")
-    finally:
-        conf.remote_timeout = original_remote_timeout
-
-    return Location(query, str(res.lon.value), str(res.lat.value)).to_dict()
-
-
-@cache_to(AZELY_LOCATION)
-def get_location_by_ip(query: str, timeout: int) -> LocationDict:
+@cache
+def get_location_by_ip(
+    query: str,
+    cache: PathLike,
+    update: bool,
+    timeout: int,
+) -> Location:
     """Get location information from a guess by IP address."""
     try:
         res = api.get(IPINFO_URL, timeout=timeout).json()
     except ConnectionError:
         raise AzelyError("Failed to get location by IP address")
 
-    return Location(res["city"], *res["loc"].split(",")[::-1]).to_dict()
+    return Location(res["city"], *res["loc"].split(",")[::-1])
+
+
+@cache
+def get_location_by_name(
+    query: str,
+    cache: PathLike,
+    update: bool,
+    timeout: int,
+) -> Location:
+    """Get location information from OpenStreetMap."""
+    original_remote_timeout = conf.remote_timeout
+
+    try:
+        conf.remote_timeout = timeout
+        res = EarthLocation.of_address(query)  # type: ignore
+    except NameResolveError:
+        raise AzelyError(f"Failed to get location: {query}")
+    finally:
+        conf.remote_timeout = original_remote_timeout
+
+    return Location(query, str(res.lon.value), str(res.lat.value))
