@@ -2,16 +2,13 @@
 
 This module provides series of utility related to exception and I/O:
 (1) ``AzelyError`` class as Azely's base exception class
-(2) ``open_toml`` function to open (and update if any) a TOML file
-(3) ``cache_to`` decorator which caches returns of a function to a TOML file
-(4) ``set_defaults`` decorator which replaces default values of a function
+(2) ``set_defaults`` decorator which replaces default values of a function
 
 """
-__all__ = ["AzelyError", "open_toml", "cache_to", "set_defaults"]
+__all__ = ["AzelyError", "set_defaults"]
 
 
 # standard library
-import re
 from functools import wraps
 from inspect import Signature, signature
 from pathlib import Path
@@ -21,11 +18,6 @@ from typing import Any, Callable, Dict, Union
 # dependent packages
 from requests.utils import CaseInsensitiveDict
 from toml import TomlDecodeError, dump, load
-
-
-# constants
-TOML_SUFFIX = ".toml"
-QUERY_PATTERN = r"^\s*([\w\s]*\w)\s*!$"
 
 
 # type aliases
@@ -38,117 +30,6 @@ class AzelyError(Exception):
     """Azely's base exception class."""
 
     pass
-
-
-def open_toml(path: PathLike, alt_dir: PathLike = "."):
-    """Open a TOML file and get contents as a dictionary.
-
-    If this function is used in a ``with`` context management,
-    any updates to the dictionary is also reflected on the TOML file.
-
-    Args:
-        path: Path or filename (without suffix) of a TOML file.
-            If the latter is specified and if it does not exist in a current
-            directory, then the function tries to find it in ``alt_dir``.
-        alt_dir: Path of a directory where the function tries to find
-            the TOML file if it does not exist in a current directory.
-
-    Returns:
-        Dictionary equivalent to the contents of the TOML file.
-
-    Raises:
-        AzelyError: Raised if the TOML file is not found anywhere.
-
-    Examples:
-        To simply open a TOML file (for example, ``./user.toml``)::
-
-            >>> dic = azely.utils.open_toml('user.toml')
-
-        or::
-
-            >>> dic = azely.utils.open_toml('user')
-
-        To open and update a TOML file::
-
-            >>> with azely.utils.open_toml('user.toml') as dic:
-            ...     dic['new_key'] = new_value
-
-    """
-    path = Path(path).with_suffix(TOML_SUFFIX).expanduser()
-
-    if not path.exists():
-        path = Path(alt_dir) / path
-
-    if not path.exists():
-        raise AzelyError(f"Failed to find path: {path}")
-
-    return TOMLDict(path)
-
-
-class cache_to:
-    """Decorator which cache returns of a function to a TOML file.
-
-    Suppose there is a function which takes a long time to get
-    a result and it is decorated by this function::
-
-        >>> import time
-        >>> @azely.utils.cache_to('cache.toml')
-        ... def func(query: str) -> str:
-        ...     # simulates a long-time processing
-        ...     time.sleep(10)
-        ...     return query
-
-    Then the following function calls::
-
-        >>> func('aaa')
-        >>> func('bbb')
-        >>> func('ccc')
-
-    would take ~30 seconds to finish. But at the same time,
-    the results are cached to ``cache.toml`` like::
-
-        # cache.toml
-
-        aaa = "aaa"
-        bbb = "bbb"
-        ccc = "ccc"
-
-    Then the second calls would take much shorter time because
-    cached values are simply read and returned by the decorator.
-    If a query argument is given with '!' at the end of it
-    (e.g., ``'aaa!'``), cached values are forcibly updated by an
-    immediate call of the original function.
-
-    """
-
-    pattern = re.compile(QUERY_PATTERN)
-
-    def __init__(self, path: PathLike, query: str = "query") -> None:
-        self.path = ensure_existence(path)
-        self.query = query
-
-    def __call__(self, func: Callable) -> Callable:
-        sig = signature(func)
-
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            bound = sig.bind(*args, **kwargs)
-            bound.apply_defaults()
-            query = bound.arguments[self.query]
-            need_update = self.pattern.search(query)
-
-            if need_update:
-                query = need_update.groups()[0]
-                bound.arguments[self.query] = query
-
-            with TOMLDict(self.path) as cache:
-                if query not in cache or need_update:
-                    item = func(*bound.args, **bound.kwargs)
-                    cache.update({query: item})
-
-                return cache[query]
-
-        return wrapper
 
 
 class set_defaults:
@@ -183,7 +64,7 @@ class set_defaults:
     """
 
     def __init__(self, path: PathLike, key: str = "") -> None:
-        self.path = ensure_existence(path)
+        self.path = path
         self.key = key
 
     def __call__(self, func: Callable) -> Callable:
@@ -219,16 +100,6 @@ class set_defaults:
 
 
 # helper classes/functions
-def ensure_existence(path: PathLike) -> Path:
-    """Make path of file exist."""
-    path = Path(path)
-
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.touch()
-
-    return path
-
-
 class TOMLDict(CaseInsensitiveDict):
     """Open and update a TOML file as a dictionary."""
 
