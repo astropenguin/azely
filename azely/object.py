@@ -51,7 +51,7 @@ __all__ = ["Object", "get_object"]
 
 # standard library
 from dataclasses import asdict, dataclass
-from typing import Dict
+from typing import Dict, List
 
 
 # dependent packages
@@ -59,7 +59,9 @@ from astropy.coordinates import SkyCoord, get_body, solar_system_ephemeris
 from astropy.time import Time as ObsTime
 from astropy.coordinates.name_resolve import NameResolveError
 from astropy.utils.data import Conf
-from .utils import AzelyError, cache_to, open_toml
+from .cache import PathLike, cache
+from .query import parse
+from .utils import AzelyError
 
 
 # constants
@@ -70,13 +72,9 @@ from .consts import (
     TIMEOUT,
 )
 
-DELIMITER = ":"
-SOLAR = "solar"
-USER_TOML = "user.toml"
 
-
-# type aliases
-ObjectDict = Dict[str, str]
+SOLAR_BODIES: List[str] = list(solar_system_ephemeris.bodies)  # type: ignore
+SOLAR_FRAME = "solar"
 
 
 # data classes
@@ -91,9 +89,9 @@ class Object:
 
     def is_solar(self) -> bool:
         """Return True if it is an solar object."""
-        return self.frame == SOLAR
+        return self.frame == SOLAR_FRAME
 
-    def to_dict(self) -> ObjectDict:
+    def to_dict(self) -> Dict[str, str]:
         """Convert it to a Python's dictionary."""
         return asdict(self)
 
@@ -106,7 +104,7 @@ class Object:
             skycoord = SkyCoord(*coords, frame=self.frame, obstime=obstime)
 
         skycoord.location = obstime.location
-        skycoord.info.name = self.name
+        skycoord.info.name = self.name  # type: ignore
         return skycoord
 
 
@@ -157,42 +155,51 @@ def get_object(query: str, frame: str = FRAME, timeout: int = TIMEOUT) -> Object
             >>> obj = azely.object.get_object('user:GC')
 
     """
+    parsed = parse(query)
     query = query.strip()
 
-    if DELIMITER in query:
-        return Object(**get_object_by_user(query))
-    elif query.lower().rstrip("!") in solar_system_ephemeris.bodies:
-        return Object(**get_object_of_solar(query))
+    if parsed.query.lower() in SOLAR_BODIES:
+        return get_object_solar(
+            query=parsed.query,
+            cache=parsed.source or AZELY_OBJECT,
+            update=parsed.update,
+        )
     else:
-        return Object(**get_object_by_query(query, frame, timeout))
+        return get_object_by_name(
+            query=parsed.query,
+            cache=parsed.source or AZELY_OBJECT,
+            update=parsed.update,
+            frame=frame,
+            timeout=timeout,
+        )
 
 
-# helper functions
-def get_object_by_user(query: str) -> ObjectDict:
-    """Get object information from a user-defined TOML file."""
-    path, query = query.split(DELIMITER)
-
-    try:
-        return open_toml(path or USER_TOML, AZELY_DIR)[query]
-    except KeyError:
-        raise AzelyError(f"Failed to get object: {query}")
-
-
-@cache_to(AZELY_OBJECT)
-def get_object_of_solar(query: str) -> ObjectDict:
+@cache
+def get_object_solar(
+    query: str,
+    cache: PathLike,
+    update: bool,
+) -> Object:
     """Get object information of the solar system."""
-    return Object(query.capitalize(), SOLAR, "", "").to_dict()
+    return Object(query.capitalize(), SOLAR_FRAME, "", "")
 
 
-@cache_to(AZELY_OBJECT)
-def get_object_by_query(query: str, frame: str, timeout: int) -> ObjectDict:
+@cache
+def get_object_by_name(
+    query: str,
+    cache: PathLike,
+    update: bool,
+    frame: str,
+    timeout: int,
+) -> Object:
     """Get object information from CDS."""
-    with Conf.remote_timeout.set_temp(timeout):
+    with Conf.remote_timeout.set_temp(timeout):  # type: ignore
         try:
             res = SkyCoord.from_name(query, frame)
+            lon, lat = res.to_string("hmsdms").split()  # type: ignore
         except NameResolveError:
             raise AzelyError(f"Failed to get object: {query}")
         except ValueError:
             raise AzelyError(f"Failed to parse frame: {frame}")
 
-    return Object(query, frame, *res.to_string("hmsdms").split()).to_dict()
+    return Object(query, frame, lon, lat)
