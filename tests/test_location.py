@@ -2,9 +2,9 @@
 from tempfile import NamedTemporaryFile
 
 
-# dependent packages
+# dependencies
 from azely.location import Location, get_location
-from toml import dump
+from tomlkit import dump
 
 
 # constants

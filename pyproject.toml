@@ -18,7 +18,6 @@ python-dateutil = "^2.8"
 pytz = "^2023.3"
 requests = "^2.29"
 timezonefinder = "^6.2"
-toml = "^0.10"
 tomlkit = "^0.11"
 
 [tool.poetry.dev-dependencies]

@@ -1,6 +1,18 @@
-# flake8: noqa
+__all__ = [
+    "azel",
+    "cache",
+    "compute",
+    "consts",
+    "get_location",
+    "get_object",
+    "get_time",
+    "location",
+    "object",
+    "query",
+    "time",
+    "utils",
+]
 __version__ = "0.7.0"
-__author__ = "Akio Taniguchi"
 
 
 # submodules
@@ -19,7 +31,3 @@ from .location import get_location
 from .object import get_object
 from .time import get_time
 from .azel import compute
-
-
-# for sphinx docs
-__all__ = dir()
