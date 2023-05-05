@@ -156,7 +156,6 @@ def get_object(query: str, frame: str = FRAME, timeout: int = TIMEOUT) -> Object
 
     """
     parsed = parse(query)
-    query = query.strip()
 
     if parsed.query.lower() in SOLAR_BODIES:
         return get_object_solar(
