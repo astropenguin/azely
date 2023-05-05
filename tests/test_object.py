@@ -16,10 +16,10 @@ expected_solar = Object(
 )
 
 expected_icrs = Object(
-    name="NGC1068",
+    name="M87",
     frame="icrs",
-    longitude="02h42m40.7091672s",
-    latitude="-00d00m47.859696s",
+    longitude="12h30m49.42338414s",
+    latitude="+12d23m28.0436859s",
 )
 
 
@@ -32,9 +32,9 @@ def test_object_by_query():
     assert get_object(f"{expected_icrs.name}!") == expected_icrs
 
 
-def test_location_by_user():
+def test_object_by_user():
     with NamedTemporaryFile("w", suffix=".toml") as f:
-        name = "AOS"
+        name = "M87"
         query = f"{f.name}:{name}"
 
         dump({name: expected_icrs.to_dict()}, f)
