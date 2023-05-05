@@ -55,12 +55,13 @@ __all__ = ["Location", "get_location"]
 # standard library
 from dataclasses import asdict, dataclass
 from datetime import tzinfo
-from typing import Dict
+from typing import ClassVar
 
 
 # dependent packages
-from astropy.coordinates import EarthLocation
+from astropy.coordinates import EarthLocation, Latitude, Longitude
 from astropy.coordinates.name_resolve import NameResolveError
+from astropy.units import Quantity
 from astropy.utils.data import conf
 from pytz import timezone
 from requests import ConnectionError, api
@@ -80,33 +81,55 @@ from .consts import (
 
 
 IPINFO_URL = "https://ipinfo.io/json"
-TF = TimezoneFinder()
 
 
 # data classes
 @dataclass(frozen=True)
 class Location:
-    """Azely's location information class."""
+    """Location information."""
 
-    name: str  #: Location's name.
-    longitude: str  #: Longitude expressed in units of degrees.
-    latitude: str  #: Latitude expressed in units of degrees.
-    altitude: str = "0"  #: Altitude expressed in units of meters.
+    name: str
+    """Name of the location."""
+
+    longitude: str
+    """Longitude of the location with units."""
+
+    latitude: str
+    """Latitude of the location with units."""
+
+    altitude: str = "0.0 m"
+    """Altitude of the location with units."""
+
+    tf: ClassVar = TimezoneFinder()
+    """TimezoneFinder instance."""
+
+    def __post_init__(self) -> None:
+        """Add or update units of location values."""
+        setattr = object.__setattr__
+        setattr(self, "longitude", str(Longitude(self.longitude, "deg")))
+        setattr(self, "latitude", str(Latitude(self.latitude, "deg")))
+        setattr(self, "altitude", str(Quantity(self.altitude, "m")))
 
     @property
-    def tzinfo(self) -> tzinfo:
-        """Return a location's tzinfo."""
-        lon, lat = map(float, (self.longitude, self.latitude))
-        return timezone(TF.timezone_at(lng=lon, lat=lat))  # type: ignore
+    def timezone(self) -> tzinfo:
+        """Timezone of the location."""
+        return timezone(
+            str(
+                self.tf.timezone_at(
+                    lng=Longitude(self.longitude).value,
+                    lat=Latitude(self.latitude).value,
+                )
+            )
+        )
 
-    def to_dict(self) -> Dict[str, str]:
-        """Convert it to a Python's dictionary."""
-        return asdict(self)
-
-    def to_earthloc(self) -> EarthLocation:
-        """Convert it to an astropy's earth location."""
-        lon, lat, alt = map(float, (self.longitude, self.latitude, self.altitude))
-        return EarthLocation(lon=lon, lat=lat, height=alt)
+    @property
+    def earth_location(self) -> EarthLocation:
+        """Location information in Astropy."""
+        return EarthLocation(
+            lon=Longitude(self.longitude),
+            lat=Latitude(self.latitude),
+            height=Quantity(self.altitude),
+        )
 
 
 # main functions
