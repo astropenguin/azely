@@ -1,4 +1,4 @@
-# dependent packages
+# dependencies
 import pandas as pd
 from azely.time import get_time
 

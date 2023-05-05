@@ -2,9 +2,9 @@
 from tempfile import NamedTemporaryFile
 
 
-# dependent packages
+# dependencies
 from azely.object import Object, get_object
-from toml import dump
+from tomlkit import dump
 
 
 # constants
