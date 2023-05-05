@@ -49,7 +49,6 @@ __all__ = ["AzEl", "compute"]
 
 # dependent packages
 from pandas import DataFrame, DatetimeIndex, Timestamp, to_timedelta
-from .utils import set_defaults
 from .location import Location, get_location
 from .object import Object, get_object
 from .time import Time, get_time
@@ -57,13 +56,13 @@ from .time import Time, get_time
 
 # constants
 from .consts import (
-    AZELY_CONFIG,
     DAYFIRST,
-    HERE,
     FRAME,
     FREQ,
+    SITE,
+    TIME,
     TIMEOUT,
-    TODAY,
+    VIEW,
     YEARFIRST,
 )
 
@@ -105,12 +104,11 @@ class AzEl(DataFrame):
 
 
 # main functions
-@set_defaults(AZELY_CONFIG, "compute")
 def compute(
     object: str,
-    site: str = HERE,
-    time: str = TODAY,
-    view: str = "",
+    site: str = SITE,
+    time: str = TIME,
+    view: str = VIEW,
     frame: str = FRAME,
     freq: str = FREQ,
     dayfirst: bool = DAYFIRST,
