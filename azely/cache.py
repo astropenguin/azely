@@ -7,7 +7,7 @@ from dataclasses import asdict
 from functools import wraps
 from inspect import Signature
 from pathlib import Path
-from typing import Any, Callable, Iterator, Optional, TypeVar, Union
+from typing import Any, Callable, Iterator, TypeVar, Union
 
 
 # dependencies
@@ -30,12 +30,9 @@ def cache(func: TCallable) -> TCallable:
         bound = signature.bind(*args, **kwargs)
         bound.apply_defaults()
 
-        cache: Optional[PathLike] = bound.arguments["cache"]
+        cache: PathLike = bound.arguments["cache"]
         query: str = bound.arguments["query"]
         update: bool = bound.arguments["update"]
-
-        if cache is None:
-            return func(*args, **kwargs)
 
         with open_toml(resolve(cache)) as doc:
             if update or query not in doc:
