@@ -34,7 +34,7 @@ def cache(func: TCallable) -> TCallable:
         query: str = bound.arguments["query"]
         update: bool = bound.arguments["update"]
 
-        with open_toml(resolve(cache)) as doc:
+        with sync_toml(resolve(cache)) as doc:
             if update or query not in doc:
                 doc[query] = asdict(func(*args, **kwargs))
 
@@ -58,7 +58,7 @@ def resolve(toml: PathLike) -> Path:
 
 
 @contextmanager
-def open_toml(toml: PathLike) -> Iterator[TOMLDocument]:
+def sync_toml(toml: PathLike) -> Iterator[TOMLDocument]:
     """Open a TOML file as an updatable tomlkit document."""
     with open(toml, "r") as file:
         yield (doc := load(file))
