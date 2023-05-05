@@ -1,7 +1,7 @@
 """Azely's consts module (constants).
 
 This module provides static constants used for default values of functions
-and constants indicating Azely's directory/files, which are dinamically
+and constants indicating Azely's directory/files, which are dynamically
 determined by some environment variables of client.
 
 """
@@ -15,61 +15,95 @@ __all__ = [
     "FREQ",
     "HERE",
     "NOW",
+    "SITE",
+    "TIME",
     "TIMEOUT",
     "TODAY",
+    "VIEW",
     "YEARFIRST",
 ]
 
 
 # standard library
-from os import environ
+from os import getenv
 from pathlib import Path
+from typing import TypeVar
 
 
-# constants (static)
-DAYFIRST = False
-"""Default value for the ``dayfirst`` argument."""
-
-FRAME = "icrs"
-"""Default value for the ``frame`` argument."""
-
-FREQ = "10T"
-"""Default value for the ``freq`` argument."""
-
-HERE = "here"
-"""Special value for getting location information by current IP address."""
-
-NOW = "now"
-"""Special value for getting current time information."""
-
-TIMEOUT = 10
-"""Default value for the ``timeout`` argument."""
-
-TODAY = "today"
-"""Special value for getting today's time information."""
-
-YEARFIRST = False
-"""Default value for the ``yearfirst`` argument."""
+# dependencies
+from tomlkit import load
 
 
-# constants (dynamic)
-def ensure(file: Path) -> Path:
-    """Create an empty file if it does not exist."""
-    if not file.exists():
-        file.parent.mkdir(parents=True, exist_ok=True)
-        file.touch()
-
-    return file
+# type hints
+T = TypeVar("T")
 
 
-if "AZELY_DIR" in environ:
-    AZELY_DIR = Path(environ["AZELY_DIR"])
-elif "XDG_CONFIG_HOME" in environ:
-    AZELY_DIR = Path(environ["XDG_CONFIG_HOME"]) / "azely"
+# helper functions
+def ensure(toml: Path) -> Path:
+    """Create an empty TOML file if it does not exist."""
+    if not toml.exists():
+        toml.parent.mkdir(parents=True, exist_ok=True)
+        toml.touch()
+
+    return toml
+
+
+def getval(toml: Path, keys: str, default: T) -> T:
+    """Return the value of the keys in a TOML file."""
+    with open(toml, "r") as file:
+        doc = load(file)
+
+    for key in keys.split("."):
+        if (doc := doc.get(key)) is None:
+            return default
+
+    return type(default)(doc.unwrap())
+
+
+# config/cache files and directory for them
+if (env := getenv("AZELY_DIR")) is not None:
+    AZELY_DIR = Path(env)
+elif (env := getenv("XDG_CONFIG_HOME")) is not None:
+    AZELY_DIR = Path(env) / "azely"
 else:
-    AZELY_DIR = Path().home() / ".config" / "azely"
+    AZELY_DIR = Path.home() / ".config" / "azely"
 
 
 AZELY_CONFIG = ensure(AZELY_DIR / "config.toml")
 AZELY_OBJECT = ensure(AZELY_DIR / "objects.toml")
 AZELY_LOCATION = ensure(AZELY_DIR / "locations.toml")
+
+
+# default values for public functions
+HERE = "here"
+"""Special value for getting current location information."""
+
+NOW = "now"
+"""Special value for getting current time information."""
+
+TODAY = "today"
+"""Special value for getting today's time information."""
+
+DAYFIRST = getval(AZELY_CONFIG, "defaults.dayfirst", False)
+"""Default value for the ``dayfirst`` argument."""
+
+FRAME = getval(AZELY_CONFIG, "defaults.frame", "icrs")
+"""Default value for the ``frame`` argument."""
+
+FREQ = getval(AZELY_CONFIG, "defaults.freq", "10T")
+"""Default value for the ``freq`` argument."""
+
+SITE = getval(AZELY_CONFIG, "defaults.site", HERE)
+"""Default value for the ``site`` argument."""
+
+TIME = getval(AZELY_CONFIG, "defaults.time", TODAY)
+"""Default value for the ``time`` argument."""
+
+TIMEOUT = getval(AZELY_CONFIG, "defaults.timeout", 10)
+"""Default value for the ``timeout`` argument."""
+
+VIEW = getval(AZELY_CONFIG, "defaults.view", "")
+"""Default value for the ``view`` argument."""
+
+YEARFIRST = getval(AZELY_CONFIG, "defaults.yearfirst", False)
+"""Default value for the ``yearfirst`` argument."""
