@@ -53,37 +53,25 @@ __all__ = ["Location", "get_location"]
 
 
 # standard library
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from datetime import tzinfo
 from typing import ClassVar
 
 
-# dependent packages
+# dependencies
 from astropy.coordinates import EarthLocation, Latitude, Longitude
 from astropy.coordinates.name_resolve import NameResolveError
 from astropy.units import Quantity
 from astropy.utils.data import conf
+from ipinfo import getHandler
 from pytz import timezone
-from requests import ConnectionError, api
 from timezonefinder import TimezoneFinder
 from .cache import PathLike, cache
+from .consts import AZELY_LOCATION, HERE, TIMEOUT
 from .query import parse
 from .utils import AzelyError
 
 
-# constants
-from .consts import (
-    AZELY_DIR,
-    AZELY_LOCATION,
-    HERE,
-    TIMEOUT,
-)
-
-
-IPINFO_URL = "https://ipinfo.io/json"
-
-
-# data classes
 @dataclass(frozen=True)
 class Location:
     """Location information."""
@@ -132,7 +120,6 @@ class Location:
         )
 
 
-# main functions
 def get_location(query: str = HERE, timeout: int = TIMEOUT) -> Location:
     """Get location information by various ways.
 
@@ -205,13 +192,14 @@ def get_location_by_ip(
     update: bool,
     timeout: int,
 ) -> Location:
-    """Get location information from a guess by IP address."""
-    try:
-        res = api.get(IPINFO_URL, timeout=timeout).json()
-    except ConnectionError:
-        raise AzelyError("Failed to get location by IP address")
+    """Get current location information by IP address."""
+    response = getHandler().getDetails(timeout=timeout)
 
-    return Location(res["city"], *res["loc"].split(",")[::-1])
+    return Location(
+        name=response.city,
+        longitude=response.longitude,
+        latitude=response.latitude,
+    )
 
 
 @cache
@@ -232,4 +220,8 @@ def get_location_by_name(
     finally:
         conf.remote_timeout = original_remote_timeout
 
-    return Location(query, str(res.lon.value), str(res.lat.value))
+    return Location(
+        name=query,
+        longitude=str(res.lon),
+        latitude=str(res.lat),
+    )
