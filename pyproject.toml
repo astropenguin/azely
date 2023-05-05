@@ -16,9 +16,9 @@ pandas = "^1.5"
 pandas-stubs = "^1.5"
 python-dateutil = "^2.8"
 pytz = "^2023.3"
-requests = "^2.29"
 timezonefinder = "^6.2"
 tomlkit = "^0.11"
+ipinfo = "^4.4"
 
 [tool.poetry.dev-dependencies]
 black = "^23.3"
