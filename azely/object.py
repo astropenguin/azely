@@ -50,58 +50,70 @@ __all__ = ["Object", "get_object"]
 
 
 # standard library
-from dataclasses import asdict, dataclass
-from typing import Dict, List
+from dataclasses import dataclass
+from typing import List
 
 
 # dependent packages
-from astropy.coordinates import SkyCoord, get_body, solar_system_ephemeris
-from astropy.time import Time as ObsTime
-from astropy.coordinates.name_resolve import NameResolveError
-from astropy.utils.data import Conf
-from .cache import PathLike, cache
-from .query import parse
-from .utils import AzelyError
-
-
-# constants
-from .consts import (
-    AZELY_DIR,
-    AZELY_OBJECT,
-    FRAME,
-    TIMEOUT,
+from astropy.coordinates import (
+    Longitude,
+    Latitude,
+    SkyCoord,
+    get_body,
+    solar_system_ephemeris,
 )
+from astropy.time import Time as ObsTime
+from astropy.utils.data import conf
+from .cache import PathLike, cache
+from .consts import AZELY_OBJECT, FRAME, TIMEOUT
+from .query import parse
 
 
 SOLAR_BODIES: List[str] = list(solar_system_ephemeris.bodies)  # type: ignore
 SOLAR_FRAME = "solar"
 
 
-# data classes
-@dataclass(frozen=True)
+@dataclass
 class Object:
-    """Azely's object information class."""
+    """Object information."""
 
-    name: str  #: Object's name.
-    frame: str  #: Name of equatorial coordinates.
-    longitude: str  #: Longitude (e.g., ra or l) with units.
-    latitude: str  #: Latitude (e.g., dec or b) with units.
+    name: str
+    """Name of the object."""
 
+    longitude: str
+    """Longitude (e.g. R.A. or l) of the object."""
+
+    latitude: str
+    """Latitude (e.g. Dec. or b) of the object."""
+
+    frame: str
+    """Equatorial coordinates of the object."""
+
+    def __post_init__(self) -> None:
+        """Add or update units of object coordinates."""
+        if not self.is_solar:
+            self.longitude = str(Longitude(self.longitude, "hr"))
+            self.latitude = str(Latitude(self.latitude, "deg"))
+
+    @property
     def is_solar(self) -> bool:
-        """Return True if it is an solar object."""
+        """Whether it is a solar object."""
         return self.frame == SOLAR_FRAME
 
-    def to_dict(self) -> Dict[str, str]:
-        """Convert it to a Python's dictionary."""
-        return asdict(self)
-
     def to_skycoord(self, obstime: ObsTime) -> SkyCoord:
-        """Convert it to an astropy's skycoord with given obstime."""
-        if self.is_solar():
-            skycoord = get_body(self.name, time=obstime)
+        """Convert it to a SkyCoord object."""
+        if self.is_solar:
+            skycoord = get_body(
+                body=self.name,
+                time=obstime,
+            )
         else:
-            coords = self.longitude, self.latitude
-            skycoord = SkyCoord(*coords, frame=self.frame, obstime=obstime)
+            skycoord = SkyCoord(
+                self.longitude,
+                self.latitude,
+                frame=self.frame,
+                obstime=obstime,
+            )
 
         skycoord.location = obstime.location
         skycoord.info.name = self.name  # type: ignore
