@@ -1,4 +1,5 @@
 # standard library
+from dataclasses import asdict
 from tempfile import NamedTemporaryFile
 
 
@@ -10,9 +11,9 @@ from tomlkit import dump
 # constants
 expected = Location(
     name="Array Operations Site",
-    longitude="-67.75392913062831",
-    latitude="-23.02306575",
-    altitude="0",
+    longitude="292d14m45.85512974s",
+    latitude="-23d01m23.0367s",
+    altitude="0.0 m",
 )
 
 
@@ -26,7 +27,7 @@ def test_location_by_user():
         name = "AOS"
         query = f"{f.name}:{name}"
 
-        dump({name: expected.to_dict()}, f)
+        dump({name: asdict(expected)}, f)
         f.seek(0)
 
         assert get_location(query) == expected
