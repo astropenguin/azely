@@ -10,15 +10,17 @@ __all__ = [
     "AZELY_CONFIG",
     "AZELY_OBJECT",
     "AZELY_LOCATION",
+    "SOLAR_FRAME",
+    "SOLAR_OBJECTS",
+    "HERE",
+    "NOW",
+    "TODAY",
     "DAYFIRST",
     "FRAME",
     "FREQ",
-    "HERE",
-    "NOW",
     "SITE",
     "TIME",
     "TIMEOUT",
-    "TODAY",
     "VIEW",
     "YEARFIRST",
 ]
@@ -27,10 +29,11 @@ __all__ = [
 # standard library
 from os import getenv
 from pathlib import Path
-from typing import TypeVar
+from typing import Tuple, TypeVar
 
 
 # dependencies
+from astropy.coordinates import solar_system_ephemeris as solar
 from tomlkit import load
 
 
@@ -74,16 +77,26 @@ AZELY_OBJECT = ensure(AZELY_DIR / "objects.toml")
 AZELY_LOCATION = ensure(AZELY_DIR / "locations.toml")
 
 
-# default values for public functions
+# special values for the solar system ephemeris
+SOLAR_FRAME = "solar"
+"""Special frame for objects in the solar system."""
+
+SOLAR_OBJECTS: Tuple[str, ...] = tuple(solar.bodies)  # type: ignore
+"""List of objects in the solar system."""
+
+
+# special values for function arguments
 HERE = "here"
-"""Special value for getting current location information."""
+"""Special query for getting current location information."""
 
 NOW = "now"
-"""Special value for getting current time information."""
+"""Special query for getting current time information."""
 
 TODAY = "today"
-"""Special value for getting today's time information."""
+"""Special query for getting today's time information."""
 
+
+# default values for public functions
 DAYFIRST = getval(AZELY_CONFIG, "defaults.dayfirst", False)
 """Default value for the ``dayfirst`` argument."""
 

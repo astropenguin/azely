@@ -1,4 +1,5 @@
 # standard library
+from dataclasses import asdict
 from tempfile import NamedTemporaryFile
 
 
@@ -10,16 +11,16 @@ from tomlkit import dump
 # constants
 expected_solar = Object(
     name="Sun",
+    longitude="NA",
+    latitude="NA",
     frame="solar",
-    longitude="",
-    latitude="",
 )
 
 expected_icrs = Object(
     name="M87",
-    frame="icrs",
     longitude="12h30m49.42338414s",
     latitude="+12d23m28.0436859s",
+    frame="icrs",
 )
 
 
@@ -37,7 +38,7 @@ def test_object_by_user():
         name = "M87"
         query = f"{f.name}:{name}"
 
-        dump({name: expected_icrs.to_dict()}, f)
+        dump({name: asdict(expected_icrs)}, f)
         f.seek(0)
 
         assert get_object(query) == expected_icrs
