@@ -60,7 +60,6 @@ from typing import ClassVar
 
 # dependencies
 from astropy.coordinates import EarthLocation, Latitude, Longitude
-from astropy.coordinates.name_resolve import NameResolveError
 from astropy.units import Quantity
 from astropy.utils.data import conf
 from ipinfo import getHandler
@@ -69,7 +68,6 @@ from timezonefinder import TimezoneFinder
 from .cache import PathLike, cache
 from .consts import AZELY_LOCATION, HERE, TIMEOUT
 from .query import parse
-from .utils import AzelyError
 
 
 @dataclass(frozen=True)
@@ -210,18 +208,11 @@ def get_location_by_name(
     timeout: int,
 ) -> Location:
     """Get location information from OpenStreetMap."""
-    original_remote_timeout = conf.remote_timeout
-
-    try:
-        conf.remote_timeout = timeout
-        res = EarthLocation.of_address(query)  # type: ignore
-    except NameResolveError:
-        raise AzelyError(f"Failed to get location: {query}")
-    finally:
-        conf.remote_timeout = original_remote_timeout
+    with conf.set_temp("remote_timeout", timeout):
+        response = EarthLocation.of_address(query)
 
     return Location(
         name=query,
-        longitude=str(res.lon),
-        latitude=str(res.lat),
+        longitude=str(response.lon),
+        latitude=str(response.lat),
     )
