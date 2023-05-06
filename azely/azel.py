@@ -173,7 +173,7 @@ def compute(
 
     """  # noqa: E501
     object_ = get_object(object, frame, timeout)
-    site_ = get_location(site, timeout)
+    site_ = get_location(site, timeout=timeout)
     time_ = get_time(time, view or site, freq, dayfirst, yearfirst, timeout)
 
     return _compute(object_, site_, time_)
@@ -198,7 +198,7 @@ def _compute(object: Object, site: Location, time: Time) -> AzEl:
         AzelyError: Raised if one of mid-level APIs fails to get any information.
 
     """
-    obstime = time.to_obstime(site.to_earthloc())
+    obstime = time.to_obstime(site.earth_location)
     skycoord = object.to_skycoord(obstime)
 
     az = skycoord.altaz.az
