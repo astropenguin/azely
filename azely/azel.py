@@ -198,7 +198,7 @@ def _compute(object: Object, site: Location, time: Time) -> AzEl:
         AzelyError: Raised if one of mid-level APIs fails to get any information.
 
     """
-    obstime = time.to_obstime(site.earth_location)
+    obstime = time.to_obstime(site.to_earthlocation())
     skycoord = object.to_skycoord(obstime)
 
     az = skycoord.altaz.az

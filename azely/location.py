@@ -54,9 +54,8 @@ class Location:
 
         return timezone(str(response))
 
-    @property
-    def earth_location(self) -> EarthLocation:
-        """Location information in Astropy."""
+    def to_earthlocation(self) -> EarthLocation:
+        """Convert it to an EarthLocation object."""
         return EarthLocation(
             lon=Longitude(self.longitude),
             lat=Latitude(self.latitude),
