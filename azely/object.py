@@ -198,19 +198,24 @@ def get_object_solar(
 @cache
 def get_object_by_name(
     query: str,
+    *,
     frame: str,
     timeout: int,
     source: PathLike,  # consumed by @cache
     update: bool,  # consumed by @cache
 ) -> Object:
-    """Get object information from CDS."""
-    with Conf.remote_timeout.set_temp(timeout):  # type: ignore
-        try:
-            res = SkyCoord.from_name(query, frame)
-            lon, lat = res.to_string("hmsdms").split()  # type: ignore
-        except NameResolveError:
-            raise AzelyError(f"Failed to get object: {query}")
-        except ValueError:
-            raise AzelyError(f"Failed to parse frame: {frame}")
+    """Get object information by an object name."""
+    with conf.set_temp("remote_timeout", timeout):
+        response = SkyCoord.from_name(
+            name=query,
+            frame=frame,
+            parse=False,
+            cache=False,
+        )
 
-    return Object(query, frame, lon, lat)
+    return Object(
+        name=query,
+        longitude=str(response.data.lon),  # type: ignore
+        latitude=str(response.data.lat),  # type: ignore
+        frame=frame,
+    )
