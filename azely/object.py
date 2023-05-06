@@ -110,8 +110,12 @@ class Object:
         return skycoord
 
 
-# main functions
-def get_object(query: str, frame: str = FRAME, timeout: int = TIMEOUT) -> Object:
+def get_object(
+    query: str,
+    *,
+    frame: str = FRAME,
+    timeout: int = TIMEOUT,
+) -> Object:
     """Get object information by various ways.
 
     This function acquires object information by the following two ways:
