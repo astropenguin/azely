@@ -160,24 +160,24 @@ def get_object(query: str, frame: str = FRAME, timeout: int = TIMEOUT) -> Object
     if parsed.query.lower() in SOLAR_BODIES:
         return get_object_solar(
             query=parsed.query,
-            cache=parsed.source or AZELY_OBJECT,
+            source=parsed.source or AZELY_OBJECT,
             update=parsed.update,
         )
     else:
         return get_object_by_name(
             query=parsed.query,
-            cache=parsed.source or AZELY_OBJECT,
-            update=parsed.update,
             frame=frame,
             timeout=timeout,
+            source=parsed.source or AZELY_OBJECT,
+            update=parsed.update,
         )
 
 
 @cache
 def get_object_solar(
     query: str,
-    cache: PathLike,
-    update: bool,
+    source: PathLike,  # consumed by @cache
+    update: bool,  # consumed by @cache
 ) -> Object:
     """Get object information of the solar system."""
     return Object(query.capitalize(), SOLAR_FRAME, "", "")
@@ -186,10 +186,10 @@ def get_object_solar(
 @cache
 def get_object_by_name(
     query: str,
-    cache: PathLike,
-    update: bool,
     frame: str,
     timeout: int,
+    source: PathLike,  # consumed by @cache
+    update: bool,  # consumed by @cache
 ) -> Object:
     """Get object information from CDS."""
     with Conf.remote_timeout.set_temp(timeout):  # type: ignore

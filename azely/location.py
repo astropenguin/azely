@@ -77,18 +77,18 @@ def get_location(
     if parsed.query.lower() == HERE:
         return get_location_by_ip(
             query=parsed.query,
-            cache=parsed.source or AZELY_LOCATION,
-            update=parsed.update,
             ipinfo_api=ipinfo_api,
             timeout=timeout,
+            source=parsed.source or AZELY_LOCATION,
+            update=parsed.update,
         )
     else:
         return get_location_by_name(
             query=parsed.query,
-            cache=parsed.source or AZELY_LOCATION,
-            update=parsed.update,
             google_api=google_api,
             timeout=timeout,
+            source=parsed.source or AZELY_LOCATION,
+            update=parsed.update,
         )
 
 
@@ -96,10 +96,10 @@ def get_location(
 def get_location_by_ip(
     query: str,
     *,
-    cache: PathLike,
-    update: bool,
     ipinfo_api: str,
     timeout: int,
+    source: PathLike,  # consumed by @cache
+    update: bool,  # consumed by @cache
 ) -> Location:
     """Get location information by current IP address."""
     handler = getHandler(ipinfo_api or None)
@@ -116,10 +116,10 @@ def get_location_by_ip(
 def get_location_by_name(
     query: str,
     *,
-    cache: PathLike,
-    update: bool,
     google_api: str,
     timeout: int,
+    source: PathLike,  # consumed by @cache
+    update: bool,  # consumed by @cache
 ) -> Location:
     """Get location information by a location name."""
     with conf.set_temp("remote_timeout", timeout):

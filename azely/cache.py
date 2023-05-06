@@ -30,11 +30,11 @@ def cache(func: TCallable) -> TCallable:
         bound = signature.bind(*args, **kwargs)
         bound.apply_defaults()
 
-        cache: PathLike = bound.arguments["cache"]
         query: str = bound.arguments["query"]
+        source: PathLike = bound.arguments["source"]
         update: bool = bound.arguments["update"]
 
-        with sync_toml(resolve(cache)) as doc:
+        with sync_toml(resolve(source)) as doc:
             if update or query not in doc:
                 doc[query] = asdict(func(*args, **kwargs))
 
