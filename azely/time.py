@@ -163,7 +163,7 @@ def get_time(
     try:
         tzinfo = timezone(view)
     except UnknownTimeZoneError:
-        tzinfo = get_location(view, timeout).timezone
+        tzinfo = get_location(view, timeout=timeout).timezone
 
     if query.lower() == NOW:
         return Time(get_time_now(tzinfo))

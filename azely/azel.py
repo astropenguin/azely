@@ -173,7 +173,7 @@ def compute(
 
     """  # noqa: E501
     object_ = get_object(object, frame, timeout)
-    site_ = get_location(site, timeout)
+    site_ = get_location(site, timeout=timeout)
     time_ = get_time(time, view or site, freq, dayfirst, yearfirst, timeout)
 
     return _compute(object_, site_, time_)

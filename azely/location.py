@@ -115,7 +115,13 @@ class Location:
         )
 
 
-def get_location(query: str = HERE, timeout: int = TIMEOUT) -> Location:
+def get_location(
+    query: str,
+    *,
+    google_api: str = GOOGLE_API,
+    ipinfo_api: str = IPINFO_API,
+    timeout: int = TIMEOUT,
+) -> Location:
     """Get location information by various ways.
 
     This function acquires location information by the following three ways:
@@ -169,6 +175,7 @@ def get_location(query: str = HERE, timeout: int = TIMEOUT) -> Location:
             query=parsed.query,
             cache=parsed.source or AZELY_LOCATION,
             update=parsed.update,
+            ipinfo_api=ipinfo_api,
             timeout=timeout,
         )
     else:
@@ -176,6 +183,7 @@ def get_location(query: str = HERE, timeout: int = TIMEOUT) -> Location:
             query=parsed.query,
             cache=parsed.source or AZELY_LOCATION,
             update=parsed.update,
+            google_api=google_api,
             timeout=timeout,
         )
 
@@ -183,12 +191,15 @@ def get_location(query: str = HERE, timeout: int = TIMEOUT) -> Location:
 @cache
 def get_location_by_ip(
     query: str,
+    *,
     cache: PathLike,
     update: bool,
+    ipinfo_api: str,
     timeout: int,
 ) -> Location:
-    """Get current location information by IP address."""
-    response = getHandler().getDetails(timeout=timeout)
+    """Get location information by current IP address."""
+    handler = getHandler(ipinfo_api or None)
+    response = handler.getDetails(timeout=timeout)
 
     return Location(
         name=response.city,
@@ -200,13 +211,19 @@ def get_location_by_ip(
 @cache
 def get_location_by_name(
     query: str,
+    *,
     cache: PathLike,
     update: bool,
+    google_api: str,
     timeout: int,
 ) -> Location:
-    """Get location information from OpenStreetMap."""
+    """Get location information by a location name."""
     with conf.set_temp("remote_timeout", timeout):
-        response = EarthLocation.of_address(query)
+        response = EarthLocation.of_address(
+            address=query,
+            get_height=bool(google_api),
+            google_api_key=google_api or None,
+        )
 
     return Location(
         name=query,

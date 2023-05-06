@@ -93,6 +93,12 @@ FRAME = getval(AZELY_CONFIG, "defaults.frame", "icrs")
 FREQ = getval(AZELY_CONFIG, "defaults.freq", "10T")
 """Default value for the ``freq`` argument."""
 
+GOOGLE_API = getval(AZELY_CONFIG, "defaults.google_api", "")
+"""Default value for the ``google_api`` argument."""
+
+IPINFO_API = getval(AZELY_CONFIG, "defaults.ipinfo_api", "")
+"""Default value for the ``ipinfo_api`` argument."""
+
 SITE = getval(AZELY_CONFIG, "defaults.site", HERE)
 """Default value for the ``site`` argument."""
 
