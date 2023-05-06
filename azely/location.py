@@ -70,7 +70,7 @@ from .consts import AZELY_LOCATION, HERE, TIMEOUT
 from .query import parse
 
 
-@dataclass(frozen=True)
+@dataclass
 class Location:
     """Location information."""
 
@@ -78,35 +78,32 @@ class Location:
     """Name of the location."""
 
     longitude: str
-    """Longitude of the location with units."""
+    """Longitude of the location."""
 
     latitude: str
-    """Latitude of the location with units."""
+    """Latitude of the location."""
 
     altitude: str = "0.0 m"
-    """Altitude of the location with units."""
+    """Altitude of the location."""
 
     tf: ClassVar = TimezoneFinder()
     """TimezoneFinder instance."""
 
     def __post_init__(self) -> None:
         """Add or update units of location values."""
-        setattr = object.__setattr__
-        setattr(self, "longitude", str(Longitude(self.longitude, "deg")))
-        setattr(self, "latitude", str(Latitude(self.latitude, "deg")))
-        setattr(self, "altitude", str(Quantity(self.altitude, "m")))
+        self.longitude = str(Longitude(self.longitude, "deg"))
+        self.latitude = str(Latitude(self.latitude, "deg"))
+        self.altitude = str(Quantity(self.altitude, "m"))
 
     @property
     def timezone(self) -> tzinfo:
         """Timezone of the location."""
-        return timezone(
-            str(
-                self.tf.timezone_at(
-                    lng=Longitude(self.longitude).value,
-                    lat=Latitude(self.latitude).value,
-                )
-            )
+        response = self.tf.timezone_at(
+            lng=Longitude(self.longitude).value,
+            lat=Latitude(self.latitude).value,
         )
+
+        return timezone(str(response))
 
     @property
     def earth_location(self) -> EarthLocation:
