@@ -188,11 +188,17 @@ def get_object(query: str, frame: str = FRAME, timeout: int = TIMEOUT) -> Object
 @cache
 def get_object_solar(
     query: str,
+    *,
     source: PathLike,  # consumed by @cache
     update: bool,  # consumed by @cache
 ) -> Object:
-    """Get object information of the solar system."""
-    return Object(query.capitalize(), SOLAR_FRAME, "", "")
+    """Get object information in the solar system."""
+    return Object(
+        name=query,
+        longitude="NA",
+        latitude="NA",
+        frame=SOLAR_FRAME,
+    )
 
 
 @cache
