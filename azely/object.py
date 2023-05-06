@@ -55,22 +55,12 @@ from typing import List
 
 
 # dependent packages
-from astropy.coordinates import (
-    Longitude,
-    Latitude,
-    SkyCoord,
-    get_body,
-    solar_system_ephemeris,
-)
+from astropy.coordinates import Longitude, Latitude, SkyCoord, get_body
 from astropy.time import Time as ObsTime
 from astropy.utils.data import conf
 from .cache import PathLike, cache
-from .consts import AZELY_OBJECT, FRAME, TIMEOUT
+from .consts import AZELY_OBJECT, FRAME, SOLAR_FRAME, SOLAR_OBJECTS, TIMEOUT
 from .query import parse
-
-
-SOLAR_BODIES: List[str] = list(solar_system_ephemeris.bodies)  # type: ignore
-SOLAR_FRAME = "solar"
 
 
 @dataclass
@@ -169,7 +159,7 @@ def get_object(query: str, frame: str = FRAME, timeout: int = TIMEOUT) -> Object
     """
     parsed = parse(query)
 
-    if parsed.query.lower() in SOLAR_BODIES:
+    if parsed.query.lower() in SOLAR_OBJECTS:
         return get_object_solar(
             query=parsed.query,
             source=parsed.source or AZELY_OBJECT,
