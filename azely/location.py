@@ -4,7 +4,7 @@ __all__ = ["Location", "get_location"]
 # standard library
 from dataclasses import dataclass
 from datetime import tzinfo
-from typing import ClassVar
+from typing import ClassVar, Optional
 
 
 # dependencies
@@ -15,8 +15,7 @@ from ipinfo import getHandler
 from pytz import timezone
 from timezonefinder import TimezoneFinder
 from .cache import PathLike, cache
-from .consts import AZELY_LOCATION, GOOGLE_API, HERE, IPINFO_API, TIMEOUT
-from .query import parse
+from .consts import AZELY_LOCATIONS, GOOGLE_API, HERE, IPINFO_API, TIMEOUT
 
 
 @dataclass
@@ -65,39 +64,45 @@ class Location:
 
 def get_location(
     query: str,
+    /,
     *,
     google_api: str = GOOGLE_API,
     ipinfo_api: str = IPINFO_API,
+    name: Optional[str] = None,
+    source: PathLike = AZELY_LOCATIONS,
     timeout: int = TIMEOUT,
+    update: bool = False,
 ) -> Location:
     """Get location information."""
-    parsed = parse(query)
-
-    if parsed.query.lower() == HERE:
+    if query.lower() == HERE:
         return get_location_by_ip(
-            query=parsed.query,
+            query,
             ipinfo_api=ipinfo_api,
+            name=name,
             timeout=timeout,
-            source=parsed.source or AZELY_LOCATION,
-            update=parsed.update,
+            source=source,
+            update=update,
         )
     else:
         return get_location_by_name(
-            query=parsed.query,
+            query,
             google_api=google_api,
+            name=name,
             timeout=timeout,
-            source=parsed.source or AZELY_LOCATION,
-            update=parsed.update,
+            source=source,
+            update=update,
         )
 
 
 @cache
 def get_location_by_ip(
     query: str,
+    /,
     *,
     ipinfo_api: str,
-    timeout: int,
+    name: Optional[str],
     source: PathLike,  # consumed by @cache
+    timeout: int,
     update: bool,  # consumed by @cache
 ) -> Location:
     """Get location information by current IP address."""
@@ -114,10 +119,12 @@ def get_location_by_ip(
 @cache
 def get_location_by_name(
     query: str,
+    /,
     *,
     google_api: str,
-    timeout: int,
+    name: Optional[str],
     source: PathLike,  # consumed by @cache
+    timeout: int,
     update: bool,  # consumed by @cache
 ) -> Location:
     """Get location information by a location name."""
@@ -129,7 +136,7 @@ def get_location_by_name(
         )
 
     return Location(
-        name=query,
+        name=name or query,
         longitude=str(response.lon),
         latitude=str(response.lat),
     )

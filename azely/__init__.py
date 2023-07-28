@@ -8,7 +8,6 @@ __all__ = [
     "get_time",
     "location",
     "object",
-    "query",
     "time",
     "utils",
 ]
@@ -18,7 +17,6 @@ __version__ = "0.7.0"
 # submodules
 from . import consts
 from . import cache
-from . import query
 from . import utils
 from . import location
 from . import object

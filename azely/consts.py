@@ -8,8 +8,8 @@ determined by some environment variables of client.
 __all__ = [
     "AZELY_DIR",
     "AZELY_CONFIG",
-    "AZELY_OBJECT",
-    "AZELY_LOCATION",
+    "AZELY_OBJECTS",
+    "AZELY_LOCATIONS",
     "SOLAR_FRAME",
     "SOLAR_OBJECTS",
     "HERE",
@@ -73,8 +73,8 @@ else:
 
 
 AZELY_CONFIG = ensure(AZELY_DIR / "config.toml")
-AZELY_OBJECT = ensure(AZELY_DIR / "objects.toml")
-AZELY_LOCATION = ensure(AZELY_DIR / "locations.toml")
+AZELY_OBJECTS = ensure(AZELY_DIR / "objects.toml")
+AZELY_LOCATIONS = ensure(AZELY_DIR / "locations.toml")
 
 
 # special values for the solar system ephemeris

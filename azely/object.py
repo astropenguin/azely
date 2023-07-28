@@ -3,7 +3,7 @@ __all__ = ["Object", "get_object"]
 
 # standard library
 from dataclasses import dataclass
-from typing import List
+from typing import Optional
 
 
 # dependent packages
@@ -11,8 +11,7 @@ from astropy.coordinates import Longitude, Latitude, SkyCoord, get_body
 from astropy.time import Time as ObsTime
 from astropy.utils.data import conf
 from .cache import PathLike, cache
-from .consts import AZELY_OBJECT, FRAME, SOLAR_FRAME, SOLAR_OBJECTS, TIMEOUT
-from .query import parse
+from .consts import AZELY_OBJECTS, FRAME, SOLAR_FRAME, SOLAR_OBJECTS, TIMEOUT
 
 
 @dataclass
@@ -64,39 +63,45 @@ class Object:
 
 def get_object(
     query: str,
+    /,
     *,
     frame: str = FRAME,
+    name: Optional[str] = None,
+    source: PathLike = AZELY_OBJECTS,
     timeout: int = TIMEOUT,
+    update: bool = False,
 ) -> Object:
     """Get object information."""
-    parsed = parse(query)
-
-    if parsed.query.lower() in SOLAR_OBJECTS:
+    if query.lower() in SOLAR_OBJECTS:
         return get_object_solar(
-            query=parsed.query,
-            source=parsed.source or AZELY_OBJECT,
-            update=parsed.update,
+            query,
+            name=name,
+            source=source,
+            update=update,
         )
     else:
         return get_object_by_name(
-            query=parsed.query,
+            query,
             frame=frame,
+            name=name,
             timeout=timeout,
-            source=parsed.source or AZELY_OBJECT,
-            update=parsed.update,
+            source=source,
+            update=update,
         )
 
 
 @cache
 def get_object_solar(
     query: str,
+    /,
     *,
+    name: Optional[str],
     source: PathLike,  # consumed by @cache
     update: bool,  # consumed by @cache
 ) -> Object:
     """Get object information in the solar system."""
     return Object(
-        name=query,
+        name=name or query,
         longitude="NA",
         latitude="NA",
         frame=SOLAR_FRAME,
@@ -106,10 +111,12 @@ def get_object_solar(
 @cache
 def get_object_by_name(
     query: str,
+    /,
     *,
     frame: str,
-    timeout: int,
+    name: Optional[str],
     source: PathLike,  # consumed by @cache
+    timeout: int,
     update: bool,  # consumed by @cache
 ) -> Object:
     """Get object information by an object name."""
@@ -122,7 +129,7 @@ def get_object_by_name(
         )
 
     return Object(
-        name=query,
+        name=name or query,
         longitude=str(response.data.lon),  # type: ignore
         latitude=str(response.data.lat),  # type: ignore
         frame=frame,

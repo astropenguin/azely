@@ -5,6 +5,9 @@
         "dockerfile": "Dockerfile"
     },
     "postCreateCommand": "poetry install",
+    "containerEnv": {
+        "AZELY_DIR": "${containerWorkspaceFolder}/.azely/"
+    },
     "customizations": {
         "vscode": {
             "extensions": [
