@@ -10,7 +10,7 @@ from astropy.coordinates import Longitude, Latitude, SkyCoord, get_body
 from astropy.time import Time as ObsTime
 from astropy.utils.data import conf
 from .cache import PathLike, cache
-from .consts import AZELY_OBJECT, FRAME, SOLAR_FRAME, SOLAR_OBJECTS, TIMEOUT
+from .consts import AZELY_OBJECTS, FRAME, SOLAR_FRAME, SOLAR_OBJECTS, TIMEOUT
 
 
 @dataclass
@@ -64,7 +64,7 @@ def get_object(
     query: str,
     *,
     frame: str = FRAME,
-    source: PathLike = AZELY_OBJECT,
+    source: PathLike = AZELY_OBJECTS,
     timeout: int = TIMEOUT,
     update: bool = False,
 ) -> Object:

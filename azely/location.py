@@ -15,7 +15,7 @@ from ipinfo import getHandler
 from pytz import timezone
 from timezonefinder import TimezoneFinder
 from .cache import PathLike, cache
-from .consts import AZELY_LOCATION, GOOGLE_API, HERE, IPINFO_API, TIMEOUT
+from .consts import AZELY_LOCATIONS, GOOGLE_API, HERE, IPINFO_API, TIMEOUT
 
 
 @dataclass
@@ -67,7 +67,7 @@ def get_location(
     *,
     google_api: str = GOOGLE_API,
     ipinfo_api: str = IPINFO_API,
-    source: PathLike = AZELY_LOCATION,
+    source: PathLike = AZELY_LOCATIONS,
     timeout: int = TIMEOUT,
     update: bool = False,
 ) -> Location:
