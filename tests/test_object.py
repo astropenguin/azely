@@ -8,7 +8,7 @@ from azely.object import Object, get_object
 from tomlkit import dump
 
 
-# constants
+# test data
 expected_solar = Object(
     name="Sun",
     longitude="NA",

@@ -8,7 +8,7 @@ from azely.location import Location, get_location
 from tomlkit import dump
 
 
-# constants
+# test data
 expected = Location(
     name="Array Operations Site",
     longitude="292d14m45.85512974s",
