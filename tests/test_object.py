@@ -17,9 +17,9 @@ expected_solar = Object(
 )
 
 expected_icrs = Object(
-    name="M87",
-    longitude="12h30m49.4233848s",
-    latitude="+12d23m28.0437s",
+    name="3C 273",
+    longitude="12h29m06.69982572s",
+    latitude="2d03m08.59762998s",
     frame="icrs",
 )
 
