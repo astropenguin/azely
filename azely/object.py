@@ -3,6 +3,7 @@ __all__ = ["Object", "get_object"]
 
 # standard library
 from dataclasses import dataclass
+from typing import Optional
 
 
 # dependent packages
@@ -65,6 +66,7 @@ def get_object(
     /,
     *,
     frame: str = FRAME,
+    name: Optional[str] = None,
     source: PathLike = AZELY_OBJECTS,
     timeout: int = TIMEOUT,
     update: bool = False,
@@ -73,6 +75,7 @@ def get_object(
     if query.lower() in SOLAR_OBJECTS:
         return get_object_solar(
             query,
+            name=name,
             source=source,
             update=update,
         )
@@ -80,6 +83,7 @@ def get_object(
         return get_object_by_name(
             query,
             frame=frame,
+            name=name,
             timeout=timeout,
             source=source,
             update=update,
@@ -91,12 +95,13 @@ def get_object_solar(
     query: str,
     /,
     *,
+    name: Optional[str],
     source: PathLike,  # consumed by @cache
     update: bool,  # consumed by @cache
 ) -> Object:
     """Get object information in the solar system."""
     return Object(
-        name=query,
+        name=name or query,
         longitude="NA",
         latitude="NA",
         frame=SOLAR_FRAME,
@@ -109,6 +114,7 @@ def get_object_by_name(
     /,
     *,
     frame: str,
+    name: Optional[str],
     source: PathLike,  # consumed by @cache
     timeout: int,
     update: bool,  # consumed by @cache
@@ -123,7 +129,7 @@ def get_object_by_name(
         )
 
     return Object(
-        name=query,
+        name=name or query,
         longitude=str(response.data.lon),  # type: ignore
         latitude=str(response.data.lat),  # type: ignore
         frame=frame,

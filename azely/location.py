@@ -4,7 +4,7 @@ __all__ = ["Location", "get_location"]
 # standard library
 from dataclasses import dataclass
 from datetime import tzinfo
-from typing import ClassVar
+from typing import ClassVar, Optional
 
 
 # dependencies
@@ -68,6 +68,7 @@ def get_location(
     *,
     google_api: str = GOOGLE_API,
     ipinfo_api: str = IPINFO_API,
+    name: Optional[str] = None,
     source: PathLike = AZELY_LOCATIONS,
     timeout: int = TIMEOUT,
     update: bool = False,
@@ -77,6 +78,7 @@ def get_location(
         return get_location_by_ip(
             query,
             ipinfo_api=ipinfo_api,
+            name=name,
             timeout=timeout,
             source=source,
             update=update,
@@ -85,6 +87,7 @@ def get_location(
         return get_location_by_name(
             query,
             google_api=google_api,
+            name=name,
             timeout=timeout,
             source=source,
             update=update,
@@ -97,6 +100,7 @@ def get_location_by_ip(
     /,
     *,
     ipinfo_api: str,
+    name: Optional[str],
     source: PathLike,  # consumed by @cache
     timeout: int,
     update: bool,  # consumed by @cache
@@ -118,6 +122,7 @@ def get_location_by_name(
     /,
     *,
     google_api: str,
+    name: Optional[str],
     source: PathLike,  # consumed by @cache
     timeout: int,
     update: bool,  # consumed by @cache
@@ -131,7 +136,7 @@ def get_location_by_name(
         )
 
     return Location(
-        name=query,
+        name=name or query,
         longitude=str(response.lon),
         latitude=str(response.lat),
     )
