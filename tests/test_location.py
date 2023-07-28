@@ -19,15 +19,12 @@ expected = Location(
 
 # test functions
 def test_location_by_query():
-    assert get_location(f"{expected.name}!") == expected
+    assert get_location(expected.name, update=True) == expected
 
 
 def test_location_by_user():
     with NamedTemporaryFile("w", suffix=".toml") as f:
-        name = "AOS"
-        query = f"{f.name}:{name}"
-
-        dump({name: asdict(expected)}, f)
+        dump({expected.name: asdict(expected)}, f)
         f.seek(0)
 
-        assert get_location(query) == expected
+        assert get_location(expected.name, source=f.name) == expected

@@ -16,7 +16,6 @@ from pytz import timezone
 from timezonefinder import TimezoneFinder
 from .cache import PathLike, cache
 from .consts import AZELY_LOCATION, GOOGLE_API, HERE, IPINFO_API, TIMEOUT
-from .query import parse
 
 
 @dataclass
@@ -68,26 +67,26 @@ def get_location(
     *,
     google_api: str = GOOGLE_API,
     ipinfo_api: str = IPINFO_API,
+    source: PathLike = AZELY_LOCATION,
     timeout: int = TIMEOUT,
+    update: bool = False,
 ) -> Location:
     """Get location information."""
-    parsed = parse(query)
-
-    if parsed.query.lower() == HERE:
+    if query.lower() == HERE:
         return get_location_by_ip(
-            query=parsed.query,
+            query=query,
             ipinfo_api=ipinfo_api,
             timeout=timeout,
-            source=parsed.source or AZELY_LOCATION,
-            update=parsed.update,
+            source=source,
+            update=update,
         )
     else:
         return get_location_by_name(
-            query=parsed.query,
+            query=query,
             google_api=google_api,
             timeout=timeout,
-            source=parsed.source or AZELY_LOCATION,
-            update=parsed.update,
+            source=source,
+            update=update,
         )
 
 
@@ -96,8 +95,8 @@ def get_location_by_ip(
     query: str,
     *,
     ipinfo_api: str,
-    timeout: int,
     source: PathLike,  # consumed by @cache
+    timeout: int,
     update: bool,  # consumed by @cache
 ) -> Location:
     """Get location information by current IP address."""
@@ -116,8 +115,8 @@ def get_location_by_name(
     query: str,
     *,
     google_api: str,
-    timeout: int,
     source: PathLike,  # consumed by @cache
+    timeout: int,
     update: bool,  # consumed by @cache
 ) -> Location:
     """Get location information by a location name."""

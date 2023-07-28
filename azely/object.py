@@ -3,7 +3,6 @@ __all__ = ["Object", "get_object"]
 
 # standard library
 from dataclasses import dataclass
-from typing import List
 
 
 # dependent packages
@@ -12,7 +11,6 @@ from astropy.time import Time as ObsTime
 from astropy.utils.data import conf
 from .cache import PathLike, cache
 from .consts import AZELY_OBJECT, FRAME, SOLAR_FRAME, SOLAR_OBJECTS, TIMEOUT
-from .query import parse
 
 
 @dataclass
@@ -66,24 +64,24 @@ def get_object(
     query: str,
     *,
     frame: str = FRAME,
+    source: PathLike = AZELY_OBJECT,
     timeout: int = TIMEOUT,
+    update: bool = False,
 ) -> Object:
     """Get object information."""
-    parsed = parse(query)
-
-    if parsed.query.lower() in SOLAR_OBJECTS:
+    if query.lower() in SOLAR_OBJECTS:
         return get_object_solar(
-            query=parsed.query,
-            source=parsed.source or AZELY_OBJECT,
-            update=parsed.update,
+            query=query,
+            source=source,
+            update=update,
         )
     else:
         return get_object_by_name(
-            query=parsed.query,
+            query=query,
             frame=frame,
             timeout=timeout,
-            source=parsed.source or AZELY_OBJECT,
-            update=parsed.update,
+            source=source,
+            update=update,
         )
 
 
@@ -108,8 +106,8 @@ def get_object_by_name(
     query: str,
     *,
     frame: str,
-    timeout: int,
     source: PathLike,  # consumed by @cache
+    timeout: int,
     update: bool,  # consumed by @cache
 ) -> Object:
     """Get object information by an object name."""
