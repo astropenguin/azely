@@ -64,6 +64,7 @@ class Location:
 
 def get_location(
     query: str,
+    /,
     *,
     google_api: str = GOOGLE_API,
     ipinfo_api: str = IPINFO_API,
@@ -74,7 +75,7 @@ def get_location(
     """Get location information."""
     if query.lower() == HERE:
         return get_location_by_ip(
-            query=query,
+            query,
             ipinfo_api=ipinfo_api,
             timeout=timeout,
             source=source,
@@ -82,7 +83,7 @@ def get_location(
         )
     else:
         return get_location_by_name(
-            query=query,
+            query,
             google_api=google_api,
             timeout=timeout,
             source=source,
@@ -93,6 +94,7 @@ def get_location(
 @cache
 def get_location_by_ip(
     query: str,
+    /,
     *,
     ipinfo_api: str,
     source: PathLike,  # consumed by @cache
@@ -113,6 +115,7 @@ def get_location_by_ip(
 @cache
 def get_location_by_name(
     query: str,
+    /,
     *,
     google_api: str,
     source: PathLike,  # consumed by @cache

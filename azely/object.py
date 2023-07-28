@@ -62,6 +62,7 @@ class Object:
 
 def get_object(
     query: str,
+    /,
     *,
     frame: str = FRAME,
     source: PathLike = AZELY_OBJECTS,
@@ -71,13 +72,13 @@ def get_object(
     """Get object information."""
     if query.lower() in SOLAR_OBJECTS:
         return get_object_solar(
-            query=query,
+            query,
             source=source,
             update=update,
         )
     else:
         return get_object_by_name(
-            query=query,
+            query,
             frame=frame,
             timeout=timeout,
             source=source,
@@ -88,6 +89,7 @@ def get_object(
 @cache
 def get_object_solar(
     query: str,
+    /,
     *,
     source: PathLike,  # consumed by @cache
     update: bool,  # consumed by @cache
@@ -104,6 +106,7 @@ def get_object_solar(
 @cache
 def get_object_by_name(
     query: str,
+    /,
     *,
     frame: str,
     source: PathLike,  # consumed by @cache
