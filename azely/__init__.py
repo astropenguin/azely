@@ -1,6 +1,5 @@
 __all__ = [
     "azel",
-    "cache",
     "compute",
     "consts",
     "get_location",
@@ -15,17 +14,16 @@ __version__ = "0.7.0"
 
 
 # submodules
+from . import azel
 from . import consts
-from . import cache
-from . import utils
 from . import location
 from . import object
 from . import time
-from . import azel
+from . import utils
 
 
 # aliases
+from .azel import compute
 from .location import get_location
 from .object import get_object
 from .time import get_time
-from .azel import compute
