@@ -3,7 +3,7 @@ __all__ = ["cache"]
 
 # standard library
 from contextlib import contextmanager
-from dataclasses import asdict
+from dataclasses import asdict, is_dataclass
 from functools import wraps
 from inspect import Signature
 from pathlib import Path
@@ -21,9 +21,12 @@ TCallable = TypeVar("TCallable", bound=Callable[..., Any])
 
 
 def cache(func: TCallable) -> TCallable:
-    """Cache dataclass objects in a TOML file."""
-    dataclass = func.__annotations__["return"]
+    """Cache a dataclass object in a TOML file."""
+    DataClass = func.__annotations__["return"]
     signature = Signature.from_callable(func)
+
+    if not is_dataclass(DataClass):
+        raise TypeError("Return type must be a dataclass.")
 
     @wraps(func)
     def wrapper(*args: Any, **kwargs: Any) -> Any:
@@ -38,7 +41,7 @@ def cache(func: TCallable) -> TCallable:
             if update or query not in doc:
                 doc[query] = asdict(func(*args, **kwargs))
 
-            return dataclass(**doc[query].unwrap())
+            return DataClass(**doc[query].unwrap())
 
     return wrapper  # type: ignore
 
