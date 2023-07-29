@@ -14,8 +14,8 @@ from astropy.utils.data import conf
 from ipinfo import getHandler
 from pytz import timezone
 from timezonefinder import TimezoneFinder
-from .cache import PathLike, cache
 from .consts import AZELY_LOCATIONS, GOOGLE_API, HERE, IPINFO_API, TIMEOUT
+from .utils import PathLike, cache, rename
 
 
 @dataclass
@@ -78,8 +78,8 @@ def get_location(
         return get_location_by_ip(
             query,
             ipinfo_api=ipinfo_api,
-            name=name,
             timeout=timeout,
+            name=name,
             source=source,
             update=update,
         )
@@ -87,23 +87,25 @@ def get_location(
         return get_location_by_name(
             query,
             google_api=google_api,
-            name=name,
             timeout=timeout,
+            name=name,
             source=source,
             update=update,
         )
 
 
+@rename
 @cache
 def get_location_by_ip(
     query: str,
     /,
     *,
     ipinfo_api: str,
-    name: Optional[str],
-    source: PathLike,  # consumed by @cache
     timeout: int,
-    update: bool,  # consumed by @cache
+    # consumed by decorators
+    name: Optional[str],  # @rename
+    source: PathLike,  # @cache
+    update: bool,  # @cache
 ) -> Location:
     """Get location information by current IP address."""
     handler = getHandler(ipinfo_api or None)
@@ -116,16 +118,18 @@ def get_location_by_ip(
     )
 
 
+@rename
 @cache
 def get_location_by_name(
     query: str,
     /,
     *,
     google_api: str,
-    name: Optional[str],
-    source: PathLike,  # consumed by @cache
     timeout: int,
-    update: bool,  # consumed by @cache
+    # consumed by decorators
+    name: Optional[str],  # @rename
+    source: PathLike,  # @cache
+    update: bool,  # @cache
 ) -> Location:
     """Get location information by a location name."""
     with conf.set_temp("remote_timeout", timeout):
@@ -136,7 +140,7 @@ def get_location_by_name(
         )
 
     return Location(
-        name=name or query,
+        name=query,
         longitude=str(response.lon),
         latitude=str(response.lat),
     )
