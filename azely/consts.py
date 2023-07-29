@@ -29,7 +29,7 @@ __all__ = [
 # standard library
 from os import getenv
 from pathlib import Path
-from typing import Tuple, TypeVar
+from typing import TypeVar
 
 
 # dependencies
@@ -81,7 +81,7 @@ AZELY_LOCATIONS = ensure(AZELY_DIR / "locations.toml")
 SOLAR_FRAME = "solar"
 """Special frame for objects in the solar system."""
 
-SOLAR_OBJECTS: Tuple[str, ...] = tuple(solar.bodies)  # type: ignore
+SOLAR_OBJECTS: tuple[str, ...] = tuple(solar.bodies)  # type: ignore
 """List of objects in the solar system."""
 
 
