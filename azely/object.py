@@ -80,7 +80,7 @@ def get_object(
             update=update,
         )
     else:
-        return get_object_by_name(
+        return get_object_by_cds(
             query,
             frame=frame,
             timeout=timeout,
@@ -112,7 +112,7 @@ def get_object_solar(
 
 @rename
 @cache
-def get_object_by_name(
+def get_object_by_cds(
     query: str,
     /,
     *,
@@ -123,7 +123,7 @@ def get_object_by_name(
     source: PathLike,  # @cache
     update: bool,  # @cache
 ) -> Object:
-    """Get object information by an object name."""
+    """Get object information by the CDS name resolver."""
     with conf.set_temp("remote_timeout", timeout):
         response = SkyCoord.from_name(
             name=query,

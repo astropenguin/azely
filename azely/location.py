@@ -84,7 +84,7 @@ def get_location(
             update=update,
         )
     else:
-        return get_location_by_name(
+        return get_location_by_map(
             query,
             google_api=google_api,
             timeout=timeout,
@@ -107,7 +107,7 @@ def get_location_by_ip(
     source: PathLike,  # @cache
     update: bool,  # @cache
 ) -> Location:
-    """Get location information by current IP address."""
+    """Get location information by ipinfo.io."""
     handler = getHandler(ipinfo_api or None)
     response = handler.getDetails(timeout=timeout)
 
@@ -120,7 +120,7 @@ def get_location_by_ip(
 
 @rename
 @cache
-def get_location_by_name(
+def get_location_by_map(
     query: str,
     /,
     *,
@@ -131,7 +131,7 @@ def get_location_by_name(
     source: PathLike,  # @cache
     update: bool,  # @cache
 ) -> Location:
-    """Get location information by a location name."""
+    """Get location information by online maps."""
     with conf.set_temp("remote_timeout", timeout):
         response = EarthLocation.of_address(
             address=query,
