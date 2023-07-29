@@ -1,9 +1,9 @@
-__all__ = ["cache"]
+__all__ = ["cache", "rename"]
 
 
 # standard library
 from contextlib import contextmanager
-from dataclasses import asdict, is_dataclass
+from dataclasses import asdict, is_dataclass, replace
 from functools import wraps
 from inspect import Signature
 from pathlib import Path
@@ -42,6 +42,27 @@ def cache(func: TCallable) -> TCallable:
                 doc[query] = asdict(func(*args, **kwargs))
 
             return DataClass(**doc[query].unwrap())
+
+    return wrapper  # type: ignore
+
+
+def rename(func: TCallable) -> TCallable:
+    """Update the name field of a dataclass object."""
+    DataClass = func.__annotations__["return"]
+    signature = Signature.from_callable(func)
+
+    if not is_dataclass(DataClass):
+        raise TypeError("Return type must be a dataclass.")
+
+    @wraps(func)
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
+        bound = signature.bind(*args, **kwargs)
+        bound.apply_defaults()
+
+        if (name := bound.arguments["name"]) is None:
+            return func(*args, **kwargs)
+        else:
+            return replace(func(*args, **kwargs), name=name)
 
     return wrapper  # type: ignore
 
