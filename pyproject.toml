@@ -7,27 +7,28 @@ keywords = [ "astronomy", "azimuth", "elevation", "ephemeris", "sidereal-time" ]
 license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/astropenguin/azely/"
+repository = "https://github.com/astropenguin/azely/"
 documentation = "https://astropenguin.github.io/azely/"
 
 [tool.poetry.dependencies]
-python = ">=3.8, <3.12"
-astropy = "^5.2"
-pandas = "^1.5"
-pandas-stubs = "^1.5"
+python = ">=3.9, <3.12"
+astropy = "^5.0"
+pandas = "^1.5 | ^2.0"
+pandas-stubs = "^1.5 | ^2.0"
 python-dateutil = "^2.8"
 pytz = "^2023.3"
 timezonefinder = "^6.2"
-tomlkit = "^0.11"
+tomlkit = "^0.12"
 ipinfo = "^4.4"
 
 [tool.poetry.dev-dependencies]
-black = "^23.3"
-ipython = "^8.12"
+black = "^23.7"
+ipython = "^8.14"
 matplotlib = "^3.7"
-myst-parser = "^1.0"
+myst-parser = "^2.0"
 pydata-sphinx-theme = "^0.13"
-pytest = "^7.3"
-sphinx = "^6.2"
+pytest = "^7.4"
+sphinx = "^7.1"
 
 [tool.pyright]
 typeCheckingMode = "basic"
