@@ -11,7 +11,7 @@ from typing import Any, Callable, Iterator, TypeVar, Union
 
 
 # dependencies
-from tomlkit import TOMLDocument, dump, load
+from tomlkit import TOMLDocument, dump, load, nl
 from .consts import AZELY_DIR
 
 
@@ -26,13 +26,10 @@ class AzelyError(Exception):
     pass
 
 
-def cache(func: TCallable) -> TCallable:
+def cache(func: TCallable, table: str) -> TCallable:
     """Cache a dataclass object in a TOML file."""
     DataClass = func.__annotations__["return"]
     signature = Signature.from_callable(func)
-
-    if not is_dataclass(DataClass):
-        raise TypeError("Return type must be a dataclass.")
 
     @wraps(func)
     def wrapper(*args: Any, **kwargs: Any) -> Any:
@@ -44,10 +41,15 @@ def cache(func: TCallable) -> TCallable:
         update: bool = bound.arguments["update"]
 
         with sync_toml(resolve(source)) as doc:
-            if update or query not in doc:
-                doc[query] = asdict(func(*args, **kwargs))
+            tab = doc.setdefault(table, {})
 
-            return DataClass(**doc[query].unwrap())
+            if update or (query not in tab):
+                tab[query] = asdict(func(*args, **kwargs))
+
+                if tab is not doc.last_item():
+                    tab.add(nl())
+
+            return DataClass(**tab[query].unwrap())
 
     return wrapper  # type: ignore
 
