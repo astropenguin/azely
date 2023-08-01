@@ -12,7 +12,6 @@ from typing import Any, Callable, Iterator, Optional, TypeVar, Union
 
 # dependencies
 from tomlkit import TOMLDocument, dump, load, nl
-from .consts import AZELY_DIR
 
 
 # type hints
@@ -40,7 +39,7 @@ def cache(func: TCallable, table: str) -> TCallable:
         source: PathLike = bound.arguments["source"]
         update: bool = bound.arguments["update"]
 
-        with sync_toml(resolve(source)) as doc:
+        with sync_toml(source) as doc:
             tab = doc.setdefault(table, {})
 
             if update or (query not in tab):
@@ -69,20 +68,6 @@ def rename(func: TCallable, key: str) -> TCallable:
         return replace(func(*args, **kwargs), **changes)
 
     return wrapper  # type: ignore
-
-
-def resolve(toml: PathLike) -> Path:
-    """Resolve the path of a TOML file."""
-    if (toml := Path(toml).expanduser().resolve()).exists():
-        return toml
-
-    if (toml := toml.with_suffix(".toml")).exists():
-        return toml
-
-    if (toml := AZELY_DIR / toml.name).exists():
-        return toml
-
-    raise FileNotFoundError(f"{toml} could not be found.")
 
 
 @contextmanager
