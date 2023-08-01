@@ -1,23 +1,22 @@
-"""Azely's consts module (constants).
-
-This module provides static constants used for default values of functions
-and constants indicating Azely's directory/files, which are dynamically
-determined by some environment variables of client.
-
-"""
 __all__ = [
+    # file-related
     "AZELY_DIR",
+    "AZELY_CACHE",
     "AZELY_CONFIG",
-    "AZELY_OBJECTS",
-    "AZELY_LOCATIONS",
+    # location-related
+    "HERE",
+    # object-related
     "SOLAR_FRAME",
     "SOLAR_OBJECTS",
-    "HERE",
+    # time-related
     "NOW",
     "TODAY",
+    # defaults
     "DAYFIRST",
     "FRAME",
     "FREQ",
+    "GOOGLE_API",
+    "IPINFO_API",
     "SITE",
     "TIME",
     "TIMEOUT",
@@ -29,7 +28,7 @@ __all__ = [
 # standard library
 from os import getenv
 from pathlib import Path
-from typing import TypeVar
+from typing import Any, Optional, TypeVar, overload
 
 
 # dependencies
@@ -51,19 +50,34 @@ def ensure(toml: Path) -> Path:
     return toml
 
 
+@overload
+def getval(toml: Path, keys: str, default: type[T]) -> Optional[T]:
+    ...
+
+
+@overload
 def getval(toml: Path, keys: str, default: T) -> T:
+    ...
+
+
+def getval(toml: Path, keys: str, default: Any) -> Any:
     """Return the value of the keys in a TOML file."""
-    with open(toml, "r") as file:
+    if isinstance(default, type):
+        type_, default_ = default, None
+    else:
+        type_, default_ = type(default), default
+
+    with open(toml) as file:
         doc = load(file)
 
     for key in keys.split("."):
         if (doc := doc.get(key)) is None:
-            return default
+            return default_
 
-    return type(default)(doc.unwrap())
+    return type_(doc.unwrap())
 
 
-# config/cache files and directory for them
+# file-related
 if (env := getenv("AZELY_DIR")) is not None:
     AZELY_DIR = Path(env)
 elif (env := getenv("XDG_CONFIG_HOME")) is not None:
@@ -72,12 +86,16 @@ else:
     AZELY_DIR = Path.home() / ".config" / "azely"
 
 
+AZELY_CACHE = ensure(AZELY_DIR / "cache.toml")
 AZELY_CONFIG = ensure(AZELY_DIR / "config.toml")
-AZELY_OBJECTS = ensure(AZELY_DIR / "objects.toml")
-AZELY_LOCATIONS = ensure(AZELY_DIR / "locations.toml")
 
 
-# special values for the solar system ephemeris
+# location-related
+HERE = "here"
+"""Special query for getting current location information."""
+
+
+# object-related
 SOLAR_FRAME = "solar"
 """Special frame for objects in the solar system."""
 
@@ -85,10 +103,7 @@ SOLAR_OBJECTS: tuple[str, ...] = tuple(solar.bodies)  # type: ignore
 """List of objects in the solar system."""
 
 
-# special values for function arguments
-HERE = "here"
-"""Special query for getting current location information."""
-
+# time-related
 NOW = "now"
 """Special query for getting current time information."""
 
@@ -96,33 +111,33 @@ TODAY = "today"
 """Special query for getting today's time information."""
 
 
-# default values for public functions
+# defaults
 DAYFIRST = getval(AZELY_CONFIG, "defaults.dayfirst", False)
-"""Default value for the ``dayfirst`` argument."""
+"""Default value for the ``dayfirst`` parameter."""
 
 FRAME = getval(AZELY_CONFIG, "defaults.frame", "icrs")
-"""Default value for the ``frame`` argument."""
+"""Default value for the ``frame`` parameter."""
 
 FREQ = getval(AZELY_CONFIG, "defaults.freq", "10T")
-"""Default value for the ``freq`` argument."""
+"""Default value for the ``freq`` parameter."""
 
-GOOGLE_API = getval(AZELY_CONFIG, "defaults.google_api", "")
-"""Default value for the ``google_api`` argument."""
+GOOGLE_API = getval(AZELY_CONFIG, "defaults.google_api", str)
+"""Default value for the ``google_api`` parameter."""
 
-IPINFO_API = getval(AZELY_CONFIG, "defaults.ipinfo_api", "")
-"""Default value for the ``ipinfo_api`` argument."""
+IPINFO_API = getval(AZELY_CONFIG, "defaults.ipinfo_api", str)
+"""Default value for the ``ipinfo_api`` parameter."""
 
 SITE = getval(AZELY_CONFIG, "defaults.site", HERE)
-"""Default value for the ``site`` argument."""
+"""Default value for the ``site`` parameter."""
 
 TIME = getval(AZELY_CONFIG, "defaults.time", TODAY)
-"""Default value for the ``time`` argument."""
+"""Default value for the ``time`` parameter."""
 
-TIMEOUT = getval(AZELY_CONFIG, "defaults.timeout", 10)
-"""Default value for the ``timeout`` argument."""
+TIMEOUT = getval(AZELY_CONFIG, "defaults.timeout", 10.0)
+"""Default value for the ``timeout`` parameter."""
 
-VIEW = getval(AZELY_CONFIG, "defaults.view", "")
-"""Default value for the ``view`` argument."""
+VIEW = getval(AZELY_CONFIG, "defaults.view", str)
+"""Default value for the ``view`` parameter."""
 
 YEARFIRST = getval(AZELY_CONFIG, "defaults.yearfirst", False)
-"""Default value for the ``yearfirst`` argument."""
+"""Default value for the ``yearfirst`` parameter."""

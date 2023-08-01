@@ -3,16 +3,15 @@ __all__ = ["AzelyError", "cache", "rename"]
 
 # standard library
 from contextlib import contextmanager
-from dataclasses import asdict, is_dataclass, replace
+from dataclasses import asdict, replace
 from functools import wraps
 from inspect import Signature
 from pathlib import Path
-from typing import Any, Callable, Iterator, TypeVar, Union
+from typing import Any, Callable, Iterator, Optional, TypeVar, Union
 
 
 # dependencies
-from tomlkit import TOMLDocument, dump, load
-from .consts import AZELY_DIR
+from tomlkit import TOMLDocument, dump, load, nl
 
 
 # type hints
@@ -26,13 +25,10 @@ class AzelyError(Exception):
     pass
 
 
-def cache(func: TCallable) -> TCallable:
+def cache(func: TCallable, table: str) -> TCallable:
     """Cache a dataclass object in a TOML file."""
     DataClass = func.__annotations__["return"]
     signature = Signature.from_callable(func)
-
-    if not is_dataclass(DataClass):
-        raise TypeError("Return type must be a dataclass.")
 
     @wraps(func)
     def wrapper(*args: Any, **kwargs: Any) -> Any:
@@ -43,48 +39,35 @@ def cache(func: TCallable) -> TCallable:
         source: PathLike = bound.arguments["source"]
         update: bool = bound.arguments["update"]
 
-        with sync_toml(resolve(source)) as doc:
-            if update or query not in doc:
-                doc[query] = asdict(func(*args, **kwargs))
+        with sync_toml(source) as doc:
+            tab = doc.setdefault(table, {})
 
-            return DataClass(**doc[query].unwrap())
+            if update or (query not in tab):
+                tab[query] = asdict(func(*args, **kwargs))
+
+                if tab is not doc.last_item():
+                    tab.add(nl())
+
+            return DataClass(**tab[query].unwrap())
 
     return wrapper  # type: ignore
 
 
-def rename(func: TCallable) -> TCallable:
+def rename(func: TCallable, key: str) -> TCallable:
     """Update the name field of a dataclass object."""
-    DataClass = func.__annotations__["return"]
     signature = Signature.from_callable(func)
-
-    if not is_dataclass(DataClass):
-        raise TypeError("Return type must be a dataclass.")
 
     @wraps(func)
     def wrapper(*args: Any, **kwargs: Any) -> Any:
         bound = signature.bind(*args, **kwargs)
         bound.apply_defaults()
 
-        if (name := bound.arguments["name"]) is None:
-            return func(*args, **kwargs)
-        else:
-            return replace(func(*args, **kwargs), name=name)
+        name: Optional[str] = bound.arguments["name"]
+        changes = {} if name is None else {key: name}
+
+        return replace(func(*args, **kwargs), **changes)
 
     return wrapper  # type: ignore
-
-
-def resolve(toml: PathLike) -> Path:
-    """Resolve the path of a TOML file."""
-    if (toml := Path(toml).expanduser().resolve()).exists():
-        return toml
-
-    if (toml := toml.with_suffix(".toml")).exists():
-        return toml
-
-    if (toml := AZELY_DIR / toml.name).exists():
-        return toml
-
-    raise FileNotFoundError(f"{toml} could not be found.")
 
 
 @contextmanager

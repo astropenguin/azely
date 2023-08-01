@@ -4,6 +4,7 @@ __all__ = ["Location", "get_location"]
 # standard library
 from dataclasses import dataclass
 from datetime import tzinfo
+from functools import partial
 from typing import ClassVar, Optional
 
 
@@ -14,7 +15,7 @@ from astropy.utils.data import conf
 from ipinfo import getHandler
 from pytz import timezone
 from timezonefinder import TimezoneFinder
-from .consts import AZELY_LOCATIONS, GOOGLE_API, HERE, IPINFO_API, TIMEOUT
+from .consts import AZELY_CACHE, GOOGLE_API, HERE, IPINFO_API, TIMEOUT
 from .utils import PathLike, cache, rename
 
 
@@ -66,11 +67,11 @@ def get_location(
     query: str,
     /,
     *,
-    google_api: str = GOOGLE_API,
-    ipinfo_api: str = IPINFO_API,
+    google_api: Optional[str] = GOOGLE_API,
+    ipinfo_api: Optional[str] = IPINFO_API,
     name: Optional[str] = None,
-    source: PathLike = AZELY_LOCATIONS,
-    timeout: int = TIMEOUT,
+    source: PathLike = AZELY_CACHE,
+    timeout: float = TIMEOUT,
     update: bool = False,
 ) -> Location:
     """Get location information."""
@@ -94,21 +95,21 @@ def get_location(
         )
 
 
-@rename
-@cache
+@partial(rename, key="name")
+@partial(cache, table="locations")
 def get_location_by_ip(
     query: str,
     /,
     *,
-    ipinfo_api: str,
-    timeout: int,
+    ipinfo_api: Optional[str],
+    timeout: float,
     # consumed by decorators
     name: Optional[str],  # @rename
     source: PathLike,  # @cache
     update: bool,  # @cache
 ) -> Location:
     """Get location information by ipinfo.io."""
-    handler = getHandler(ipinfo_api or None)
+    handler = getHandler(ipinfo_api)
     response = handler.getDetails(timeout=timeout)
 
     return Location(
@@ -118,14 +119,14 @@ def get_location_by_ip(
     )
 
 
-@rename
-@cache
+@partial(rename, key="name")
+@partial(cache, table="locations")
 def get_location_by_map(
     query: str,
     /,
     *,
-    google_api: str,
-    timeout: int,
+    google_api: Optional[str],
+    timeout: float,
     # consumed by decorators
     name: Optional[str],  # @rename
     source: PathLike,  # @cache
@@ -136,7 +137,7 @@ def get_location_by_map(
         response = EarthLocation.of_address(
             address=query,
             get_height=bool(google_api),
-            google_api_key=google_api or None,
+            google_api_key=google_api,
         )
 
     return Location(
