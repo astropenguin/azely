@@ -70,7 +70,7 @@ def get_location(
     google_api: Optional[str] = GOOGLE_API,
     ipinfo_api: Optional[str] = IPINFO_API,
     name: Optional[str] = None,
-    source: PathLike = AZELY_CACHE,
+    source: Optional[PathLike] = AZELY_CACHE,
     timeout: float = TIMEOUT,
     update: bool = False,
 ) -> Location:
@@ -105,7 +105,7 @@ def get_location_by_ip(
     timeout: float,
     # consumed by decorators
     name: Optional[str],  # @rename
-    source: PathLike,  # @cache
+    source: Optional[PathLike],  # @cache
     update: bool,  # @cache
 ) -> Location:
     """Get location information by ipinfo.io."""
@@ -129,7 +129,7 @@ def get_location_by_map(
     timeout: float,
     # consumed by decorators
     name: Optional[str],  # @rename
-    source: PathLike,  # @cache
+    source: Optional[PathLike],  # @cache
     update: bool,  # @cache
 ) -> Location:
     """Get location information by online maps."""

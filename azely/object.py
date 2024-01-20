@@ -68,7 +68,7 @@ def get_object(
     *,
     frame: str = FRAME,
     name: Optional[str] = None,
-    source: PathLike = AZELY_CACHE,
+    source: Optional[PathLike] = AZELY_CACHE,
     timeout: float = TIMEOUT,
     update: bool = False,
 ) -> Object:
@@ -99,7 +99,7 @@ def get_object_solar(
     *,
     # consumed by decorators
     name: Optional[str],  # @rename
-    source: PathLike,  # @cache
+    source: Optional[PathLike],  # @cache
     update: bool,  # @cache
 ) -> Object:
     """Get object information in the solar system."""
@@ -121,7 +121,7 @@ def get_object_by_cds(
     timeout: float,
     # consumed by decorators
     name: Optional[str],  # @rename
-    source: PathLike,  # @cache
+    source: Optional[PathLike],  # @cache
     update: bool,  # @cache
 ) -> Object:
     """Get object information by the CDS name resolver."""
