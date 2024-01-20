@@ -11,7 +11,7 @@ repository = "https://github.com/astropenguin/azely/"
 documentation = "https://astropenguin.github.io/azely/"
 
 [tool.poetry.dependencies]
-python = ">=3.9, <3.12"
+python = ">=3.9, <3.13"
 astropy = "^5.0"
 pandas = "^1.5 | ^2.0"
 pandas-stubs = "^1.5 | ^2.0"
@@ -22,13 +22,13 @@ tomlkit = "^0.12"
 ipinfo = "^4.4"
 
 [tool.poetry.dev-dependencies]
-black = "^23.7"
-ipython = "^8.14"
+black = "^23.12"
+ipython = "^8.18"
 matplotlib = "^3.7"
 myst-parser = "^2.0"
 pydata-sphinx-theme = "^0.13"
 pytest = "^7.4"
-sphinx = "^7.1"
+sphinx = "^7.2"
 
 [tool.pyright]
 typeCheckingMode = "basic"

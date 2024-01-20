@@ -34,19 +34,22 @@ def cache(func: TCallable, table: str) -> TCallable:
     def wrapper(*args: Any, **kwargs: Any) -> Any:
         bound = signature.bind(*args, **kwargs)
         bound.apply_defaults()
+        bargs = bound.arguments
 
-        query: str = bound.arguments["query"]
-        source: PathLike = bound.arguments["source"]
-        update: bool = bound.arguments["update"]
+        if (source := bargs["source"]) is None:
+            return func(*args, **kwargs)
 
         with sync_toml(source) as doc:
             tab = doc.setdefault(table, {})
 
-            if update or (query not in tab):
-                tab[query] = asdict(func(*args, **kwargs))
+            if (query := bargs["query"]) in tab:
+                if not bargs["update"]:
+                    return DataClass(**tab[query].unwrap())
 
-                if tab is not doc.last_item():
-                    tab.add(nl())
+            tab[query] = asdict(func(*args, **kwargs))
+
+            if tab is not doc.last_item():
+                tab.add(nl())
 
             return DataClass(**tab[query].unwrap())
 
@@ -61,11 +64,12 @@ def rename(func: TCallable, key: str) -> TCallable:
     def wrapper(*args: Any, **kwargs: Any) -> Any:
         bound = signature.bind(*args, **kwargs)
         bound.apply_defaults()
+        bargs = bound.arguments
 
-        name: Optional[str] = bound.arguments["name"]
-        changes = {} if name is None else {key: name}
-
-        return replace(func(*args, **kwargs), **changes)
+        if (name := bargs["name"]) is None:
+            return func(*args, **kwargs)
+        else:
+            return replace(func(*args, **kwargs), **{key: name})
 
     return wrapper  # type: ignore
 
