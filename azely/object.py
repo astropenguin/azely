@@ -7,7 +7,7 @@ from functools import partial
 from typing import Optional
 
 
-# dependent packages
+# dependencies
 from astropy.coordinates import Longitude, Latitude, SkyCoord, get_body
 from astropy.time import Time as ObsTime
 from astropy.utils.data import conf
@@ -92,7 +92,7 @@ def get_object(
 
 
 @partial(rename, key="name")
-@partial(cache, table="objects")
+@partial(cache, table="object")
 def get_object_solar(
     query: str,
     /,
@@ -112,7 +112,7 @@ def get_object_solar(
 
 
 @partial(rename, key="name")
-@partial(cache, table="objects")
+@partial(cache, table="object")
 def get_object_by_cds(
     query: str,
     /,

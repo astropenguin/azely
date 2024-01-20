@@ -96,7 +96,7 @@ def get_location(
 
 
 @partial(rename, key="name")
-@partial(cache, table="locations")
+@partial(cache, table="location")
 def get_location_by_ip(
     query: str,
     /,
@@ -120,7 +120,7 @@ def get_location_by_ip(
 
 
 @partial(rename, key="name")
-@partial(cache, table="locations")
+@partial(cache, table="location")
 def get_location_by_map(
     query: str,
     /,
