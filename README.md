@@ -2,7 +2,7 @@
 
 [![Release](https://img.shields.io/pypi/v/azely?label=Release&color=cornflowerblue&style=flat-square)](https://pypi.org/project/azely/)
 [![Python](https://img.shields.io/pypi/pyversions/azely?label=Python&color=cornflowerblue&style=flat-square)](https://pypi.org/project/azely/)
-[![Downloads](https://img.shields.io/pypi/dm/azely?label=Downloads&color=cornflowerblue&style=flat-square)](https://pepy.tech/project/azely)
+[![Downloads](https://img.shields.io/pypi/dm/azely?label=Downloads&color=cornflowerblue&style=flat-square)](https://pepy.tech/projects/azely)
 [![DOI](https://img.shields.io/badge/DOI-10.5281/zenodo.3680060-cornflowerblue?style=flat-square)](https://doi.org/10.5281/zenodo.3680060)
 [![Tests](https://img.shields.io/github/workflow/status/astropenguin/azely/Tests?label=Tests&style=flat-square)](https://github.com/astropenguin/azely/actions)
 
@@ -29,7 +29,7 @@ In fact azely offers one-liner to compute and plot, for example, one-day elevati
 
 ## Requirements
 
-- **Python:** 3.7, 3.8, 3.9, and 3.10 (tested by author)
+- **Python:** 3.9, 3.10, 3.11, 3.12, 3.13 (tested by author)
 - **Dependencies:** See [pyproject.toml](https://github.com/astropenguin/azely/blob/v0.7.0/pyproject.toml)
 
 ## Installation
