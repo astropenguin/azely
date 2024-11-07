@@ -11,7 +11,7 @@ repository = "https://github.com/astropenguin/azely/"
 documentation = "https://astropenguin.github.io/azely/"
 
 [tool.poetry.dependencies]
-python = ">=3.9, <3.13"
+python = ">=3.9, <3.14"
 astropy = "^5.0"
 pandas = "^1.5 | ^2.0"
 pandas-stubs = "^1.5 | ^2.0"
