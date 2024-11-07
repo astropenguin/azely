@@ -29,7 +29,7 @@ In fact azely offers one-liner to compute and plot, for example, one-day elevati
 
 ## Requirements
 
-- **Python:** 3.7, 3.8, 3.9, and 3.10 (tested by author)
+- **Python:** 3.9, 3.10, 3.11, 3.12, 3.13 (tested by author)
 - **Dependencies:** See [pyproject.toml](https://github.com/astropenguin/azely/blob/v0.7.0/pyproject.toml)
 
 ## Installation
