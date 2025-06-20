@@ -51,13 +51,11 @@ def ensure(toml: Path) -> Path:
 
 
 @overload
-def getval(toml: Path, keys: str, default: type[T]) -> Optional[T]:
-    ...
+def getval(toml: Path, keys: str, default: type[T]) -> Optional[T]: ...
 
 
 @overload
-def getval(toml: Path, keys: str, default: T) -> T:
-    ...
+def getval(toml: Path, keys: str, default: T) -> T: ...
 
 
 def getval(toml: Path, keys: str, default: Any) -> Any:
