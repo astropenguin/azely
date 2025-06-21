@@ -123,6 +123,7 @@ for obj in ('Sun', 'Sgr A*', 'M87', 'M104', 'Cen A'):
 ax.set_title(f'site: {site}, view: {view}, time: {time}')
 ax.set_ylabel('Elevation (deg)')
 ax.set_ylim(0, 90)
+ax.grid(which="both")
 ax.legend()
 ```
 
@@ -160,11 +161,15 @@ df.in_lst.el.plot(ax=twin, alpha=0)
 
 ax.set_ylabel("Elevation (deg)")
 ax.set_ylim(0, 90)
+ax.grid(which="both")
 ax.legend()
 
 formatter = mdates.DateFormatter('%H:%M')
 twin.xaxis.set_major_formatter(formatter)
 fig.autofmt_xdate(rotation=0)
+
+ax.margins(0)
+twin.margins(0)
 ```
 
 ![lst-axis.svg](https://raw.githubusercontent.com/astropenguin/azely/v0.7.0/docs/_static/lst-axis.svg)
