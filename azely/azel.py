@@ -39,7 +39,7 @@ class AzEl(DataFrame):
     def in_lst(self):
         """Convert time index to LST."""
         td = self.index - self.index[0]
-        td_lst = td * SOLAR_TO_SIDEREAL + self.lst[0]
+        td_lst = td * SOLAR_TO_SIDEREAL + self.lst.iloc[0]
         td_lst = td_lst.floor("1D") + self.lst
 
         lst = Timestamp(0) + td_lst
