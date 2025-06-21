@@ -1,38 +1,63 @@
-[tool.poetry]
+[project]
 name = "azely"
 version = "0.7.0"
-description = "Computation and plotting of azimuth and elevation for astronomical objects"
-authors = ["Akio Taniguchi <taniguchi@a.phys.nagoya-u.ac.jp>"]
-keywords = [ "astronomy", "azimuth", "elevation", "ephemeris", "sidereal-time" ]
-license = "MIT"
+description = "Azimuth/elevation visualization for astronomy"
 readme = "README.md"
-homepage = "https://github.com/astropenguin/azely/"
-repository = "https://github.com/astropenguin/azely/"
-documentation = "https://astropenguin.github.io/azely/"
+keywords = [
+    "astronomy",
+    "azimuth",
+    "elevation",
+    "ephemeris",
+    "sidereal-time",
+    "visibility",
+]
+requires-python = ">=3.10,<3.14"
+dependencies = [
+    "astropy>=6,<8",
+    "matplotlib>=3,<4",
+    "numpy>=2,<3",
+    "pandas>=2,<3",
+    "pandas-stubs>=2,<3",
+    "python-dateutil>=2,<3",
+    "timezonefinder>=6,<7",
+    "tomlkit>=0.10,<1.0",
+    "ipinfo>=4,<6"
 
-[tool.poetry.dependencies]
-python = ">=3.9, <3.13"
-astropy = "^5.0"
-pandas = "^1.5 | ^2.0"
-pandas-stubs = "^1.5 | ^2.0"
-python-dateutil = "^2.8"
-pytz = "^2023.3"
-timezonefinder = "^6.2"
-tomlkit = "^0.12"
-ipinfo = "^4.4"
+]
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
 
-[tool.poetry.dev-dependencies]
-black = "^23.12"
-ipython = "^8.18"
-matplotlib = "^3.7"
-myst-parser = "^2.0"
-pydata-sphinx-theme = "^0.13"
-pytest = "^7.4"
-sphinx = "^7.2"
+[[project.authors]]
+name = "Akio Taniguchi"
+email = "taniguchi.akio@gmail.com"
+
+[project.license]
+file = "LICENSE"
+
+[project.urls]
+homepage = "https://astropenguin.github.io/azely"
+repository = "https://github.com/astropenguin/azely"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[dependency-groups]
+dev = [
+    "black>=25,<26",
+    "ipython>=8,<10",
+    "myst-parser>=3,<5",
+    "pydata-sphinx-theme>=0.15,<1.0",
+    "pyright>=1,<2",
+    "pytest>=8,<9",
+    "sphinx>=7,<9",
+]
 
 [tool.pyright]
 typeCheckingMode = "basic"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"

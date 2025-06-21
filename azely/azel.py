@@ -39,7 +39,7 @@ class AzEl(DataFrame):
     def in_lst(self):
         """Convert time index to LST."""
         td = self.index - self.index[0]
-        td_lst = td * SOLAR_TO_SIDEREAL + self.lst[0]
+        td_lst = td * SOLAR_TO_SIDEREAL + self.lst.iloc[0]
         td_lst = td_lst.floor("1D") + self.lst
 
         lst = Timestamp(0) + td_lst
@@ -48,7 +48,7 @@ class AzEl(DataFrame):
     @property
     def in_utc(self):
         """Convert time index to UTC."""
-        utc = self.index.tz_convert("UTC")
+        utc = self.index.tz_convert("UTC")  # type: ignore
         return self.set_index(DatetimeIndex(utc, name="UTC"))
 
     @property
@@ -62,12 +62,12 @@ def compute(
     object: str,
     site: str = SITE,
     time: str = TIME,
-    view: str = VIEW,
+    view: str | None = VIEW,
     frame: str = FRAME,
     freq: str = FREQ,
     dayfirst: bool = DAYFIRST,
     yearfirst: bool = YEARFIRST,
-    timeout: int = TIMEOUT,
+    timeout: float = TIMEOUT,
 ) -> AzEl:
     """Compute az/el and local sidereal time (LST) of an astronomical object.
 
@@ -96,7 +96,7 @@ def compute(
             ``'UTC'``, or ``Tokyo``). By default (``''``),  timezone at the site is used.
         frame: (object option) Name of equatorial coordinates used in astropy's SkyCoord.
         freq: (time option) Frequency of time samples as the same format of pandas offset
-            aliases (e.g., ``'1D'`` -> 1 day, ``'3H'`` -> 3 hours, ``'10T'`` -> 10 minutes).
+            aliases (e.g., ``'1D'`` -> 1 day, ``'3h'`` -> 3 hours, ``'10min'`` -> 10 minutes).
         dayfirst: (time option) Whether to interpret the first value in an ambiguous
             3-integer date (e.g., ``'01-02-03'``) as the day. If True, for example,
             ``'01-02-03'`` is treated as Feb. 1st 2003.
@@ -155,8 +155,8 @@ def _compute(object: Object, site: Location, time: Time) -> AzEl:
     obstime = time.to_obstime(site.to_earthlocation())
     skycoord = object.to_skycoord(obstime)
 
-    az = skycoord.altaz.az
-    el = skycoord.altaz.alt
+    az = skycoord.altaz.az  # type: ignore
+    el = skycoord.altaz.alt  # type: ignore
     lst = to_timedelta(obstime.sidereal_time("mean").value, unit="hr")
 
     azel = AzEl(dict(az=az, el=el, lst=lst), index=time.to_index())

@@ -4,7 +4,6 @@ __all__ = ["Object", "get_object"]
 # standard library
 from dataclasses import dataclass
 from functools import partial
-from typing import Optional
 
 
 # dependencies
@@ -12,7 +11,7 @@ from astropy.coordinates import Longitude, Latitude, SkyCoord, get_body
 from astropy.time import Time as ObsTime
 from astropy.utils.data import conf
 from .consts import AZELY_CACHE, FRAME, SOLAR_FRAME, SOLAR_OBJECTS, TIMEOUT
-from .utils import PathLike, cache, rename
+from .utils import StrPath, cache, rename
 
 
 @dataclass
@@ -67,8 +66,8 @@ def get_object(
     /,
     *,
     frame: str = FRAME,
-    name: Optional[str] = None,
-    source: Optional[PathLike] = AZELY_CACHE,
+    name: str | None = None,
+    source: StrPath | None = AZELY_CACHE,
     timeout: float = TIMEOUT,
     update: bool = False,
 ) -> Object:
@@ -98,8 +97,8 @@ def get_object_solar(
     /,
     *,
     # consumed by decorators
-    name: Optional[str],  # @rename
-    source: Optional[PathLike],  # @cache
+    name: str | None,  # @rename
+    source: StrPath | None,  # @cache
     update: bool,  # @cache
 ) -> Object:
     """Get object information in the solar system."""
@@ -120,8 +119,8 @@ def get_object_by_cds(
     frame: str,
     timeout: float,
     # consumed by decorators
-    name: Optional[str],  # @rename
-    source: Optional[PathLike],  # @cache
+    name: str | None,  # @rename
+    source: StrPath | None,  # @cache
     update: bool,  # @cache
 ) -> Object:
     """Get object information by the CDS name resolver."""

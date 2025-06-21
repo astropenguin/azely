@@ -18,14 +18,8 @@ locations = [
         altitude="0.0 m",
     ),
     Location(
-        name="Gran Telescopio Milimétrico Alfonso Serrano",
-        longitude="262d41m06.76068s",
-        latitude="18d59m08.66328s",
-        altitude="0.0 m",
-    ),
-    Location(
         name="Nobeyama Radio Astronomy Observatory",
-        longitude="138d28m25.28621699s",
+        longitude="138d28m25.28616s",
         latitude="35d56m34.76364s",
         altitude="0.0 m",
     ),

@@ -6,8 +6,8 @@ from contextlib import contextmanager
 from dataclasses import asdict, replace
 from functools import wraps
 from inspect import Signature
-from pathlib import Path
-from typing import Any, Callable, Iterator, Optional, TypeVar, Union
+from os import PathLike
+from typing import Any, Callable, Iterator, TypeVar, Union
 
 
 # dependencies
@@ -15,7 +15,7 @@ from tomlkit import TOMLDocument, dump, load, nl
 
 
 # type hints
-PathLike = Union[Path, str]
+StrPath = Union[PathLike[str], str]
 TCallable = TypeVar("TCallable", bound=Callable[..., Any])
 
 
@@ -75,7 +75,7 @@ def rename(func: TCallable, key: str) -> TCallable:
 
 
 @contextmanager
-def sync_toml(toml: PathLike) -> Iterator[TOMLDocument]:
+def sync_toml(toml: StrPath) -> Iterator[TOMLDocument]:
     """Open a TOML file as an updatable tomlkit document."""
     with open(toml, "r") as file:
         yield (doc := load(file))

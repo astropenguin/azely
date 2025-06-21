@@ -28,7 +28,7 @@ __all__ = [
 # standard library
 from os import getenv
 from pathlib import Path
-from typing import Any, Optional, TypeVar, overload
+from typing import Any, TypeVar, overload
 
 
 # dependencies
@@ -51,13 +51,11 @@ def ensure(toml: Path) -> Path:
 
 
 @overload
-def getval(toml: Path, keys: str, default: type[T]) -> Optional[T]:
-    ...
+def getval(toml: Path, keys: str, default: type[T]) -> T | None: ...
 
 
 @overload
-def getval(toml: Path, keys: str, default: T) -> T:
-    ...
+def getval(toml: Path, keys: str, default: T) -> T: ...
 
 
 def getval(toml: Path, keys: str, default: Any) -> Any:
@@ -118,7 +116,7 @@ DAYFIRST = getval(AZELY_CONFIG, "defaults.dayfirst", False)
 FRAME = getval(AZELY_CONFIG, "defaults.frame", "icrs")
 """Default value for the ``frame`` parameter."""
 
-FREQ = getval(AZELY_CONFIG, "defaults.freq", "10T")
+FREQ = getval(AZELY_CONFIG, "defaults.freq", "10min")
 """Default value for the ``freq`` parameter."""
 
 GOOGLE_API = getval(AZELY_CONFIG, "defaults.google_api", str)

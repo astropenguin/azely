@@ -1,15 +1,31 @@
-cff-version: 1.2.0
-message: "If you use this software, please cite it as below."
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
 
-title: "azely"
-abstract: "Computation and plotting of azimuth and elevation for astronomical objects"
-version: 0.7.0
-date-released: 2022-11-03
-license: "MIT"
-doi: "10.5281/zenodo.3680060)"
-url: "https://github.com/astropenguin/azely"
+cff-version: 1.2.0
+title: azely
+message: >-
+  If you use this software, please cite it using the metadata from this file.
+type: software
 authors:
-  - given-names: "Akio"
-    family-names: "Taniguchi"
-    affiliation: "Nagoya University"
-    orcid: "https://orcid.org/0000-0002-9695-6183"
+  - given-names: Akio
+    family-names: Taniguchi
+    email: taniguchi.akio@gmail.com
+    affiliation: Kitami Institute of Technology
+    orcid: 'https://orcid.org/0000-0002-9695-6183'
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.3680060
+repository-code: 'https://github.com/astropenguin/azely'
+url: 'https://astropenguin.github.io/azely'
+abstract: Azimuth/elevation visualization for astronomy
+keywords:
+  - python
+  - astronomy
+  - azimuth
+  - elevation
+  - ephemeris
+  - sidereal-time
+  - visibility
+license: MIT
+version: 0.7.0
+date-released: '2022-11-03'

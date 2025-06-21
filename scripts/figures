@@ -14,8 +14,7 @@ plt.rcParams["figure.figsize"] = 12, 4
 # example of one-liner
 fig, ax = plt.subplots()
 
-with plt.style.context("seaborn-whitegrid"):
-    df = azely.compute("Sun", "Tokyo").el.plot(ax=ax, ylim=(0, 90))
+df = azely.compute("Sun", "Tokyo").el.plot(ax=ax, ylim=(0, 90))
 
 fig.tight_layout()
 fig.savefig("docs/_static/one-liner.svg")
@@ -28,14 +27,14 @@ site = "ALMA AOS"
 time = "Apr. 11th 2017"
 view = "UTC"
 
-with plt.style.context("seaborn-whitegrid"):
-    for obj in ("Sun", "Sgr A*", "M87", "M104", "Cen A"):
-        df = azely.compute(obj, site, time, view)
-        df.el.plot(ax=ax, label=obj)
+for obj in ("Sun", "Sgr A*", "M87", "M104", "Cen A"):
+    df = azely.compute(obj, site, time, view)
+    df.el.plot(ax=ax, label=obj)
 
 ax.set_title(f"site: {site}, view: {view}, time: {time}")
 ax.set_ylabel("Elevation (deg)")
 ax.set_ylim(0, 90)
+ax.grid(which="both")
 ax.legend()
 
 fig.tight_layout()
@@ -47,19 +46,20 @@ fig, ax = plt.subplots(figsize=(12, 4))
 twin = ax.twiny()
 
 df = azely.compute("Sun", "Tokyo", "2020-01-01")
-
-with plt.style.context("seaborn-whitegrid"):
-    df.el.plot(ax=ax, label=df.object.name)
-
+df.el.plot(ax=ax, label=df.object.name)
 df.in_lst.el.plot(ax=twin, alpha=0)
 
 ax.set_ylabel("Elevation (deg)")
 ax.set_ylim(0, 90)
+ax.grid(which="both")
 ax.legend()
 
 formatter = mdates.DateFormatter("%H:%M")
 twin.xaxis.set_major_formatter(formatter)
 fig.autofmt_xdate(rotation=0)
+
+ax.margins(0)
+twin.margins(0)
 
 fig.tight_layout()
 fig.savefig("docs/_static/lst-axis.svg")
