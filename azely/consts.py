@@ -28,7 +28,7 @@ __all__ = [
 # standard library
 from os import getenv
 from pathlib import Path
-from typing import Any, Optional, TypeVar, overload
+from typing import Any, TypeVar, overload
 
 
 # dependencies
@@ -51,7 +51,7 @@ def ensure(toml: Path) -> Path:
 
 
 @overload
-def getval(toml: Path, keys: str, default: type[T]) -> Optional[T]: ...
+def getval(toml: Path, keys: str, default: type[T]) -> T | None: ...
 
 
 @overload

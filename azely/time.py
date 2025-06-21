@@ -46,6 +46,7 @@ __all__ = ["Time", "get_time"]
 from datetime import datetime, timedelta, tzinfo
 from functools import partial
 from typing import Callable
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 
 # dependent packages
@@ -53,7 +54,8 @@ from astropy.coordinates import EarthLocation
 from astropy.time import Time as ObsTime
 from dateutil.parser import parse
 from pandas import DatetimeIndex, date_range
-from pytz import UnknownTimeZoneError, timezone
+
+# from pytz import UnknownTimeZoneError, timezone
 from .utils import AzelyError
 from .location import get_location
 
@@ -96,7 +98,7 @@ def get_time(
     freq: str = FREQ,
     dayfirst: bool = DAYFIRST,
     yearfirst: bool = YEARFIRST,
-    timeout: int = TIMEOUT,
+    timeout: float = TIMEOUT,
 ) -> Time:
     """Get time information by various ways.
 
@@ -162,35 +164,38 @@ def get_time(
     query = query.strip()
 
     try:
-        tzinfo = timezone(view)
-    except UnknownTimeZoneError:
-        tzinfo = get_location(view, timeout=timeout).timezone
+        zoneinfo = ZoneInfo(view)
+    except ZoneInfoNotFoundError:
+        zoneinfo = get_location(view, timeout=timeout).timezone
 
     if query.lower() == NOW:
-        return Time(get_time_now(tzinfo))
+        return Time(get_time_now(zoneinfo))
     elif query.lower() == TODAY:
-        return Time(get_time_today(freq, tzinfo))
+        return Time(get_time_today(freq, zoneinfo))
     else:
         parser = partial(parse, dayfirst=dayfirst, yearfirst=yearfirst)
-        return Time(get_time_period(query, freq, tzinfo, parser))
+        return Time(get_time_period(query, freq, zoneinfo, parser))
 
 
 # helper functions
-def get_time_now(tzinfo: tzinfo) -> DatetimeIndex:
+def get_time_now(timezone: tzinfo) -> DatetimeIndex:
     """Get current time at given timezone."""
-    start = end = datetime.now(tzinfo)
-    return date_range(start, end, tz=tzinfo, name=tzinfo.zone)
+    start = end = datetime.now(timezone)
+    return date_range(start, end, tz=timezone, name=str(timezone))
 
 
-def get_time_today(freq: str, tzinfo: tzinfo) -> DatetimeIndex:
+def get_time_today(freq: str, timezone: tzinfo) -> DatetimeIndex:
     """Get time range of today at given timezone."""
-    start = datetime.now(tzinfo).date()
+    start = datetime.now(timezone).date()
     end = start + timedelta(days=1)
-    return date_range(start, end, None, freq, tz=tzinfo, name=tzinfo.zone)
+    return date_range(start, end, None, freq, tz=timezone, name=str(timezone))
 
 
 def get_time_period(
-    query: str, freq: str, tzinfo: tzinfo, parser: Callable
+    query: str,
+    freq: str,
+    timezone: tzinfo,
+    parser: Callable,
 ) -> DatetimeIndex:
     """Get time range of given date and length at given timezone."""
     period = query.split(DELIMITER)
@@ -204,4 +209,4 @@ def get_time_period(
     except ValueError:
         raise AzelyError(f"Failed to parse: {query}")
 
-    return date_range(start, end, None, freq, tz=tzinfo, name=tzinfo.zone)
+    return date_range(start, end, None, freq, tz=timezone, name=str(timezone))

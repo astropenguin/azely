@@ -48,7 +48,7 @@ class AzEl(DataFrame):
     @property
     def in_utc(self):
         """Convert time index to UTC."""
-        utc = self.index.tz_convert("UTC")
+        utc = self.index.tz_convert("UTC")  # type: ignore
         return self.set_index(DatetimeIndex(utc, name="UTC"))
 
     @property
@@ -62,12 +62,12 @@ def compute(
     object: str,
     site: str = SITE,
     time: str = TIME,
-    view: str = VIEW,
+    view: str | None = VIEW,
     frame: str = FRAME,
     freq: str = FREQ,
     dayfirst: bool = DAYFIRST,
     yearfirst: bool = YEARFIRST,
-    timeout: int = TIMEOUT,
+    timeout: float = TIMEOUT,
 ) -> AzEl:
     """Compute az/el and local sidereal time (LST) of an astronomical object.
 
@@ -155,8 +155,8 @@ def _compute(object: Object, site: Location, time: Time) -> AzEl:
     obstime = time.to_obstime(site.to_earthlocation())
     skycoord = object.to_skycoord(obstime)
 
-    az = skycoord.altaz.az
-    el = skycoord.altaz.alt
+    az = skycoord.altaz.az  # type: ignore
+    el = skycoord.altaz.alt  # type: ignore
     lst = to_timedelta(obstime.sidereal_time("mean").value, unit="hr")
 
     azel = AzEl(dict(az=az, el=el, lst=lst), index=time.to_index())

@@ -3,9 +3,9 @@ __all__ = ["Location", "get_location"]
 
 # standard library
 from dataclasses import dataclass
-from datetime import tzinfo
 from functools import partial
-from typing import ClassVar, Optional
+from typing import ClassVar
+from zoneinfo import ZoneInfo
 
 
 # dependencies
@@ -13,10 +13,9 @@ from astropy.coordinates import EarthLocation, Latitude, Longitude
 from astropy.units import Quantity
 from astropy.utils.data import conf
 from ipinfo import getHandler
-from pytz import timezone
 from timezonefinder import TimezoneFinder
 from .consts import AZELY_CACHE, GOOGLE_API, HERE, IPINFO_API, TIMEOUT
-from .utils import PathLike, cache, rename
+from .utils import StrPath, cache, rename
 
 
 @dataclass
@@ -45,14 +44,14 @@ class Location:
         self.altitude = str(Quantity(self.altitude, "m"))
 
     @property
-    def timezone(self) -> tzinfo:
+    def timezone(self) -> ZoneInfo:
         """Timezone of the location."""
         response = self.tf.timezone_at(
             lng=Longitude(self.longitude).value,
             lat=Latitude(self.latitude).value,
         )
 
-        return timezone(str(response))
+        return ZoneInfo(str(response))
 
     def to_earthlocation(self) -> EarthLocation:
         """Convert it to an EarthLocation object."""
@@ -67,10 +66,10 @@ def get_location(
     query: str,
     /,
     *,
-    google_api: Optional[str] = GOOGLE_API,
-    ipinfo_api: Optional[str] = IPINFO_API,
-    name: Optional[str] = None,
-    source: Optional[PathLike] = AZELY_CACHE,
+    google_api: str | None = GOOGLE_API,
+    ipinfo_api: str | None = IPINFO_API,
+    name: str | None = None,
+    source: StrPath | None = AZELY_CACHE,
     timeout: float = TIMEOUT,
     update: bool = False,
 ) -> Location:
@@ -101,11 +100,11 @@ def get_location_by_ip(
     query: str,
     /,
     *,
-    ipinfo_api: Optional[str],
+    ipinfo_api: str | None,
     timeout: float,
     # consumed by decorators
-    name: Optional[str],  # @rename
-    source: Optional[PathLike],  # @cache
+    name: str | None,  # @rename
+    source: StrPath | None,  # @cache
     update: bool,  # @cache
 ) -> Location:
     """Get location information by ipinfo.io."""
@@ -125,11 +124,11 @@ def get_location_by_map(
     query: str,
     /,
     *,
-    google_api: Optional[str],
+    google_api: str | None,
     timeout: float,
     # consumed by decorators
-    name: Optional[str],  # @rename
-    source: Optional[PathLike],  # @cache
+    name: str | None,  # @rename
+    source: StrPath | None,  # @cache
     update: bool,  # @cache
 ) -> Location:
     """Get location information by online maps."""
