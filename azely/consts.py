@@ -116,7 +116,7 @@ DAYFIRST = getval(AZELY_CONFIG, "defaults.dayfirst", False)
 FRAME = getval(AZELY_CONFIG, "defaults.frame", "icrs")
 """Default value for the ``frame`` parameter."""
 
-FREQ = getval(AZELY_CONFIG, "defaults.freq", "10T")
+FREQ = getval(AZELY_CONFIG, "defaults.freq", "10min")
 """Default value for the ``freq`` parameter."""
 
 GOOGLE_API = getval(AZELY_CONFIG, "defaults.google_api", str)

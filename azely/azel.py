@@ -96,7 +96,7 @@ def compute(
             ``'UTC'``, or ``Tokyo``). By default (``''``),  timezone at the site is used.
         frame: (object option) Name of equatorial coordinates used in astropy's SkyCoord.
         freq: (time option) Frequency of time samples as the same format of pandas offset
-            aliases (e.g., ``'1D'`` -> 1 day, ``'3H'`` -> 3 hours, ``'10T'`` -> 10 minutes).
+            aliases (e.g., ``'1D'`` -> 1 day, ``'3h'`` -> 3 hours, ``'10min'`` -> 10 minutes).
         dayfirst: (time option) Whether to interpret the first value in an ambiguous
             3-integer date (e.g., ``'01-02-03'``) as the day. If True, for example,
             ``'01-02-03'`` is treated as Feb. 1st 2003.
