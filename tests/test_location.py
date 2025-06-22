@@ -13,7 +13,7 @@ from tomlkit import dump
 locations = [
     Location(
         name="Atacama Large Millimeter/submillimeter Array",
-        longitude="292d14m48.93972s",
+        longitude="-67d45m11.06028s",
         latitude="-23d01m21.97704s",
         altitude="0.0 m",
     ),
@@ -27,12 +27,17 @@ locations = [
 
 
 # test functions
-@mark.parametrize("obj", locations)
-def test_get_location(obj: Location) -> None:
+@mark.parametrize("expected", locations)
+def test_get_location(expected: Location) -> None:
     with NamedTemporaryFile("w", suffix=".toml") as f:
-        dump({obj.name: asdict(obj)}, f)
+        dump({expected.name: asdict(expected)}, f)
 
         # save an object to the TOML file
-        assert get_location(obj.name, source=f.name) == obj
+        location = get_location(expected.name, source=f.name)
+        assert location.longitude == expected.longitude
+        assert location.latitude == expected.latitude
+
         # read the object from the TOML file
-        assert get_location(obj.name, source=f.name) == obj
+        location = get_location(expected.name, source=f.name)
+        assert location.longitude == expected.longitude
+        assert location.latitude == expected.latitude

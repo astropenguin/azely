@@ -17,8 +17,7 @@ from .utils import AzelyError
 
 
 # constants
-DEFAULT_ARGS = "00:00 today", "tomorrow", "10min", ""
-DEFAULT_SEP = r"\s*;\s*"
+DEFAULT_QUERY = "00:00 today;tomorrow;10min;"
 
 
 @dataclass(frozen=True)
@@ -79,7 +78,7 @@ class Time:
         return ObsTime(self.to_index().tz_convert(None), location=earthloc)
 
 
-def get_time(query: str, /, *, sep: str = DEFAULT_SEP) -> Time:
+def get_time(query: str, /, *, sep: str = r"\s*;\s*") -> Time:
     """Parse given query to create time information.
 
     Args:
@@ -90,14 +89,15 @@ def get_time(query: str, /, *, sep: str = DEFAULT_SEP) -> Time:
         Time information created from the parsed query.
 
     """
-    args = (s := split(sep, query)) + [""] * (len(DEFAULT_ARGS) - len(s))
+    default_args = split(sep, DEFAULT_QUERY)
+    parsed_args = (s := split(sep, query)) + [""] * (len(default_args) - len(s))
 
     if not query:
-        return Time(*DEFAULT_ARGS)
+        return Time(*default_args)
     else:
         return Time(
-            start=args[0] or DEFAULT_ARGS[0],
-            stop=args[1] or DEFAULT_ARGS[1],
-            step=args[2] or DEFAULT_ARGS[2],
-            timezone=args[3] or DEFAULT_ARGS[3],
+            start=parsed_args[0] or default_args[0],
+            stop=parsed_args[1] or default_args[1],
+            step=parsed_args[2] or default_args[2],
+            timezone=parsed_args[3] or default_args[3],
         )

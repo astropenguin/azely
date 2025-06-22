@@ -7,23 +7,13 @@ from dataclasses import replace
 
 # dependent packages
 from pandas import DataFrame, DatetimeIndex, Timestamp, to_timedelta
+from .consts import FRAME, SITE, TIME, TIMEOUT
 from .location import Location, get_location
 from .object import Object, get_object
 from .time import Time, get_time
 
 
 # constants
-from .consts import (
-    DAYFIRST,
-    FRAME,
-    FREQ,
-    SITE,
-    TIME,
-    TIMEOUT,
-    VIEW,
-    YEARFIRST,
-)
-
 SOLAR_TO_SIDEREAL = 1.002_737_909
 
 
@@ -32,7 +22,7 @@ class AzEl(DataFrame):
     """Subclass of pandas DataFrame with special properties for Azely."""
 
     #: allowed custom attributes
-    _metadata = ["object", "site"]
+    _metadata = ["location", "object"]
 
     @property
     def alt(self):
@@ -64,7 +54,7 @@ class AzEl(DataFrame):
 # main functions
 def compute(
     object: str,
-    site: str = SITE,
+    location: Location | str = SITE,
     time: Time | str = TIME,
     frame: str = FRAME,
     timeout: float = TIMEOUT,
@@ -127,16 +117,18 @@ def compute(
 
     """  # noqa: E501
     object_ = get_object(object, frame=frame, timeout=timeout)
-    site_ = get_location(site, timeout=timeout)
+
+    if isinstance(location, str):
+        location = get_location(location, timeout=timeout)
 
     if isinstance(time, str):
-        time = replace(get_time(time), timezone=str(site_.timezone))
+        time = replace(get_time(time), timezone=str(location.timezone))
 
-    return _compute(object_, site_, time)
+    return _compute(object_, location, time)
 
 
 # helper functions
-def _compute(object: Object, site: Location, time: Time) -> AzEl:
+def _compute(object: Object, location: Location, time: Time) -> AzEl:
     """Compute az/el and local sidereal time (LST) of an astronomical object.
 
     Similar to ``compute`` function, but this function receives instances
@@ -154,7 +146,7 @@ def _compute(object: Object, site: Location, time: Time) -> AzEl:
         AzelyError: Raised if one of mid-level APIs fails to get any information.
 
     """
-    obstime = time.to_obstime(site.to_earthlocation())
+    obstime = time.to_obstime(location.to_earthlocation())
     skycoord = object.to_skycoord(obstime)
 
     az = skycoord.altaz.az  # type: ignore
@@ -162,6 +154,6 @@ def _compute(object: Object, site: Location, time: Time) -> AzEl:
     lst = to_timedelta(obstime.sidereal_time("mean").value, unit="hr")
 
     azel = AzEl(dict(az=az, el=el, lst=lst), index=time.to_index())
+    azel.location = location
     azel.object = object
-    azel.site = site
     return azel
