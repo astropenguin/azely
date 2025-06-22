@@ -1,8 +1,10 @@
 __all__ = [
+    "AzEl",
     "Location",
+    "Object",
     "Time",
-    "azel",
-    "compute",
+    "api",
+    "calc",
     "consts",
     "get_location",
     "get_object",
@@ -15,17 +17,14 @@ __all__ = [
 __version__ = "0.7.0"
 
 
-# submodules
-from . import azel
+# dependencies
+from . import api
 from . import consts
 from . import location
 from . import object
 from . import time
 from . import utils
-
-
-# aliases
-from .azel import compute
+from .api import AzEl, calc
 from .location import Location, get_location
-from .object import get_object
+from .object import Object, get_object
 from .time import Time, get_time

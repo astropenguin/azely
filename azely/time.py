@@ -4,6 +4,7 @@ __all__ = ["Time", "get_time"]
 # standard library
 from dataclasses import dataclass
 from datetime import timezone as tz
+from functools import partial
 from re import split
 from zoneinfo import ZoneInfo
 
@@ -13,7 +14,7 @@ import pandas as pd
 from astropy.coordinates import EarthLocation
 from astropy.time import Time as ObsTime
 from dateparser import parse
-from .utils import AzelyError
+from .utils import AzelyError, StrPath, cache
 
 
 # constants
@@ -78,12 +79,25 @@ class Time:
         return ObsTime(self.to_index().tz_convert(None), location=earthloc)
 
 
-def get_time(query: str, /, *, sep: str = r"\s*;\s*") -> Time:
+@partial(cache, table="time")
+def get_time(
+    query: str,
+    /,
+    *,
+    sep: str = r"\s*;\s*",
+    # consumed by decorators
+    source: StrPath | None = None,
+    update: bool = False,
+) -> Time:
     """Parse given query to create time information.
 
     Args:
         query: Query string for the time information.
         sep: Separator string for splitting the query.
+        source: Path of a source TOML file for reading from
+            or writing to the time information.
+        update: Whether to forcibly update the time information
+            in the source TOML file even if it already exists.
 
     Returns:
         Time information created from the parsed query.

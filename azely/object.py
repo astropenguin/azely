@@ -11,7 +11,7 @@ from re import split
 from astropy.coordinates import SkyCoord, get_body
 from astropy.time import Time as ObsTime
 from astropy.utils.data import conf
-from .consts import AZELY_CACHE, SOLAR_OBJECTS
+from .consts import SOLAR_OBJECTS
 from .utils import AzelyError, StrPath, cache, rename
 
 
@@ -79,7 +79,7 @@ def get_object(
     timeout: float = 10.0,
     # consumed by decorators
     name: str | None = None,
-    source: StrPath | None = AZELY_CACHE,
+    source: StrPath | None = None,
     update: bool = False,
 ) -> Object:
     """Parse given query to create object information.
