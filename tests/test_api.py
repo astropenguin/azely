@@ -4,7 +4,7 @@ from io import StringIO
 
 # dependencies
 import pandas as pd
-from azely.azel import compute
+from azely.api import compute
 from pandas.testing import assert_frame_equal
 
 
