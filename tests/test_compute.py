@@ -35,13 +35,12 @@ Asia/Tokyo,az,el,lst
 2020-02-01 21:00:00+09:00,133.28648719943655,-58.30233678736436,0 days 16:13:39.593877600
 2020-02-01 22:00:00+09:00,116.90150420214667,-46.91544721519637,0 days 17:13:49.450324800
 2020-02-01 23:00:00+09:00,106.59215723190304,-34.04536962878047,0 days 18:13:59.306768400
-2020-02-02 00:00:00+09:00,99.08617418966456,-20.549911723352988,0 days 19:14:09.163215600
 """
 
 
 # test functions
 def test_compute():
-    result = compute("NGC1068!", "ALMA AOS!", "2020-02-01", view="Tokyo", freq="1h")
+    result = compute("NGC1068", "ALMA AOS", "2020-02-01 JST; Tomorrow; 1h")
     expected = pd.read_csv(StringIO(data), index_col=0)
     expected = expected.set_index(result.index)
 
