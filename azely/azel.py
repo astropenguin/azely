@@ -7,23 +7,13 @@ from dataclasses import replace
 
 # dependent packages
 from pandas import DataFrame, DatetimeIndex, Timestamp, to_timedelta
+from .consts import FRAME, SITE, TIME, TIMEOUT
 from .location import Location, get_location
 from .object import Object, get_object
 from .time import Time, get_time
 
 
 # constants
-from .consts import (
-    DAYFIRST,
-    FRAME,
-    FREQ,
-    SITE,
-    TIME,
-    TIMEOUT,
-    VIEW,
-    YEARFIRST,
-)
-
 SOLAR_TO_SIDEREAL = 1.002_737_909
 
 
@@ -64,7 +54,7 @@ class AzEl(DataFrame):
 # main functions
 def compute(
     object: str,
-    site: str = SITE,
+    site: Location | str = SITE,
     time: Time | str = TIME,
     frame: str = FRAME,
     timeout: float = TIMEOUT,
@@ -127,12 +117,14 @@ def compute(
 
     """  # noqa: E501
     object_ = get_object(object, frame=frame, timeout=timeout)
-    site_ = get_location(site, timeout=timeout)
+
+    if isinstance(site, str):
+        site = get_location(site, timeout=timeout)
 
     if isinstance(time, str):
-        time = replace(get_time(time), timezone=str(site_.timezone))
+        time = replace(get_time(time), timezone=str(site.timezone))
 
-    return _compute(object_, site_, time)
+    return _compute(object_, site, time)
 
 
 # helper functions
