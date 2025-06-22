@@ -53,10 +53,9 @@ class AzEl(DataFrame):
 
 # main functions
 def compute(
-    object: str,
+    object: Object | str,
     location: Location | str = SITE,
     time: Time | str = TIME,
-    frame: str = FRAME,
     timeout: float = TIMEOUT,
 ) -> AzEl:
     """Compute az/el and local sidereal time (LST) of an astronomical object.
@@ -115,8 +114,9 @@ def compute(
 
             >>> df = azely.compute('Sun', 'Tokyo', '1/1 12:00 to 12/31 12:00', freq='1D')
 
-    """  # noqa: E501
-    object_ = get_object(object, frame=frame, timeout=timeout)
+    """
+    if isinstance(object, str):
+        object = get_object(object, timeout=timeout)
 
     if isinstance(location, str):
         location = get_location(location, timeout=timeout)
@@ -124,7 +124,7 @@ def compute(
     if isinstance(time, str):
         time = replace(get_time(time), timezone=str(location.timezone))
 
-    return _compute(object_, location, time)
+    return _compute(object, location, time)
 
 
 # helper functions

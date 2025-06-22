@@ -4,45 +4,53 @@ __all__ = ["Object", "get_object"]
 # standard library
 from dataclasses import dataclass
 from functools import partial
+from re import split
 
 
 # dependencies
-from astropy.coordinates import Longitude, Latitude, SkyCoord, get_body
+from astropy.coordinates import SkyCoord, get_body
 from astropy.time import Time as ObsTime
 from astropy.utils.data import conf
-from .consts import AZELY_CACHE, FRAME, SOLAR_FRAME, SOLAR_OBJECTS, TIMEOUT
-from .utils import StrPath, cache, rename
+from .consts import AZELY_CACHE, SOLAR_OBJECTS
+from .utils import AzelyError, StrPath, cache, rename
 
 
-@dataclass
+# constants
+DEFAULT_FRAME = "icrs"
+SOLAR_FRAME = "solar"
+
+
+@dataclass(frozen=True)
 class Object:
-    """Object information."""
+    """Object information.
+
+    Args:
+        name: Name of the object.
+        longitude: Longitude of the object (with units).
+        latitude: Latitude of the object (with units).
+        frame: Coordinate frame name of the object.
+
+    """
 
     name: str
     """Name of the object."""
 
     longitude: str
-    """Longitude (e.g. R.A. or l) of the object."""
+    """Longitude of the object (with units)."""
 
     latitude: str
-    """Latitude (e.g. Dec. or b) of the object."""
+    """Latitude of the object (with units)."""
 
     frame: str
-    """Equatorial coordinates of the object."""
-
-    def __post_init__(self) -> None:
-        """Add or update units of object coordinates."""
-        if not self.is_solar:
-            self.longitude = str(Longitude(self.longitude, "hr"))
-            self.latitude = str(Latitude(self.latitude, "deg"))
+    """Coordinate frame name of the object. """
 
     @property
     def is_solar(self) -> bool:
         """Whether it is a solar object."""
         return self.frame == SOLAR_FRAME
 
-    def to_skycoord(self, obstime: ObsTime) -> SkyCoord:
-        """Convert it to a SkyCoord object."""
+    def to_skycoord(self, obstime: ObsTime, /) -> SkyCoord:
+        """Convert it to an astropy's SkyCoord object."""
         if self.is_solar:
             skycoord = get_body(
                 body=self.name,
@@ -61,80 +69,74 @@ class Object:
         return skycoord
 
 
+@partial(rename, key="name")
+@partial(cache, table="object")
 def get_object(
     query: str,
     /,
     *,
-    frame: str = FRAME,
+    sep: str = r"\s*;\s*",
+    timeout: float = 10.0,
+    # consumed by decorators
     name: str | None = None,
     source: StrPath | None = AZELY_CACHE,
-    timeout: float = TIMEOUT,
     update: bool = False,
 ) -> Object:
-    """Get object information."""
-    if query.lower() in SOLAR_OBJECTS:
-        return get_object_solar(
-            query,
-            name=name,
-            source=source,
-            update=update,
-        )
-    else:
-        return get_object_by_cds(
-            query,
-            frame=frame,
-            timeout=timeout,
-            name=name,
-            source=source,
-            update=update,
-        )
+    """Parse given query to create object information.
 
+    Args:
+        query: Query string for the object information.
+        sep: Separator string for splitting the query.
+        timeout: Timeout length in units of seconds.
+        name: Name of the object information (not cached).
+        source: Path of a source TOML file for reading from
+            or writing to the object information.
+        update: Whether to forcibly update the object information
+            in the source TOML file even if it already exists.
 
-@partial(rename, key="name")
-@partial(cache, table="object")
-def get_object_solar(
-    query: str,
-    /,
-    *,
-    # consumed by decorators
-    name: str | None,  # @rename
-    source: StrPath | None,  # @cache
-    update: bool,  # @cache
-) -> Object:
-    """Get object information in the solar system."""
-    return Object(
-        name=query,
-        longitude="NA",
-        latitude="NA",
-        frame=SOLAR_FRAME,
-    )
+    Returns
+        Object information created from the parsed query.
 
+    """
+    if len(args := split(sep, query)) == 1:
+        if query.lower() in SOLAR_OBJECTS:
+            return Object(
+                name=query,
+                longitude="NA",
+                latitude="NA",
+                frame=SOLAR_FRAME,
+            )
 
-@partial(rename, key="name")
-@partial(cache, table="object")
-def get_object_by_cds(
-    query: str,
-    /,
-    *,
-    frame: str,
-    timeout: float,
-    # consumed by decorators
-    name: str | None,  # @rename
-    source: StrPath | None,  # @cache
-    update: bool,  # @cache
-) -> Object:
-    """Get object information by the CDS name resolver."""
-    with conf.set_temp("remote_timeout", timeout):
-        response = SkyCoord.from_name(
+        with conf.set_temp("remote_timeout", timeout):
+            response = SkyCoord.from_name(
+                name=query,
+                frame=DEFAULT_FRAME,
+                parse=False,
+                cache=False,
+            )
+
+        # requiring double-str may be an astropy's issue
+        return Object(
             name=query,
-            frame=frame,
-            parse=False,
-            cache=False,
+            longitude=str(str(response.data.lon)),  # type: ignore
+            latitude=str(str(response.data.lat)),  # type: ignore
+            frame=DEFAULT_FRAME,
         )
 
-    return Object(
-        name=query,
-        longitude=str(response.data.lon),  # type: ignore
-        latitude=str(response.data.lat),  # type: ignore
-        frame=frame,
-    )
+    if len(args) == 3:
+        return Object(
+            name=args[0],
+            longitude=args[1],
+            latitude=args[2],
+            frame=DEFAULT_FRAME,
+        )
+
+    if len(args) == 4:
+        return Object(
+            name=args[0],
+            longitude=args[1],
+            latitude=args[2],
+            frame=args[3],
+        )
+
+    raise AzelyError(f"Failed to parse: {query!s}")
