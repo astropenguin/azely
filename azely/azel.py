@@ -66,11 +66,7 @@ def compute(
     object: str,
     site: str = SITE,
     time: Time | str = TIME,
-    view: str | None = VIEW,
     frame: str = FRAME,
-    freq: str = FREQ,
-    dayfirst: bool = DAYFIRST,
-    yearfirst: bool = YEARFIRST,
     timeout: float = TIMEOUT,
 ) -> AzEl:
     """Compute az/el and local sidereal time (LST) of an astronomical object.
