@@ -1,5 +1,6 @@
 __all__ = [
     "Location",
+    "Object",
     "Time",
     "azel",
     "compute",
@@ -27,5 +28,5 @@ from . import utils
 # aliases
 from .azel import compute
 from .location import Location, get_location
-from .object import get_object
+from .object import Object, get_object
 from .time import Time, get_time
