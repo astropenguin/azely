@@ -7,14 +7,14 @@ from azely.time import Time, get_time
 def test_get_time() -> None:
     expected = Time("00:00 today", "tomorrow", "10min", "")
 
-    assert get_time("") == expected
-    assert get_time(";;;") == expected
-    assert get_time("00:00 today") == expected
-    assert get_time(";tomorrow") == expected
-    assert get_time(";;10min") == expected
-    assert get_time("00:00 today;tomorrow") == expected
-    assert get_time("00:00 today;;10min") == expected
-    assert get_time("00:00 today;tomorrow;10min") == expected
+    assert get_time("", source=None) == expected
+    assert get_time(";;;", source=None) == expected
+    assert get_time("00:00 today", source=None) == expected
+    assert get_time(";tomorrow", source=None) == expected
+    assert get_time(";;10min", source=None) == expected
+    assert get_time("00:00 today;tomorrow", source=None) == expected
+    assert get_time("00:00 today;;10min", source=None) == expected
+    assert get_time("00:00 today;tomorrow;10min", source=None) == expected
 
 
 def test_time_to_index() -> None:
