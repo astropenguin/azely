@@ -1,4 +1,4 @@
-__all__ = ["AzEl", "calc", "compute"]
+__all__ = ["AzEl", "calc"]
 
 
 # standard library
@@ -129,42 +129,3 @@ def calc(
     azel.object = object
     azel.time = time
     return azel
-
-
-def compute(
-    object: Object | str,
-    location: Location | str = "",
-    time: Time | str = "",
-    # options for location, object, time
-    google_api: str | None = None,
-    ipinfo_api: str | None = None,
-    sep: str = r"\s*;\s*",
-    timeout: float = 10.0,
-    # options for cache
-    source: StrPath | None = AZELY_CACHE,
-    update: bool = False,
-) -> AzEl:
-    """Calculate azimuth/elevation of given object in given location at give time.
-
-    Args:
-        object: Object information or query string for it.
-        location: Location information or query string for it.
-        time: Time information or query string for it.
-        google_api: Optional Google API key.
-        ipinfo_api: Optional IPinfo API key.
-        sep: Separator string for splitting the query.
-        timeout: Timeout length in units of seconds.
-        source: Path of a source TOML file for reading from
-            or writing to the object/location/time information.
-        update: Whether to forcibly update the object/location/time
-            information in the source TOML file even if it already exists.
-
-    Returns:
-        DataFrame of the calculated azimuth/elevation.
-
-    Important:
-        This function will be deprecated in a future release.
-        Please use the ``azely.calc`` function instead.
-
-    """
-    return calc(**locals())
