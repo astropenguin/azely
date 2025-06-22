@@ -33,12 +33,13 @@ objects = [
 
 
 # test functions
-@mark.parametrize("obj", objects)
-def test_get_object(obj: Object) -> None:
+@mark.parametrize("expected", objects)
+def test_get_object(expected: Object) -> None:
     with NamedTemporaryFile("w", suffix=".toml") as f:
-        dump({obj.name: asdict(obj)}, f)
+        dump({expected.name: asdict(expected)}, f)
 
         # save an object to the TOML file
-        assert get_object(obj.name, source=f.name) == obj
+        assert get_object(expected.name, source=f.name) == expected
+
         # read the object from the TOML file
-        assert get_object(obj.name, source=f.name) == obj
+        assert get_object(expected.name, source=f.name) == expected

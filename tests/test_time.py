@@ -27,27 +27,17 @@ def test_time_to_index() -> None:
         inclusive="left",
     )
 
-    assert (
-        Time("2020-01-01 JST", "2020-01-07", "10min", "").to_index() == expected
-    ).all()
-    assert (
-        Time("2020-01-01", "2020-01-07 JST", "10min", "").to_index() == expected
-    ).all()
-    assert (
-        Time("2020-01-01 JST", "2020-01-07 JST", "10min", "").to_index() == expected
-    ).all()
-    assert (
-        Time("2020-01-01 JST", "2020-01-07", "10min", "UTC").to_index() == expected
-    ).all()
-    assert (
-        Time("2020-01-01", "2020-01-07 JST", "10min", "UTC").to_index() == expected
-    ).all()
-    assert (
-        Time("2020-01-01 JST", "2020-01-07 JST", "10min", "UTC").to_index() == expected
-    ).all()
-    assert (
-        Time("2020-01-01", "2020-01-07", "10min", "Asia/Tokyo").to_index() == expected
-    ).all()
-    assert (
-        Time("2020-01-01", "2020-01-07", "10min", "UTC").to_index() != expected
-    ).all()
+    def assert_(time: Time, expected: pd.DatetimeIndex):
+        assert (time.to_index() == expected).all()
+
+    def assert_not(time: Time, expected: pd.DatetimeIndex):
+        assert not (time.to_index() == expected).all()
+
+    assert_(Time("2020-01-01 JST", "2020-01-07", "10min", ""), expected)
+    assert_(Time("2020-01-01", "2020-01-07 JST", "10min", ""), expected)
+    assert_(Time("2020-01-01 JST", "2020-01-07 JST", "10min", ""), expected)
+    assert_(Time("2020-01-01 JST", "2020-01-07", "10min", "UTC"), expected)
+    assert_(Time("2020-01-01", "2020-01-07 JST", "10min", "UTC"), expected)
+    assert_(Time("2020-01-01 JST", "2020-01-07 JST", "10min", "UTC"), expected)
+    assert_(Time("2020-01-01", "2020-01-07", "10min", "Asia/Tokyo"), expected)
+    assert_not(Time("2020-01-01", "2020-01-07", "10min", "UTC"), expected)

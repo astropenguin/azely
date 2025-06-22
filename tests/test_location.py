@@ -28,7 +28,7 @@ locations = [
 
 # test functions
 @mark.parametrize("expected", locations)
-def test_get_location(expected: Location, /) -> None:
+def test_get_location(expected: Location) -> None:
     with NamedTemporaryFile("w", suffix=".toml") as f:
         dump({expected.name: asdict(expected)}, f)
 
