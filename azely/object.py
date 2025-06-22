@@ -8,16 +8,16 @@ from re import split
 
 
 # dependencies
-from astropy.coordinates import SkyCoord, get_body
+from astropy.coordinates import SkyCoord, get_body, solar_system_ephemeris
 from astropy.time import Time as ObsTime
 from astropy.utils.data import conf
-from .consts import SOLAR_OBJECTS
 from .utils import AzelyError, StrPath, cache, rename
 
 
 # constants
 DEFAULT_FRAME = "icrs"
 SOLAR_FRAME = "solar"
+SOLAR_OBJECTS = tuple(solar_system_ephemeris.bodies)  # type: ignore
 
 
 @dataclass(frozen=True)
