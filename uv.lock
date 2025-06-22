@@ -274,6 +274,7 @@ dependencies = [
     { name = "python-dateutil" },
     { name = "timezonefinder" },
     { name = "tomlkit" },
+    { name = "typing-extensions" },
 ]
 
 [package.dev-dependencies]
@@ -301,6 +302,7 @@ requires-dist = [
     { name = "python-dateutil", specifier = ">=2,<3" },
     { name = "timezonefinder", specifier = ">=6,<7" },
     { name = "tomlkit", specifier = ">=0.10,<1.0" },
+    { name = "typing-extensions", specifier = ">=4,<5" },
 ]
 
 [package.metadata.requires-dev]
