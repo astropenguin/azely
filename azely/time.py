@@ -23,7 +23,15 @@ DEFAULT_SEP = r"\s*;\s*"
 
 @dataclass(frozen=True)
 class Time:
-    """Time information."""
+    """Time information.
+
+    Args:
+        start: Left bound of the time (inclusive).
+        stop: Right bound of the time (inclusive).
+        step: Step of the time (pandas offset alias).
+        timezone: Timezone of the time (IANA timezone name).
+
+    """
 
     start: str
     """Left bound of the time (inclusive)."""
@@ -35,7 +43,7 @@ class Time:
     """Step of the time (pandas offset alias)."""
 
     timezone: str
-    """IANA timezone name (e.g. Asia/Tokyo)."""
+    """Timezone of the time (IANA timezone name)."""
 
     def to_index(self) -> pd.DatetimeIndex:
         """Convert it to a pandas' DatetimeIndex object."""
@@ -72,14 +80,14 @@ class Time:
 
 
 def get_time(query: str, /, *, sep: str = DEFAULT_SEP) -> Time:
-    """Get time information.
+    """Parse given query to create time information.
 
     Args:
-        query: Query string for time information.
+        query: Query string for the time information.
         sep: Separator string for splitting the query.
 
     Returns:
-        Time information object.
+        Time information created from the parsed query.
 
     """
     args = (s := split(sep, query)) + [""] * (len(DEFAULT_ARGS) - len(s))
