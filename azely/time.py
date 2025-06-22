@@ -14,7 +14,6 @@ import pandas as pd
 from astropy.coordinates import EarthLocation
 from astropy.time import Time as ObsTime
 from dateparser import parse
-from .consts import AZELY_CACHE
 from .utils import AzelyError, StrPath, cache
 
 
@@ -87,7 +86,7 @@ def get_time(
     *,
     sep: str = r"\s*;\s*",
     # consumed by decorators
-    source: StrPath | None = AZELY_CACHE,
+    source: StrPath | None = None,
     update: bool = False,
 ) -> Time:
     """Parse given query to create time information.

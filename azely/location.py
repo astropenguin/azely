@@ -15,7 +15,6 @@ from astropy.units import Quantity
 from astropy.utils.data import conf
 from ipinfo import getHandler
 from timezonefinder import TimezoneFinder
-from .consts import AZELY_CACHE
 from .utils import AzelyError, StrPath, cache, rename
 
 
@@ -80,7 +79,7 @@ def get_location(
     timeout: float = 10.0,
     # consumed by decorators
     name: str | None = None,
-    source: StrPath | None = AZELY_CACHE,
+    source: StrPath | None = None,
     update: bool = False,
 ) -> Location:
     """Parse given query to create location information.
