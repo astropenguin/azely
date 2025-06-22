@@ -1,212 +1,103 @@
-"""Azely's time module (mid-level API).
-
-This module mainly provides ``Time`` class for date and time information at a
-given location (time information, hereafter) and ``get_time`` function to obtain
-time information as an instance of ``Time`` class.
-
-The ``Time`` class is subclass of ``pandas.DatetimeIndex`` and expressed like
-``Time(['2020-02-18'], dtype='datetime64[ns, Asia/Tokyo]', freq='D')``.
-
-The ``get_time`` function computes time information in several cases:
-(1) Current time (e.g., [2020-01-01 22:32:58+09:00]).
-(2) Time range today (e.g., [2020-01-01 00:00, ..., 2020-01-02 00:00])
-(3) Time range of given date and length (by query)
-
-In the cases of (1) and (2), special queries, ``'now'`` and ``'today'``, must be
-specified, respectively. The ``view`` option specifies a timezone where
-time (range) is considered (timezone or location name can be accepted).
-
-In the case of (3), formatted query (e.g., ``'2020-01-01 to 2020-01-05'``)
-or natural language-like query can be used (e.g., ``'Jan. 1st to Jan. 5th'``),
-where start and end must be separated by ``'to'``. The ``view`` option also works.
-
-Examples:
-    To get current time in Tokyo::
-
-        >>> time = azely.time.get_time('now', view="Tokyo")
-
-    To get current time in UTC::
-
-        >>> time = azely.time.get_time('now', view="UTC")
-
-    To get time range today at ALMA AOS::
-
-        >>> time = azely.time.get_time('today', view="ALMA AOS")
-
-    To get time range from Jan. 1 to Jan. 5 in 2020 in UTC::
-
-        >>> time = azely.time.get_time('2020-01-01 to 2020-01-05', view='UTC')
-
-"""
-
 __all__ = ["Time", "get_time"]
 
 
 # standard library
-from datetime import datetime, timedelta, tzinfo
-from functools import partial
-from typing import Callable
-from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+from dataclasses import dataclass
+from datetime import timezone as tz
+from re import split
+from zoneinfo import ZoneInfo
 
 
-# dependent packages
+# dependencies
+import pandas as pd
 from astropy.coordinates import EarthLocation
 from astropy.time import Time as ObsTime
-from dateutil.parser import parse
-from pandas import DatetimeIndex, date_range
-
-# from pytz import UnknownTimeZoneError, timezone
+from dateparser import parse
 from .utils import AzelyError
-from .location import get_location
+
 
 # constants
-from .consts import (
-    DAYFIRST,
-    HERE,
-    NOW,
-    TODAY,
-    FREQ,
-    TIMEOUT,
-    YEARFIRST,
-)
-
-DELIMITER = "to"
+DEFAULT_ARGS = "00:00 today", "tomorrow", "10min", ""
+DEFAULT_SEP = r"\s*;\s*"
 
 
-# data classes
-class Time(DatetimeIndex):
-    """Azely's time information class."""
-
-    def to_obstime(self, earthloc: EarthLocation) -> ObsTime:
-        """Convert it to an astropy's time (obstime)."""
-        return ObsTime(self.tz_convert(None), location=earthloc)
-
-    def to_index(self) -> DatetimeIndex:
-        """Convert it to a pandas DatetimeIndex."""
-        return DatetimeIndex(self)
-
-    @property
-    def _constructor(self):
-        """Constructor of class."""
-        return Time
-
-
-# main functions
-def get_time(
-    query: str = TODAY,
-    view: str = HERE,
-    freq: str = FREQ,
-    dayfirst: bool = DAYFIRST,
-    yearfirst: bool = YEARFIRST,
-    timeout: float = TIMEOUT,
-) -> Time:
-    """Get time information by various ways.
-
-    The ``get_time`` function computes time information in several cases:
-    (1) Current time (e.g., [2020-01-01 22:32:58+09:00]).
-    (2) Time range of today (e.g., [2020-01-01 00:00, ..., 2020-01-02 00:00])
-    (3) Time range of given date and length (by query)
-
-    In the cases of (1) and (2), special queries, ``'now'`` and ``'today'``, must be
-    specified, respectively. The ``view`` option specifies a timezone where
-    time (range) is considered (timezone or location name can be accepted).
-
-    In the case of (3), formatted query (e.g., ``'2020-01-01 to 2020-01-05'``)
-    or natural language-like query can be used (e.g., ``'Jan. 1st to Jan. 5th'``),
-    where start and end must be separated by ``'to'``. The ``view`` option also works.
+@dataclass(frozen=True)
+class Time:
+    """Time information.
 
     Args:
-        query: Query string (e.g., ``'2020-01-01 to 2020-01-05'``).
-            If ``'today'`` (by default) or ``'now'`` is specified,
-            then time range of today or current time is computed, respectively.
-        view: Name of timezone (e.g., ``'Asia/Tokyo'`` or ``'UTC'``) or location
-            with which timezone can be identified (e.g., ``'Tokyo'``).
-        freq: Frequency of time samples as the same format of pandas offset aliases
-            (e.g., ``'1D'`` -> 1 day, ``'3h'`` -> 3 hours, ``'10min'`` -> 10 minutes).
-        dayfirst: Whether to interpret the first value in an ambiguous 3-integer
-            date (e.g., ``'01-02-03'``) as the day. If True, for example,
-            ``'01-02-03'`` is treated as Feb. 1st 2003.
-        yearfirst: Whether to interpret the first value in an ambiguous 3-integer
-            date (e.g., ``'01-02-03'``) as the year. If True, for example,
-            ``'01-02-03'`` is treated as Feb. 3rd 2001.
-            If ``dayfirst`` is also ``True``, then it will be Mar. 2nd 2001.
-        timeout: Query timeout expressed in units of seconds (see notes).
-
-    Returns:
-        Time information as an instance of ``Time`` class.
-
-    Raises:
-        AzelyError: Raised if the function fails to parse query or timezone.
-
-    Notes:
-        If location is specified as ``view``, then ``azely.location.get_location``
-        function is used inside the function, which requires internet connection
-        if the location is queried for the first time.
-
-    Examples:
-        To get current time in Tokyo::
-
-            >>> time = azely.time.get_time('now', view="Tokyo")
-
-        To get current time in UTC::
-
-            >>> time = azely.time.get_time('now', view="UTC")
-
-        To get time range of today at ALMA AOS::
-
-            >>> time = azely.time.get_time('today', view="ALMA AOS")
-
-        To get time range from Jan. 1 to Jan. 5 in 2020 in UTC::
-
-            >>> time = azely.time.get_time('2020-01-01 to 2020-01-05', view='UTC')
+        start: Left bound of the time (inclusive).
+        stop: Right bound of the time (inclusive).
+        step: Step of the time (pandas offset alias).
+        timezone: Timezone of the time (IANA timezone name).
 
     """
-    query = query.strip()
 
-    try:
-        zoneinfo = ZoneInfo(view)
-    except ZoneInfoNotFoundError:
-        zoneinfo = get_location(view, timeout=timeout).timezone
+    start: str
+    """Left bound of the time (inclusive)."""
 
-    if query.lower() == NOW:
-        return Time(get_time_now(zoneinfo))
-    elif query.lower() == TODAY:
-        return Time(get_time_today(freq, zoneinfo))
+    stop: str
+    """Right bound of the time (exclusive)."""
+
+    step: str
+    """Step of the time (pandas offset alias)."""
+
+    timezone: str
+    """Timezone of the time (IANA timezone name)."""
+
+    def to_index(self) -> pd.DatetimeIndex:
+        """Convert it to a pandas' DatetimeIndex object."""
+        if (start := parse(self.start)) is None:
+            raise AzelyError(f"Failed to parse: {self.start!s}")
+
+        if (stop := parse(self.stop, settings={"RELATIVE_BASE": start})) is None:
+            raise AzelyError(f"Failed to parse: {self.stop!s}")
+
+        timezone = ZoneInfo(self.timezone) if self.timezone else None
+
+        if (tzinfo := start.tzinfo or stop.tzinfo or timezone) is None:
+            raise AzelyError("Failed to resolve timezone.")
+
+        if start.tzinfo is None and stop.tzinfo is None:
+            start = start.replace(tzinfo=tzinfo)
+            stop = stop.replace(tzinfo=tzinfo)
+        elif start.tzinfo is None and stop.tzinfo is not None:
+            start = start.replace(tzinfo=stop.tzinfo)
+        elif start.tzinfo is not None and stop.tzinfo is None:
+            stop = stop.replace(tzinfo=start.tzinfo)
+
+        return pd.date_range(
+            start=start.astimezone(tz.utc),
+            end=stop.astimezone(tz.utc),
+            freq=self.step,
+            tz=tz.utc,
+            inclusive="left",
+        ).tz_convert(tzinfo)
+
+    def to_obstime(self, earthloc: EarthLocation, /) -> ObsTime:
+        """Convert it to an astropy's Time object."""
+        return ObsTime(self.to_index().tz_convert(None), location=earthloc)
+
+
+def get_time(query: str, /, *, sep: str = DEFAULT_SEP) -> Time:
+    """Parse given query to create time information.
+
+    Args:
+        query: Query string for the time information.
+        sep: Separator string for splitting the query.
+
+    Returns:
+        Time information created from the parsed query.
+
+    """
+    args = (s := split(sep, query)) + [""] * (len(DEFAULT_ARGS) - len(s))
+
+    if not query:
+        return Time(*DEFAULT_ARGS)
     else:
-        parser = partial(parse, dayfirst=dayfirst, yearfirst=yearfirst)
-        return Time(get_time_period(query, freq, zoneinfo, parser))
-
-
-# helper functions
-def get_time_now(timezone: tzinfo) -> DatetimeIndex:
-    """Get current time at given timezone."""
-    start = end = datetime.now(timezone)
-    return date_range(start, end, tz=timezone, name=str(timezone))
-
-
-def get_time_today(freq: str, timezone: tzinfo) -> DatetimeIndex:
-    """Get time range of today at given timezone."""
-    start = datetime.now(timezone).date()
-    end = start + timedelta(days=1)
-    return date_range(start, end, None, freq, tz=timezone, name=str(timezone))
-
-
-def get_time_period(
-    query: str,
-    freq: str,
-    timezone: tzinfo,
-    parser: Callable,
-) -> DatetimeIndex:
-    """Get time range of given date and length at given timezone."""
-    period = query.split(DELIMITER)
-
-    try:
-        if len(period) == 1:
-            start = parser(period[0])
-            end = start + timedelta(days=1)
-        else:
-            start, end = map(parser, period)
-    except ValueError:
-        raise AzelyError(f"Failed to parse: {query}")
-
-    return date_range(start, end, None, freq, tz=timezone, name=str(timezone))
+        return Time(
+            start=args[0] or DEFAULT_ARGS[0],
+            stop=args[1] or DEFAULT_ARGS[1],
+            step=args[2] or DEFAULT_ARGS[2],
+            timezone=args[3] or DEFAULT_ARGS[3],
+        )

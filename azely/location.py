@@ -47,7 +47,7 @@ class Location:
     def timezone(self) -> ZoneInfo:
         """Timezone of the location."""
         response = self.tf.timezone_at(
-            lng=Longitude(self.longitude).value,
+            lng=Longitude(self.longitude, wrap_angle="180 deg").value,
             lat=Latitude(self.latitude).value,
         )
 
