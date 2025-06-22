@@ -1,4 +1,5 @@
 __all__ = [
+    "Time",
     "azel",
     "compute",
     "consts",
@@ -26,4 +27,4 @@ from . import utils
 from .azel import compute
 from .location import get_location
 from .object import get_object
-from .time import get_time
+from .time import Time, get_time

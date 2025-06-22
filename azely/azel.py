@@ -1,6 +1,10 @@
 __all__ = ["AzEl", "compute"]
 
 
+# standard library
+from dataclasses import replace
+
+
 # dependent packages
 from pandas import DataFrame, DatetimeIndex, Timestamp, to_timedelta
 from .location import Location, get_location
@@ -61,7 +65,7 @@ class AzEl(DataFrame):
 def compute(
     object: str,
     site: str = SITE,
-    time: str = TIME,
+    time: Time | str = TIME,
     view: str | None = VIEW,
     frame: str = FRAME,
     freq: str = FREQ,
@@ -128,9 +132,11 @@ def compute(
     """  # noqa: E501
     object_ = get_object(object, frame=frame, timeout=timeout)
     site_ = get_location(site, timeout=timeout)
-    time_ = get_time(time, view or site, freq, dayfirst, yearfirst, timeout)
 
-    return _compute(object_, site_, time_)
+    if isinstance(time, str):
+        time = replace(get_time(time), timezone=str(site_.timezone))
+
+    return _compute(object_, site_, time)
 
 
 # helper functions
