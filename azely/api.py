@@ -1,159 +1,170 @@
-__all__ = ["AzEl", "compute"]
+__all__ = ["AzEl", "calc", "compute"]
 
 
 # standard library
 from dataclasses import replace
+from typing import ClassVar
 
 
 # dependent packages
-from pandas import DataFrame, DatetimeIndex, Timestamp, to_timedelta
-from .consts import FRAME, SITE, TIME, TIMEOUT
+import pandas as pd
+from typing_extensions import Self
+from .consts import AZELY_CACHE
 from .location import Location, get_location
 from .object import Object, get_object
 from .time import Time, get_time
+from .utils import StrPath
 
 
 # constants
 SOLAR_TO_SIDEREAL = 1.002_737_909
 
 
-# data class
-class AzEl(DataFrame):
-    """Subclass of pandas DataFrame with special properties for Azely."""
+class AzEl(pd.DataFrame):
+    """Azely's custom DataFrame."""
 
-    #: allowed custom attributes
-    _metadata = ["location", "object"]
+    alt: pd.Series
+    az: pd.Series
+    el: pd.Series
+    location: Location
+    object: Object
+    time: Time
+    _metadata: ClassVar = ["location", "object", "time"]
 
     @property
-    def alt(self):
-        """Alias of ``dataframe.el``."""
-        return self.el
+    def _constructor(self) -> type[Self]:
+        return type(self)
 
     @property
-    def in_lst(self):
-        """Convert time index to LST."""
+    def in_lst(self) -> Self:
+        """Convert its index to LST."""
         td = self.index - self.index[0]
         td_lst = td * SOLAR_TO_SIDEREAL + self.lst.iloc[0]
         td_lst = td_lst.floor("1D") + self.lst
 
-        lst = Timestamp(0) + td_lst
-        return self.set_index(DatetimeIndex(lst, name="LST"))
+        lst = pd.Timestamp(0) + td_lst
+        return self.set_index(pd.DatetimeIndex(lst, name="LST"))
 
     @property
-    def in_utc(self):
-        """Convert time index to UTC."""
+    def in_utc(self) -> Self:
+        """Convert timezone of its index to UTC."""
         utc = self.index.tz_convert("UTC")  # type: ignore
-        return self.set_index(DatetimeIndex(utc, name="UTC"))
-
-    @property
-    def _constructor(self):
-        """Constructor of class."""
-        return AzEl
+        return self.set_index(pd.DatetimeIndex(utc, name="UTC"))
 
 
-# main functions
-def compute(
+def calc(
     object: Object | str,
-    location: Location | str = SITE,
-    time: Time | str = TIME,
-    timeout: float = TIMEOUT,
+    location: Location | str = "",
+    time: Time | str = "",
+    # options for location, object, time
+    google_api: str | None = None,
+    ipinfo_api: str | None = None,
+    sep: str = r"\s*;\s*",
+    timeout: float = 10.0,
+    # options for information cache
+    source: StrPath | None = AZELY_CACHE,
+    update: bool = False,
 ) -> AzEl:
-    """Compute az/el and local sidereal time (LST) of an astronomical object.
-
-    The ``compute`` function (1) gets object, location, and time information, (2) computes
-    az/el and LST (local sidereal time), and (3) returns them as a pandas DataFrame.
-
-    Object information can be obtained either online (CDS) or offline (an user-defined
-    TOML file) by query (e.g., ``'NGC1068'`` or ``'Sun'``). Location information can be
-    obtained either online (IP address or OpenStreetMap) or offline (an user-defined
-    TOML file) by query (e.g., ``'Tokyo'`` or ``'ALMA AOS'``). Time information can be
-    computed from either formatted (e.g., ``'2020-01-01'``) and natural language-like
-    query (e.g., ``'Jan 1st 2020'``). See docstrings of ``get_[object|location|time]``
-    functions for more detailed query options.
-
-    There are two different locations to be used for a computation:
-    (1) ``site``: location where az/el of an object is computed.
-    (2) ``view``: location where time information (timezone) is considered.
+    """Calculate azimuth/elevation of given object in given location at give time.
 
     Args:
-        object: Query string for object information (e.g., ``'Sun'`` or ``'NGC1068'``).
-            Specify ``'user:NGC1068'`` if users want to get information from ``user.toml``.
-        site: Query string for location information at a site (e.g., ``'Tokyo'``).
-            Specify ``'user:Tokyo'`` if users want to get information from ``user.toml``.
-        time: Query string for time information at a view (e.g., ``'2020-01-01'``).
-        view: Query string for timezone information at the view. (e.g., ``'Asia/Tokyo'``,
-            ``'UTC'``, or ``Tokyo``). By default (``''``),  timezone at the site is used.
-        frame: (object option) Name of equatorial coordinates used in astropy's SkyCoord.
-        freq: (time option) Frequency of time samples as the same format of pandas offset
-            aliases (e.g., ``'1D'`` -> 1 day, ``'3h'`` -> 3 hours, ``'10min'`` -> 10 minutes).
-        dayfirst: (time option) Whether to interpret the first value in an ambiguous
-            3-integer date (e.g., ``'01-02-03'``) as the day. If True, for example,
-            ``'01-02-03'`` is treated as Feb. 1st 2003.
-        yearfirst: (time option) Whether to interpret the first value in an ambiguous
-            3-integer date (e.g., ``'01-02-03'``) as the year. If True, for example,
-            ``'01-02-03'`` is treated as Feb. 3rd 2001. If ``dayfirst`` is also ``True``,
-            then it will be Mar. 2nd 2001.
-        timeout: (common option) Query timeout expressed in units of seconds.
+        object: Object information or query string for it.
+        location: Location information or query string for it.
+        time: Time information or query string for it.
+        google_api: Optional Google API key.
+        ipinfo_api: Optional IPinfo API key.
+        sep: Separator string for splitting the query.
+        timeout: Timeout length in units of seconds.
+        source: Path of a source TOML file for reading from
+            or writing to the object/location/time information.
+        update: Whether to forcibly update the object/location/time
+            information in the source TOML file even if it already exists.
 
     Returns:
-        Computed DataFrame of object's az/el and LST at given site and view.
-
-    Raises:
-        AzelyError: Raised if one of mid-level APIs fails to get any information.
-
-    Examples:
-        To compute daily az/el of NGC1068 at ALMA AOS::
-
-            >>> df = azely.compute('NGC1068', 'ALMA AOS', '2020-02-01')
-
-        To compute the same object and location but view from Japan::
-
-            >>> df = azely.compute('NGC1068', 'ALMA AOS', '2020-02-01', view='Tokyo')
-
-        To compute az/el of Sun at noon during an year at Tokyo::
-
-            >>> df = azely.compute('Sun', 'Tokyo', '1/1 12:00 to 12/31 12:00', freq='1D')
+        DataFrame of the calculated azimuth/elevation.
 
     """
     if isinstance(object, str):
-        object = get_object(object, timeout=timeout)
+        object = get_object(
+            object,
+            sep=sep,
+            timeout=timeout,
+            source=source,
+            update=update,
+        )
 
     if isinstance(location, str):
-        location = get_location(location, timeout=timeout)
+        location = get_location(
+            location,
+            google_api=google_api,
+            ipinfo_api=ipinfo_api,
+            sep=sep,
+            timeout=timeout,
+            source=source,
+            update=update,
+        )
 
     if isinstance(time, str):
-        time = replace(get_time(time), timezone=str(location.timezone))
+        time = get_time(
+            time,
+            sep=sep,
+            source=source,
+            update=update,
+        )
 
-    return _compute(object, location, time)
-
-
-# helper functions
-def _compute(object: Object, location: Location, time: Time) -> AzEl:
-    """Compute az/el and local sidereal time (LST) of an astronomical object.
-
-    Similar to ``compute`` function, but this function receives instances
-    of ``Object``, ``Location``, and ``Time`` classes as arguments.
-
-    Args:
-        object: Object information.
-        site: Site location information.
-        time: Time information.
-
-    Returns:
-        Computed DataFrame of object's az/el and LST at given site and view.
-
-    Raises:
-        AzelyError: Raised if one of mid-level APIs fails to get any information.
-
-    """
+    time = replace(time, timezone=str(location.timezone))
     obstime = time.to_obstime(location.to_earthlocation())
     skycoord = object.to_skycoord(obstime)
+    sidereal_time = obstime.sidereal_time("mean").value
 
-    az = skycoord.altaz.az  # type: ignore
-    el = skycoord.altaz.alt  # type: ignore
-    lst = to_timedelta(obstime.sidereal_time("mean").value, unit="hr")
-
-    azel = AzEl(dict(az=az, el=el, lst=lst), index=time.to_index())
+    azel = AzEl(
+        index=time.to_index(),
+        data={
+            "az": skycoord.altaz.az,  # type: ignore
+            "el": skycoord.altaz.alt,  # type: ignore
+            "lst": pd.to_timedelta(sidereal_time, unit="hr"),
+        },
+    )
     azel.location = location
     azel.object = object
+    azel.time = time
     return azel
+
+
+def compute(
+    object: Object | str,
+    location: Location | str = "",
+    time: Time | str = "",
+    # options for location, object, time
+    google_api: str | None = None,
+    ipinfo_api: str | None = None,
+    sep: str = r"\s*;\s*",
+    timeout: float = 10.0,
+    # options for cache
+    source: StrPath | None = AZELY_CACHE,
+    update: bool = False,
+) -> AzEl:
+    """Calculate azimuth/elevation of given object in given location at give time.
+
+    Args:
+        object: Object information or query string for it.
+        location: Location information or query string for it.
+        time: Time information or query string for it.
+        google_api: Optional Google API key.
+        ipinfo_api: Optional IPinfo API key.
+        sep: Separator string for splitting the query.
+        timeout: Timeout length in units of seconds.
+        source: Path of a source TOML file for reading from
+            or writing to the object/location/time information.
+        update: Whether to forcibly update the object/location/time
+            information in the source TOML file even if it already exists.
+
+    Returns:
+        DataFrame of the calculated azimuth/elevation.
+
+    Important:
+        This function will be deprecated in a future release.
+        Please use the ``azely.calc`` function instead.
+
+    """
+    return calc(**locals())
