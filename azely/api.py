@@ -47,7 +47,7 @@ class AzEl(pd.DataFrame):
 
     @property
     def in_utc(self) -> Self:
-        """Convert timezone of its index to UTC."""
+        """Convert its index to UTC."""
         utc = self.index.tz_convert("UTC")  # type: ignore
         return self.set_index(pd.DatetimeIndex(utc, name="UTC"))
 
