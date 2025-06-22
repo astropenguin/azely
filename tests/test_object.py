@@ -19,13 +19,13 @@ objects = [
     ),
     Object(
         name="3C 273",
-        longitude="12h29m06.69982572s",
+        longitude="187d16m40.49738576s",
         latitude="2d03m08.59762998s",
         frame="icrs",
     ),
     Object(
         name="3C 345",
-        longitude="16h42m58.80997043s",
+        longitude="250d44m42.14955645s",
         latitude="39d48m36.9939552s",
         frame="icrs",
     ),
