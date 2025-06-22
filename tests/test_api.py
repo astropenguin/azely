@@ -3,8 +3,8 @@ from io import StringIO
 
 
 # dependencies
+import azely
 import pandas as pd
-from azely.api import compute
 from pandas.testing import assert_frame_equal
 
 
@@ -39,10 +39,15 @@ Asia/Tokyo,az,el,lst
 
 
 # test functions
-def test_compute():
-    result = compute("NGC1068", "ALMA AOS", "2020-02-01 JST; Tomorrow; 1h")
+def test_calc() -> None:
+    df = azely.calc(
+        "NGC1068",
+        "ALMA AOS",
+        "2020-02-01 JST; Tomorrow; 1h",
+        source=None,
+    )
     expected = pd.read_csv(StringIO(data), index_col=0)
-    expected = expected.set_index(result.index)
+    expected = expected.set_index(df.index)
 
     columns = ["az", "el"]
-    assert_frame_equal(result[columns], expected[columns], atol=1e-3)
+    assert_frame_equal(df[columns], expected[columns], atol=1e-3)
