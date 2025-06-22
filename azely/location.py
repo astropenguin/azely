@@ -120,10 +120,11 @@ def get_location(
                 google_api_key=google_api,
             )
 
+        # requiring double-str may be an astropy's issue
         return Location(
             name=query,
-            longitude=str(response.lon),
-            latitude=str(response.lat),
+            longitude=str(str(response.lon)),
+            latitude=str(str(response.lat)),
             altitude=str(response.height),
         )
 

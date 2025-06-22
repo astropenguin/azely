@@ -13,15 +13,15 @@ from tomlkit import dump
 locations = [
     Location(
         name="Atacama Large Millimeter/submillimeter Array",
-        longitude="292d14m48.93972s",
+        longitude="-67d45m11.06028s",
         latitude="-23d01m21.97704s",
-        altitude="0.0 m",
+        altitude="-3.8089945457383293e-10 m",
     ),
     Location(
         name="Nobeyama Radio Astronomy Observatory",
         longitude="138d28m25.28616s",
         latitude="35d56m34.76364s",
-        altitude="0.0 m",
+        altitude="2.1695119188480857e-11 m",
     ),
 ]
 
