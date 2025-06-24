@@ -11,8 +11,6 @@ from zoneinfo import ZoneInfo
 
 # dependencies
 import pandas as pd
-from astropy.coordinates import EarthLocation
-from astropy.time import Time as ObsTime
 from dateparser import parse
 from dateparser.timezone_parser import StaticTzInfo
 from .utils import AzelyError, StrPath, cache
@@ -80,10 +78,6 @@ class Time:
             name=tzname,
             tz=tz.utc,
         ).tz_convert(tzinfo)
-
-    def to_obstime(self, earthloc: EarthLocation, /) -> ObsTime:
-        """Convert it to an astropy's Time object."""
-        return ObsTime(self.to_index().tz_convert(None), location=earthloc)
 
 
 @partial(cache, table="time")
