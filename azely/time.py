@@ -4,7 +4,7 @@ __all__ = ["Time", "get_time"]
 # standard library
 from dataclasses import dataclass
 from datetime import timezone as tz
-from functools import partial
+from functools import cached_property, partial
 from re import split
 from zoneinfo import ZoneInfo
 
@@ -44,8 +44,9 @@ class Time:
     timezone: str
     """Timezone of the time (IANA timezone name)."""
 
-    def to_index(self) -> pd.DatetimeIndex:
-        """Convert it to a pandas' DatetimeIndex object."""
+    @cached_property
+    def index(self) -> pd.DatetimeIndex:
+        """Convert it to a pandas DatetimeIndex."""
         if (start := parse(self.start)) is None:
             raise AzelyError(f"Failed to parse: {self.start!s}")
 

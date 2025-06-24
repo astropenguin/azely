@@ -3,7 +3,7 @@ __all__ = ["Location", "get_location"]
 
 # standard library
 from dataclasses import dataclass
-from functools import partial
+from functools import cached_property, partial
 from re import split
 from typing import ClassVar
 from zoneinfo import ZoneInfo
@@ -48,9 +48,9 @@ class Location:
 
     _timezone_finder: ClassVar = TimezoneFinder()
 
-    @property
+    @cached_property
     def timezone(self) -> ZoneInfo:
-        """IANA timezone of the location."""
+        """Convert it to an IANA ZoneInfo."""
         response = self._timezone_finder.timezone_at(
             lng=Longitude(self.longitude, wrap_angle="180d").value,
             lat=Latitude(self.latitude).value,
@@ -58,8 +58,9 @@ class Location:
 
         return ZoneInfo(str(response))
 
-    def to_earthlocation(self) -> EarthLocation:
-        """Convert it to an astropy's EarthLocation object."""
+    @cached_property
+    def earthlocation(self) -> EarthLocation:
+        """Convert it to an astropy EarthLocation."""
         return EarthLocation(
             lon=Longitude(self.longitude),
             lat=Latitude(self.latitude),

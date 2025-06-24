@@ -44,14 +44,9 @@ class Object:
     frame: str
     """Coordinate frame name of the object. """
 
-    @property
-    def is_solar(self) -> bool:
-        """Whether it is a solar object."""
-        return self.frame == SOLAR_FRAME
-
-    def to_skycoord(self, obstime: ObsTime, /) -> SkyCoord:
-        """Convert it to an astropy's SkyCoord object."""
-        if self.is_solar:
+    def skycoord(self, obstime: ObsTime, /) -> SkyCoord:
+        """Convert it to an astropy SkyCoord."""
+        if self.frame == SOLAR_FRAME:
             skycoord = get_body(
                 body=self.name,
                 time=obstime,

@@ -41,7 +41,7 @@ class AzEl(pd.DataFrame):
         """Convert its index to LST."""
         time = ObsTime(
             self.index.tz_convert(None),  # type: ignore
-            location=self.location.to_earthlocation(),
+            location=self.location.earthlocation,
         )
         lst = pd.to_timedelta(time.sidereal_time("mean").value, "hr")
         dlst = (self.index - self.index[0]) * SOLAR_TO_SIDEREAL
@@ -116,13 +116,13 @@ def calc(
 
     time = replace(time, timezone=str(location.timezone))
     obstime = ObsTime(
-        (index := time.to_index()).tz_convert(None),
-        location=location.to_earthlocation(),
+        time.index.tz_convert(None),
+        location=location.earthlocation,
     )
-    skycoord = object.to_skycoord(obstime).altaz
+    skycoord = object.skycoord(obstime).altaz
 
     azel = AzEl(
-        index=index,
+        index=time.index,
         data={
             "az": skycoord.az,  # type: ignore
             "el": skycoord.alt,  # type: ignore
