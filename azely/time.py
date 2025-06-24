@@ -14,6 +14,7 @@ import pandas as pd
 from astropy.coordinates import EarthLocation
 from astropy.time import Time as ObsTime
 from dateparser import parse
+from dateparser.timezone_parser import StaticTzInfo
 from .utils import AzelyError, StrPath, cache
 
 
@@ -58,6 +59,11 @@ class Time:
         if (tzinfo := start.tzinfo or stop.tzinfo or timezone) is None:
             raise AzelyError("Failed to resolve timezone.")
 
+        if isinstance(tzinfo, StaticTzInfo):
+            tzname = tzinfo.tzname(None)
+        else:
+            tzname = str(tzinfo)
+
         if start.tzinfo is None and stop.tzinfo is None:
             start = start.replace(tzinfo=tzinfo)
             stop = stop.replace(tzinfo=tzinfo)
@@ -70,8 +76,9 @@ class Time:
             start=start.astimezone(tz.utc),
             end=stop.astimezone(tz.utc),
             freq=self.step,
-            tz=tz.utc,
             inclusive="left",
+            name=tzname,
+            tz=tz.utc,
         ).tz_convert(tzinfo)
 
     def to_obstime(self, earthloc: EarthLocation, /) -> ObsTime:
