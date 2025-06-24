@@ -8,6 +8,7 @@ from typing import ClassVar
 
 # dependent packages
 import pandas as pd
+from astropy.time import Time as ObsTime
 from typing_extensions import Self
 from .consts import AZELY_CACHE
 from .location import Location, get_location
@@ -38,12 +39,13 @@ class AzEl(pd.DataFrame):
     @property
     def in_lst(self) -> Self:
         """Convert its index to LST."""
-        td = self.index - self.index[0]
-        td_lst = td * SOLAR_TO_SIDEREAL + self.lst.iloc[0]
-        td_lst = td_lst.floor("1D") + self.lst
-
-        lst = pd.Timestamp(0) + td_lst
-        return self.set_index(pd.DatetimeIndex(lst, name="LST"))
+        time = ObsTime(
+            self.index.tz_convert(None),  # type: ignore
+            location=self.location.to_earthlocation(),
+        )
+        lst = pd.to_timedelta(time.sidereal_time("mean").value, "hr")
+        dlst = (self.index - self.index[0]) * SOLAR_TO_SIDEREAL
+        return self.set_index((lst + (lst[0] + dlst).floor("D")).rename("LST"))
 
     @property
     def in_utc(self) -> Self:
@@ -113,16 +115,17 @@ def calc(
         )
 
     time = replace(time, timezone=str(location.timezone))
-    obstime = time.to_obstime(location.to_earthlocation())
-    skycoord = object.to_skycoord(obstime)
-    sidereal_time = obstime.sidereal_time("mean").value
+    obstime = ObsTime(
+        (index := time.to_index()).tz_convert(None),
+        location=location.to_earthlocation(),
+    )
+    skycoord = object.to_skycoord(obstime).altaz
 
     azel = AzEl(
-        index=time.to_index(),
+        index=index,
         data={
-            "az": skycoord.altaz.az,  # type: ignore
-            "el": skycoord.altaz.alt,  # type: ignore
-            "lst": pd.to_timedelta(sidereal_time, unit="hr"),
+            "az": skycoord.az,  # type: ignore
+            "el": skycoord.alt,  # type: ignore
         },
     )
     azel.location = location
