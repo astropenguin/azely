@@ -1,5 +1,5 @@
-### Azely ###
-.azely/
+# Created by https://www.toptal.com/developers/gitignore/api/python
+# Edit at https://www.toptal.com/developers/gitignore?templates=python
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
@@ -74,7 +74,7 @@ instance/
 
 # Sphinx documentation
 docs/readme.rst
-docs/_apidoc
+docs/_apidoc/
 docs/_build/
 
 # PyBuilder
@@ -174,3 +174,5 @@ poetry.toml
 
 # LSP config files
 pyrightconfig.json
+
+# End of https://www.toptal.com/developers/gitignore/api/python
