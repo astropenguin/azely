@@ -11,7 +11,7 @@ from re import split
 from astropy.coordinates import SkyCoord, get_body, solar_system_ephemeris
 from astropy.time import Time as ObsTime
 from astropy.utils.data import conf
-from .utils import AzelyError, StrPath, cache, rename
+from .utils import AzelyError, StrPath, cache
 
 
 # constants
@@ -64,7 +64,6 @@ class Object:
         return skycoord
 
 
-@partial(rename, key="name")
 @partial(cache, table="object")
 def get_object(
     query: str,
@@ -73,9 +72,9 @@ def get_object(
     sep: str = r"\s*;\s*",
     timeout: float = 10.0,
     # consumed by decorators
-    name: str | None = None,
+    append: bool = True,
+    overwrite: bool = False,
     source: StrPath | None = None,
-    update: bool = False,
 ) -> Object:
     """Parse given query to create object information.
 
@@ -83,11 +82,11 @@ def get_object(
         query: Query string for the object information.
         sep: Separator string for splitting the query.
         timeout: Timeout length in units of seconds.
-        name: Name of the object information (not cached).
-        source: Path of a source TOML file for reading from
-            or writing to the object information.
-        update: Whether to forcibly update the object information
-            in the source TOML file even if it already exists.
+        append: Whether to append the object information
+            to the source TOML file if it does not exist.
+        overwrite: Whether to overwrite the object information
+            to the source TOML file even if it already exists.
+        source: Path of a source TOML file for the object information.
 
     Returns
         Object information created from the parsed query.

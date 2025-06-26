@@ -1,4 +1,4 @@
-__all__ = ["AzelyError", "cache", "rename"]
+__all__ = ["AzelyError", "cache"]
 
 
 # standard library
@@ -34,42 +34,30 @@ def cache(func: TCallable, table: str) -> TCallable:
     def wrapper(*args: Any, **kwargs: Any) -> Any:
         bound = signature.bind(*args, **kwargs)
         bound.apply_defaults()
-        bargs = bound.arguments
 
-        if (source := bargs["source"]) is None:
+        append = bound.arguments.get("append", True)
+        overwrite = bound.arguments.get("overwrite", False)
+        source = bound.arguments.get("source", None)
+        query = bound.arguments.get("query", None)
+
+        if source is None:
             return func(*args, **kwargs)
 
         with sync_toml(source) as doc:
-            tab = doc.setdefault(table, {})
+            table_ = doc.setdefault(table, {})
 
-            if (query := bargs["query"]) in tab:
-                if not bargs["update"]:
-                    return DataClass(**tab[query].unwrap())
+            if query not in table_ and not append and not overwrite:
+                return func(*args, **kwargs)
 
-            tab[query] = asdict(func(*args, **kwargs))
+            if query in table_ and not overwrite:
+                return DataClass(**table_[query].unwrap())
 
-            if tab is not doc.last_item():
-                tab.add(nl())
+            table_[query] = asdict(obj := func(*args, **kwargs))
 
-            return DataClass(**tab[query].unwrap())
+            if table_ is not doc.last_item():
+                table_.add(nl())
 
-    return wrapper  # type: ignore
-
-
-def rename(func: TCallable, key: str) -> TCallable:
-    """Update the name field of a dataclass object."""
-    signature = Signature.from_callable(func)
-
-    @wraps(func)
-    def wrapper(*args: Any, **kwargs: Any) -> Any:
-        bound = signature.bind(*args, **kwargs)
-        bound.apply_defaults()
-        bargs = bound.arguments
-
-        if (name := bargs["name"]) is None:
-            return func(*args, **kwargs)
-        else:
-            return replace(func(*args, **kwargs), **{key: name})
+            return obj
 
     return wrapper  # type: ignore
 
