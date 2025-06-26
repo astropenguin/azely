@@ -4,21 +4,20 @@ __all__ = ["Time", "get_time"]
 # standard library
 from dataclasses import dataclass
 from datetime import timezone as tz
-from functools import partial
+from functools import cached_property, partial
 from re import split
 from zoneinfo import ZoneInfo
 
 
 # dependencies
 import pandas as pd
-from astropy.coordinates import EarthLocation
-from astropy.time import Time as ObsTime
 from dateparser import parse
+from dateparser.timezone_parser import StaticTzInfo
 from .utils import AzelyError, StrPath, cache
 
 
 # constants
-DEFAULT_QUERY = "00:00 today;tomorrow;10min;"
+DEFAULT_QUERY = "00:00 today;00:00 tomorrow;10min;"
 
 
 @dataclass(frozen=True)
@@ -45,8 +44,9 @@ class Time:
     timezone: str
     """Timezone of the time (IANA timezone name)."""
 
-    def to_index(self) -> pd.DatetimeIndex:
-        """Convert it to a pandas' DatetimeIndex object."""
+    @cached_property
+    def index(self) -> pd.DatetimeIndex:
+        """Convert it to a pandas DatetimeIndex."""
         if (start := parse(self.start)) is None:
             raise AzelyError(f"Failed to parse: {self.start!s}")
 
@@ -57,6 +57,11 @@ class Time:
 
         if (tzinfo := start.tzinfo or stop.tzinfo or timezone) is None:
             raise AzelyError("Failed to resolve timezone.")
+
+        if isinstance(tzinfo, StaticTzInfo):
+            tzname = tzinfo.tzname(None)
+        else:
+            tzname = str(tzinfo)
 
         if start.tzinfo is None and stop.tzinfo is None:
             start = start.replace(tzinfo=tzinfo)
@@ -70,13 +75,10 @@ class Time:
             start=start.astimezone(tz.utc),
             end=stop.astimezone(tz.utc),
             freq=self.step,
-            tz=tz.utc,
             inclusive="left",
+            name=tzname,
+            tz=tz.utc,
         ).tz_convert(tzinfo)
-
-    def to_obstime(self, earthloc: EarthLocation, /) -> ObsTime:
-        """Convert it to an astropy's Time object."""
-        return ObsTime(self.to_index().tz_convert(None), location=earthloc)
 
 
 @partial(cache, table="time")
