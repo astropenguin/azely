@@ -1,6 +1,6 @@
 [project]
 name = "azely"
-version = "0.7.0"
+version = "1.0.0"
 description = "Azimuth/elevation visualization for astronomy"
 readme = "README.md"
 keywords = [
