@@ -44,7 +44,8 @@ class AzEl(pd.DataFrame):
             location=self.location.earthlocation,
         )
         lst = pd.to_timedelta(time.sidereal_time("mean").value, "hr")
-        dlst = (self.index - self.index[0]) * SOLAR_TO_SIDEREAL
+        dt = pd.TimedeltaIndex(self.index - self.index[0], freq=None)  # type: ignore
+        dlst = dt * SOLAR_TO_SIDEREAL
         return self.set_index((lst + (lst[0] + dlst).floor("D")).rename("LST"))
 
     @property
