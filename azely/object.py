@@ -11,7 +11,7 @@ from re import split
 from astropy.coordinates import SkyCoord, get_body, solar_system_ephemeris
 from astropy.time import Time as ObsTime
 from astropy.utils.data import conf
-from typing_extensions import Required, TypedDict
+from typing_extensions import NotRequired, Required, TypedDict
 from .utils import AzelyError, StrPath, cache
 
 
@@ -22,7 +22,7 @@ class ObjectDict(TypedDict):
     name: Required[str]
     longitude: Required[str]
     latitude: Required[str]
-    frame: Required[str]
+    frame: NotRequired[str]
 
 
 # constants
@@ -52,7 +52,7 @@ class Object:
     latitude: str
     """Latitude of the object (with units)."""
 
-    frame: str
+    frame: str = DEFAULT_FRAME
     """Coordinate frame name of the object. """
 
     def skycoord(self, obstime: ObsTime, /) -> SkyCoord:
@@ -128,20 +128,7 @@ def get_object(
             frame=DEFAULT_FRAME,
         )
 
-    if len(args) == 3:
-        return Object(
-            name=args[0],
-            longitude=args[1],
-            latitude=args[2],
-            frame=DEFAULT_FRAME,
-        )
-
-    if len(args) == 4:
-        return Object(
-            name=args[0],
-            longitude=args[1],
-            latitude=args[2],
-            frame=args[3],
-        )
+    if 3 <= len(args) <= 4:
+        return Object(*args)
 
     raise AzelyError(f"Failed to parse: {query!s}")

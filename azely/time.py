@@ -13,7 +13,7 @@ from zoneinfo import ZoneInfo
 import pandas as pd
 from dateparser import parse
 from dateparser.timezone_parser import StaticTzInfo
-from typing_extensions import Required, TypedDict
+from typing_extensions import NotRequired, TypedDict
 from .utils import AzelyError, StrPath, cache
 
 
@@ -21,14 +21,18 @@ from .utils import AzelyError, StrPath, cache
 class TimeDict(TypedDict):
     """Dictionary of the time information attributes."""
 
-    start: Required[str]
-    stop: Required[str]
-    step: Required[str]
-    timezone: Required[str]
+    start: NotRequired[str]
+    stop: NotRequired[str]
+    step: NotRequired[str]
+    timezone: NotRequired[str]
 
 
 # constants
-DEFAULT_QUERY = "00:00 today;00:00 tomorrow;10min;"
+DEFAULT_START = "00:00 today"
+DEFAULT_STOP = "00:00 tomorrow"
+DEFAULT_STEP = "10min"
+DEFAULT_TIMEZONE = ""
+N_TIME_ARGS = 4
 
 
 @dataclass(frozen=True)
@@ -43,16 +47,16 @@ class Time:
 
     """
 
-    start: str
+    start: str = DEFAULT_START
     """Left bound of the time (inclusive)."""
 
-    stop: str
+    stop: str = DEFAULT_STOP
     """Right bound of the time (exclusive)."""
 
-    step: str
+    step: str = DEFAULT_STEP
     """Step of the time (pandas offset alias)."""
 
-    timezone: str
+    timezone: str = DEFAULT_TIMEZONE
     """Timezone of the time (IANA timezone name)."""
 
     @cached_property
@@ -119,15 +123,14 @@ def get_time(
         Time information created from the parsed query.
 
     """
-    default_args = split(sep, DEFAULT_QUERY)
-    parsed_args = (s := split(sep, query)) + [""] * (len(default_args) - len(s))
-
     if not query:
-        return Time(*default_args)
+        return Time()
     else:
+        args = (_ := split(sep, query)) + [""] * (N_TIME_ARGS - len(_))
+
         return Time(
-            start=parsed_args[0] or default_args[0],
-            stop=parsed_args[1] or default_args[1],
-            step=parsed_args[2] or default_args[2],
-            timezone=parsed_args[3] or default_args[3],
+            start=args[0] or DEFAULT_START,
+            stop=args[1] or DEFAULT_STOP,
+            step=args[2] or DEFAULT_STEP,
+            timezone=args[3] or DEFAULT_TIMEZONE,
         )
