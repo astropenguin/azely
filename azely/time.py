@@ -17,7 +17,7 @@ from .utils import AzelyError, StrPath, cache
 
 
 # constants
-DEFAULT_QUERY = "00:00 today;tomorrow;10min;"
+DEFAULT_QUERY = "00:00 today;00:00 tomorrow;10min;"
 
 
 @dataclass(frozen=True)

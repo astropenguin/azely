@@ -19,14 +19,14 @@ objects = [
     ),
     azely.Object(
         name="3C 273",
-        longitude="187d16m40.497384s",
-        latitude="2d03m08.597628s",
+        longitude="187d16m40.49738576s",
+        latitude="2d03m08.59762998s",
         frame="icrs",
     ),
     azely.Object(
         name="3C 345",
-        longitude="250d44m42.149544s",
-        latitude="39d48m36.99396s",
+        longitude="250d44m42.14955645s",
+        latitude="39d48m36.9939552s",
         frame="icrs",
     ),
 ]
