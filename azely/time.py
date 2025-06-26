@@ -1,4 +1,4 @@
-__all__ = ["Time", "get_time"]
+__all__ = ["Time", "TimeDict", "get_time"]
 
 
 # standard library
@@ -13,7 +13,18 @@ from zoneinfo import ZoneInfo
 import pandas as pd
 from dateparser import parse
 from dateparser.timezone_parser import StaticTzInfo
+from typing_extensions import Required, TypedDict
 from .utils import AzelyError, StrPath, cache
+
+
+# type hints
+class TimeDict(TypedDict):
+    """Dictionary of the time information attributes."""
+
+    start: Required[str]
+    stop: Required[str]
+    step: Required[str]
+    timezone: Required[str]
 
 
 # constants

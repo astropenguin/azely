@@ -1,4 +1,4 @@
-__all__ = ["Location", "get_location"]
+__all__ = ["Location", "LocationDict", "get_location"]
 
 
 # standard library
@@ -15,7 +15,18 @@ from astropy.units import Quantity
 from astropy.utils.data import conf
 from ipinfo import getHandler
 from timezonefinder import TimezoneFinder
+from typing_extensions import Required, TypedDict
 from .utils import AzelyError, StrPath, cache
+
+
+# type hints
+class LocationDict(TypedDict):
+    """Dictionary of the location information attributes."""
+
+    name: Required[str]
+    longitude: Required[str]
+    latitude: Required[str]
+    altitude: Required[str]
 
 
 # constants

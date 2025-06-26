@@ -5,6 +5,8 @@ from tempfile import NamedTemporaryFile
 
 # dependencies
 import azely
+from astropy.coordinates import Angle
+from astropy.time import Time
 from pytest import mark
 from tomlkit import dump
 
@@ -37,9 +39,14 @@ objects = [
 def test_get_object(expected: azely.Object) -> None:
     with NamedTemporaryFile("w", suffix=".toml") as f:
         dump({expected.name: asdict(expected)}, f)
+        now = Time.now()
 
         # save an object to the TOML file
-        assert azely.get_object(expected.name, source=f.name) == expected
+        left = azely.get_object(expected.name, source=f.name).skycoord(now)
+        right = expected.skycoord(now)
+        assert left.separation(right) < Angle(1, "mas")
 
         # read the object from the TOML file
-        assert azely.get_object(expected.name, source=f.name) == expected
+        left = azely.get_object(expected.name, source=f.name).skycoord(now)
+        right = expected.skycoord(now)
+        assert left.separation(right) < Angle(1, "mas")

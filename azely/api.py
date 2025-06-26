@@ -11,26 +11,32 @@ import pandas as pd
 from astropy.time import Time as ObsTime
 from typing_extensions import NotRequired, Self, TypedDict
 from .consts import AZELY_CACHE
-from .location import Location, get_location
-from .object import Object, get_object
-from .time import Time, get_time
+from .location import Location, LocationDict, get_location
+from .object import Object, ObjectDict, get_object
+from .time import Time, TimeDict, get_time
 from .utils import StrPath
 
 
 # type hints
 class AppendDict(TypedDict):
+    """Dictionary of the append options for each information."""
+
     location: NotRequired[bool]
     object: NotRequired[bool]
     time: NotRequired[bool]
 
 
 class OverwriteDict(TypedDict):
+    """Dictionary of the overwrite options for each information."""
+
     location: NotRequired[bool]
     object: NotRequired[bool]
     time: NotRequired[bool]
 
 
 class SourceDict(TypedDict):
+    """Dictionary of the source options for each information."""
+
     location: NotRequired[StrPath | None]
     object: NotRequired[StrPath | None]
     time: NotRequired[StrPath | None]
@@ -75,9 +81,10 @@ class AzEl(pd.DataFrame):
 
 
 def calc(
-    object: Object | str,
-    location: Location | str = "",
-    time: Time | str = "",
+    object: Object | ObjectDict | str,
+    location: Location | LocationDict | str = "",
+    time: Time | TimeDict | str = "",
+    *,
     # options for query parse
     google_api: str | None = None,
     ipinfo_api: str | None = None,
@@ -91,9 +98,9 @@ def calc(
     """Calculate azimuth/elevation of given object in given location at give time.
 
     Args:
-        object: Object information or query string for it.
-        location: Location information or query string for it.
-        time: Time information or query string for it.
+        object: Object information, or query dictionary or string for it.
+        location: Location information, or query dictionary or string for it.
+        time: Time information, or query dictionary or string for it.
         google_api: Optional Google API key.
         ipinfo_api: Optional IPinfo API key.
         sep: Separator string for splitting the query.
@@ -120,17 +127,9 @@ def calc(
     if not isinstance(source, dict):
         source = {"location": source, "object": source, "time": source}
 
-    if isinstance(object, str):
-        object = get_object(
-            object,
-            sep=sep,
-            timeout=timeout,
-            append=append.get("object", True),
-            overwrite=overwrite.get("object", False),
-            source=source.get("object", AZELY_CACHE),
-        )
-
-    if isinstance(location, str):
+    if isinstance(location, dict):
+        location = Location(**location)
+    elif isinstance(location, str):
         location = get_location(
             location,
             google_api=google_api,
@@ -142,7 +141,21 @@ def calc(
             source=source.get("location", AZELY_CACHE),
         )
 
-    if isinstance(time, str):
+    if isinstance(object, dict):
+        object = Object(**object)
+    elif isinstance(object, str):
+        object = get_object(
+            object,
+            sep=sep,
+            timeout=timeout,
+            append=append.get("object", True),
+            overwrite=overwrite.get("object", False),
+            source=source.get("object", AZELY_CACHE),
+        )
+
+    if isinstance(time, dict):
+        time = Time(**time)
+    elif isinstance(time, str):
         time = get_time(
             time,
             sep=sep,

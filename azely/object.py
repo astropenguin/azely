@@ -1,4 +1,4 @@
-__all__ = ["Object", "get_object"]
+__all__ = ["Object", "ObjectDict", "get_object"]
 
 
 # standard library
@@ -11,7 +11,18 @@ from re import split
 from astropy.coordinates import SkyCoord, get_body, solar_system_ephemeris
 from astropy.time import Time as ObsTime
 from astropy.utils.data import conf
+from typing_extensions import Required, TypedDict
 from .utils import AzelyError, StrPath, cache
+
+
+# type hints
+class ObjectDict(TypedDict):
+    """Dictionary of the object information attributes."""
+
+    name: Required[str]
+    longitude: Required[str]
+    latitude: Required[str]
+    frame: Required[str]
 
 
 # constants
