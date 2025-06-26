@@ -9,12 +9,31 @@ from typing import ClassVar
 # dependent packages
 import pandas as pd
 from astropy.time import Time as ObsTime
-from typing_extensions import Self
+from typing_extensions import NotRequired, Self, TypedDict
 from .consts import AZELY_CACHE
 from .location import Location, get_location
 from .object import Object, get_object
 from .time import Time, get_time
 from .utils import StrPath
+
+
+# type hints
+class AppendDict(TypedDict):
+    location: NotRequired[bool]
+    object: NotRequired[bool]
+    time: NotRequired[bool]
+
+
+class OverwriteDict(TypedDict):
+    location: NotRequired[bool]
+    object: NotRequired[bool]
+    time: NotRequired[bool]
+
+
+class SourceDict(TypedDict):
+    location: NotRequired[StrPath | None]
+    object: NotRequired[StrPath | None]
+    time: NotRequired[StrPath | None]
 
 
 # constants
@@ -59,14 +78,15 @@ def calc(
     object: Object | str,
     location: Location | str = "",
     time: Time | str = "",
-    # options for location, object, time
+    # options for query parse
     google_api: str | None = None,
     ipinfo_api: str | None = None,
     sep: str = r"\s*;\s*",
     timeout: float = 10.0,
-    # options for information cache
-    source: StrPath | None = AZELY_CACHE,
-    update: bool = False,
+    # options for cache
+    append: AppendDict | bool = True,
+    overwrite: OverwriteDict | bool = False,
+    source: SourceDict | StrPath | None = AZELY_CACHE,
 ) -> AzEl:
     """Calculate azimuth/elevation of given object in given location at give time.
 
@@ -78,22 +98,36 @@ def calc(
         ipinfo_api: Optional IPinfo API key.
         sep: Separator string for splitting the query.
         timeout: Timeout length in units of seconds.
-        source: Path of a source TOML file for reading from
-            or writing to the object/location/time information.
-        update: Whether to forcibly update the object/location/time
-            information in the source TOML file even if it already exists.
+        append: Whether to append the location/object/time information
+            to the source TOML file if it does not exist.
+            An option dictionary for each information is also accepted.
+        overwrite: Whether to overwrite the location/object/time information
+            to the source TOML file even if it already exists.
+            An option dictionary for each information is also accepted.
+        source: Path of a source TOML file for the location/object/time information.
+            An option dictionary for each information is also accepted.
 
     Returns:
         DataFrame of the calculated azimuth/elevation.
 
     """
+    if not isinstance(append, dict):
+        append = {"location": append, "object": append, "time": append}
+
+    if not isinstance(overwrite, dict):
+        overwrite = {"location": overwrite, "object": overwrite, "time": overwrite}
+
+    if not isinstance(source, dict):
+        source = {"location": source, "object": source, "time": source}
+
     if isinstance(object, str):
         object = get_object(
             object,
             sep=sep,
             timeout=timeout,
-            source=source,
-            update=update,
+            append=append.get("object", True),
+            overwrite=overwrite.get("object", False),
+            source=source.get("object", AZELY_CACHE),
         )
 
     if isinstance(location, str):
@@ -103,16 +137,18 @@ def calc(
             ipinfo_api=ipinfo_api,
             sep=sep,
             timeout=timeout,
-            source=source,
-            update=update,
+            append=append.get("location", True),
+            overwrite=overwrite.get("location", False),
+            source=source.get("location", AZELY_CACHE),
         )
 
     if isinstance(time, str):
         time = get_time(
             time,
             sep=sep,
-            source=source,
-            update=update,
+            append=append.get("time", True),
+            overwrite=overwrite.get("time", False),
+            source=source.get("time", AZELY_CACHE),
         )
 
     time = replace(time, timezone=str(location.timezone))

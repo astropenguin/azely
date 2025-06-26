@@ -74,14 +74,16 @@ def get_location(
     query: str,
     /,
     *,
+    # options for query parse
     google_api: str | None = None,
     ipinfo_api: str | None = None,
     sep: str = r"\s*;\s*",
     timeout: float = 10.0,
-    # consumed by decorators
+    # options for cache
     name: str | None = None,
+    append: bool = True,
+    overwrite: bool = False,
     source: StrPath | None = None,
-    update: bool = False,
 ) -> Location:
     """Parse given query to create location information.
 
@@ -92,10 +94,11 @@ def get_location(
         sep: Separator string for splitting the query.
         timeout: Timeout length in units of seconds.
         name: Name of the location information (not cached).
-        source: Path of a source TOML file for reading from
-            or writing to the location information.
-        update: Whether to forcibly update the location information
-            in the source TOML file even if it already exists.
+        append: Whether to append the location information
+            to the source TOML file if it does not exist.
+        overwrite: Whether to overwrite the location information
+            to the source TOML file even if it already exists.
+        source: Path of a source TOML file for the location information.
 
     Returns
         Location information created from the parsed query.

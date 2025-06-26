@@ -86,20 +86,23 @@ def get_time(
     query: str,
     /,
     *,
+    # options for query parse
     sep: str = r"\s*;\s*",
-    # consumed by decorators
+    # options for cache
+    append: bool = True,
+    overwrite: bool = False,
     source: StrPath | None = None,
-    update: bool = False,
 ) -> Time:
     """Parse given query to create time information.
 
     Args:
         query: Query string for the time information.
         sep: Separator string for splitting the query.
-        source: Path of a source TOML file for reading from
-            or writing to the time information.
-        update: Whether to forcibly update the time information
-            in the source TOML file even if it already exists.
+        append: Whether to append the time information
+            to the source TOML file if it does not exist.
+        overwrite: Whether to overwrite the time information
+            to the source TOML file even if it already exists.
+        source: Path of a source TOML file for the time information.
 
     Returns:
         Time information created from the parsed query.
