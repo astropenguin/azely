@@ -84,6 +84,7 @@ def calc(
     object: Object | ObjectDict | str,
     location: Location | LocationDict | str = "",
     time: Time | TimeDict | str = "",
+    *,
     # options for query parse
     google_api: str | None = None,
     ipinfo_api: str | None = None,
