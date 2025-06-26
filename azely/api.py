@@ -52,6 +52,7 @@ class AzEl(pd.DataFrame):
     alt: pd.Series
     az: pd.Series
     el: pd.Series
+    index: pd.DatetimeIndex
     location: Location
     object: Object
     time: Time
@@ -61,23 +62,26 @@ class AzEl(pd.DataFrame):
     def _constructor(self) -> type[Self]:
         return type(self)
 
-    @property
     def in_lst(self) -> Self:
         """Convert its index to LST."""
-        time = ObsTime(
-            self.index.tz_convert(None),  # type: ignore
-            location=self.location.earthlocation,
+        lst_0days = pd.to_timedelta(
+            ObsTime(self.index.tz_convert(None), location=self.location.earthlocation)
+            .sidereal_time("mean")
+            .value,
+            "hr",
         )
-        lst = pd.to_timedelta(time.sidereal_time("mean").value, "hr")
-        dt = pd.TimedeltaIndex(self.index - self.index[0], freq=None)  # type: ignore
-        dlst = dt * SOLAR_TO_SIDEREAL
-        return self.set_index((lst + (lst[0] + dlst).floor("D")).rename("LST"))
+        lst_ndays = lst_0days + (
+            lst_0days[0]
+            + pd.TimedeltaIndex(self.index - self.index[0], freq=None)  # type: ignore
+            * SOLAR_TO_SIDEREAL
+        ).floor("D")
 
-    @property
+        origin = self.index[0].normalize().tz_localize(None)
+        return self.set_index((origin + lst_ndays).rename("LST"))
+
     def in_utc(self) -> Self:
         """Convert its index to UTC."""
-        utc = self.index.tz_convert("UTC")  # type: ignore
-        return self.set_index(pd.DatetimeIndex(utc, name="UTC"))
+        return self.set_index(self.index.tz_convert("UTC").rename("UTC"))
 
 
 def calc(
