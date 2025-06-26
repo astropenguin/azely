@@ -19,18 +19,24 @@ from .utils import StrPath
 
 # type hints
 class AppendDict(TypedDict):
+    """Dictionary of the append options for each information."""
+
     location: NotRequired[bool]
     object: NotRequired[bool]
     time: NotRequired[bool]
 
 
 class OverwriteDict(TypedDict):
+    """Dictionary of the overwrite options for each information."""
+
     location: NotRequired[bool]
     object: NotRequired[bool]
     time: NotRequired[bool]
 
 
 class SourceDict(TypedDict):
+    """Dictionary of the source options for each information."""
+
     location: NotRequired[StrPath | None]
     object: NotRequired[StrPath | None]
     time: NotRequired[StrPath | None]
