@@ -15,7 +15,7 @@ from astropy.units import Quantity
 from astropy.utils.data import conf
 from ipinfo import getHandler
 from timezonefinder import TimezoneFinder
-from .utils import AzelyError, StrPath, cache, rename
+from .utils import AzelyError, StrPath, cache
 
 
 # constants
@@ -68,7 +68,6 @@ class Location:
         )
 
 
-@partial(rename, key="name")
 @partial(cache, table="location")
 def get_location(
     query: str,
@@ -80,7 +79,6 @@ def get_location(
     sep: str = r"\s*;\s*",
     timeout: float = 10.0,
     # options for cache
-    name: str | None = None,
     append: bool = True,
     overwrite: bool = False,
     source: StrPath | None = None,
@@ -93,7 +91,6 @@ def get_location(
         ipinfo_api: Optional IPinfo API key.
         sep: Separator string for splitting the query.
         timeout: Timeout length in units of seconds.
-        name: Name of the location information (not cached).
         append: Whether to append the location information
             to the source TOML file if it does not exist.
         overwrite: Whether to overwrite the location information

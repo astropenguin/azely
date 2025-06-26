@@ -1,4 +1,4 @@
-__all__ = ["AzelyError", "cache", "rename"]
+__all__ = ["AzelyError", "cache"]
 
 
 # standard library
@@ -58,24 +58,6 @@ def cache(func: TCallable, table: str) -> TCallable:
                 table_.add(nl())
 
             return obj
-
-    return wrapper  # type: ignore
-
-
-def rename(func: TCallable, key: str) -> TCallable:
-    """Update the name field of a dataclass object."""
-    signature = Signature.from_callable(func)
-
-    @wraps(func)
-    def wrapper(*args: Any, **kwargs: Any) -> Any:
-        bound = signature.bind(*args, **kwargs)
-        bound.apply_defaults()
-        bargs = bound.arguments
-
-        if (name := bargs["name"]) is None:
-            return func(*args, **kwargs)
-        else:
-            return replace(func(*args, **kwargs), **{key: name})
 
     return wrapper  # type: ignore
 
