@@ -4,7 +4,7 @@
 [![Python](https://img.shields.io/pypi/pyversions/azely?label=Python&color=cornflowerblue&style=flat-square)](https://pypi.org/project/azely/)
 [![Downloads](https://img.shields.io/pypi/dm/azely?label=Downloads&color=cornflowerblue&style=flat-square)](https://pepy.tech/project/azely)
 [![DOI](https://img.shields.io/badge/DOI-10.5281/zenodo.3680060-cornflowerblue?style=flat-square)](https://doi.org/10.5281/zenodo.3680060)
-[![Tests](https://img.shields.io/github/workflow/status/astropenguin/azely/Tests?label=Tests&style=flat-square)](https://github.com/astropenguin/azely/actions)
+[![Tests](https://img.shields.io/github/actions/workflow/status/astropenguin/azely/tests.yaml?label=Tests&style=flat-square)](https://github.com/astropenguin/azely/actions)
 
 Azimuth/elevation calculator for astronomy
 
