@@ -15,7 +15,7 @@ from astropy.units import Quantity
 from astropy.utils.data import conf
 from ipinfo import getHandler
 from timezonefinder import TimezoneFinder
-from typing_extensions import Required, TypedDict
+from typing_extensions import NotRequired, Required, TypedDict
 from .utils import AzelyError, StrPath, cache
 
 
@@ -26,7 +26,7 @@ class LocationDict(TypedDict):
     name: Required[str]
     longitude: Required[str]
     latitude: Required[str]
-    altitude: Required[str]
+    altitude: NotRequired[str]
 
 
 # constants
@@ -54,7 +54,7 @@ class Location:
     latitude: str
     """Latitude of the location (with units)."""
 
-    altitude: str
+    altitude: str = DEFAULT_ALTITUDE
     """Altitude of the location (with units)."""
 
     _timezone_finder: ClassVar = TimezoneFinder()
@@ -139,20 +139,7 @@ def get_location(
             altitude=str(response.height),
         )
 
-    if len(args) == 3:
-        return Location(
-            name=args[0],
-            longitude=args[1],
-            latitude=args[2],
-            altitude=DEFAULT_ALTITUDE,
-        )
-
-    if len(args) == 4:
-        return Location(
-            name=args[0],
-            longitude=args[1],
-            latitude=args[2],
-            altitude=args[3],
-        )
+    if 3 <= len(args) <= 4:
+        return Location(*args)
 
     raise AzelyError(f"Failed to parse: {query!s}")
