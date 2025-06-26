@@ -26,8 +26,6 @@ jobs:
           - python3.13-bookworm
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: true
       - run: uv sync --frozen
       - run: black --check ${PYTHON_DIRS}
       - run: pyright ${PYTHON_DIRS}

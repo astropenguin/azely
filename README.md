@@ -4,9 +4,9 @@
 [![Python](https://img.shields.io/pypi/pyversions/azely?label=Python&color=cornflowerblue&style=flat-square)](https://pypi.org/project/azely/)
 [![Downloads](https://img.shields.io/pypi/dm/azely?label=Downloads&color=cornflowerblue&style=flat-square)](https://pepy.tech/project/azely)
 [![DOI](https://img.shields.io/badge/DOI-10.5281/zenodo.3680060-cornflowerblue?style=flat-square)](https://doi.org/10.5281/zenodo.3680060)
-[![Tests](https://img.shields.io/github/workflow/status/astropenguin/azely/Tests?label=Tests&style=flat-square)](https://github.com/astropenguin/azely/actions)
+[![Tests](https://img.shields.io/github/actions/workflow/status/astropenguin/azely/tests.yaml?label=Tests&style=flat-square)](https://github.com/astropenguin/azely/actions)
 
-Azimuth/elevation visualization for astronomy
+Azimuth/elevation calculator for astronomy
 
 ## TL;DR
 
@@ -18,7 +18,7 @@ In fact azely offers one-liner to compute and plot, for example, one-day elevati
 >>> azely.compute('Sun', 'Tokyo').el.plot(ylim=(0, 90))
 ```
 
-![one-liner.svg](https://raw.githubusercontent.com/astropenguin/azely/v0.7.0/docs/_static/one-liner.svg)
+![one-liner.svg](https://raw.githubusercontent.com/astropenguin/azely/v1.0.0/docs/_static/one-liner.svg)
 
 ## Features
 
@@ -30,7 +30,7 @@ In fact azely offers one-liner to compute and plot, for example, one-day elevati
 ## Requirements
 
 - **Python:** 3.7, 3.8, 3.9, and 3.10 (tested by author)
-- **Dependencies:** See [pyproject.toml](https://github.com/astropenguin/azely/blob/v0.7.0/pyproject.toml)
+- **Dependencies:** See [pyproject.toml](https://github.com/astropenguin/azely/blob/v1.0.0/pyproject.toml)
 
 ## Installation
 
@@ -127,7 +127,7 @@ ax.grid(which="both")
 ax.legend()
 ```
 
-![multiple-objects.svg](https://raw.githubusercontent.com/astropenguin/azely/v0.7.0/docs/_static/multiple-objects.svg)
+![multiple-objects.svg](https://raw.githubusercontent.com/astropenguin/azely/v1.0.0/docs/_static/multiple-objects.svg)
 
 ## Advanced usage
 
@@ -172,7 +172,7 @@ ax.margins(0)
 twin.margins(0)
 ```
 
-![lst-axis.svg](https://raw.githubusercontent.com/astropenguin/azely/v0.7.0/docs/_static/lst-axis.svg)
+![lst-axis.svg](https://raw.githubusercontent.com/astropenguin/azely/v1.0.0/docs/_static/lst-axis.svg)
 
 ### User-defined information
 
