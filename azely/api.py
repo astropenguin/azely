@@ -74,14 +74,20 @@ class AzEl(pd.DataFrame):
     def in_lst(self) -> Self:
         """Convert its time index to the local sidereal time (LST)."""
         lst_0days = pd.to_timedelta(
-            ObsTime(self.index.tz_convert(None), location=self.location.earthlocation)
+            ObsTime(
+                self.index.tz_convert(None),
+                location=self.location.earthlocation,
+            )
             .sidereal_time("mean")
             .value,
-            "hr",
+            unit="hr",
         )
         lst_ndays = lst_0days + (
             lst_0days[0]
-            + pd.TimedeltaIndex(self.index - self.index[0], freq=None)  # type: ignore
+            + pd.TimedeltaIndex(
+                self.index - self.index[0],
+                freq=None,  # type: ignore
+            )
             * SOLAR_TO_SIDEREAL
         ).floor("D")
 
@@ -195,17 +201,18 @@ def calc(
         )
 
     time = replace(time, timezone=str(location.timezone))
-    obstime = ObsTime(
-        time.index.tz_convert(None),
-        location=location.earthlocation,
-    )
-    skycoord = object.skycoord(obstime).altaz
+    altaz = object.skycoord(
+        ObsTime(
+            time.index.tz_convert(None),
+            location=location.earthlocation,
+        )
+    ).altaz
 
     azel = AzEl(
         index=time.index,
         data={
-            "az": skycoord.az,  # type: ignore
-            "el": skycoord.alt,  # type: ignore
+            "az": altaz.az,  # type: ignore
+            "el": altaz.alt,  # type: ignore
         },
     )
     azel.location = location
