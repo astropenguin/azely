@@ -92,7 +92,7 @@ def get_object(
     Args:
         query: Query string for the object information.
         sep: Separator string for splitting the query.
-        timeout: Timeout length in units of seconds.
+        timeout: Timeout length in seconds.
         append: Whether to append the object information
             to the source TOML file if it does not exist.
         overwrite: Whether to overwrite the object information

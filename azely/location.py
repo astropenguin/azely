@@ -101,7 +101,7 @@ def get_location(
         google_api: Optional Google API key.
         ipinfo_api: Optional IPinfo API key.
         sep: Separator string for splitting the query.
-        timeout: Timeout length in units of seconds.
+        timeout: Timeout length in seconds.
         append: Whether to append the location information
             to the source TOML file if it does not exist.
         overwrite: Whether to overwrite the location information

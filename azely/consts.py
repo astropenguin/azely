@@ -8,10 +8,10 @@ from pathlib import Path
 
 # constants
 AZELY_CACHE: Path
-"""Azely's default cache TOML file."""
+"""Azely's default source TOML file."""
 
 AZELY_DIR: Path
-"""Azely's directory for the cache TOML file."""
+"""Azely's directory for the default source TOML file."""
 
 
 if (env := getenv("AZELY_DIR")) is not None:

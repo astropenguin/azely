@@ -7,59 +7,63 @@ import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 
 
-# matplotlib global settings
-plt.rcParams["figure.figsize"] = 12, 4
+def plot_one_liner() -> None:
+    """Plot an example of one-liner."""
+    fig, ax = plt.subplots(figsize=(12, 4))
+
+    azely.calc("Sun", "Tokyo").el.plot(ax=ax, ylim=(0, 90))
+
+    fig.tight_layout()
+    fig.savefig("docs/_static/one-liner.svg")
 
 
-# example of one-liner
-fig, ax = plt.subplots()
+def plot_multiple_objects() -> None:
+    """Plot an example of multiple objects."""
+    fig, ax = plt.subplots(figsize=(12, 4))
 
-df = azely.compute("Sun", "Tokyo").el.plot(ax=ax, ylim=(0, 90))
+    location = "ALMA AOS"
+    time = "2017 Apr 11th in UTC"
 
-fig.tight_layout()
-fig.savefig("docs/_static/one-liner.svg")
+    for obj in ("Sun", "Sgr A*", "M87", "M104", "Cen A"):
+        df = azely.calc(obj, location, time)
+        df.el.plot(ax=ax, label=obj)
 
+    ax.set_title(f"Location: {location}, Time: {time}")
+    ax.set_ylabel("Elevation (deg)")
+    ax.set_ylim(0, 90)
+    ax.grid(which="both")
+    ax.legend()
 
-# example of blackhole candidates
-fig, ax = plt.subplots()
-
-site = "ALMA AOS"
-time = "Apr. 11th 2017"
-view = "UTC"
-
-for obj in ("Sun", "Sgr A*", "M87", "M104", "Cen A"):
-    df = azely.compute(obj, site, time, view)
-    df.el.plot(ax=ax, label=obj)
-
-ax.set_title(f"site: {site}, view: {view}, time: {time}")
-ax.set_ylabel("Elevation (deg)")
-ax.set_ylim(0, 90)
-ax.grid(which="both")
-ax.legend()
-
-fig.tight_layout()
-fig.savefig("docs/_static/multiple-objects.svg")
+    fig.tight_layout()
+    fig.savefig("docs/_static/multiple-objects.svg")
 
 
-# example of lst axis
-fig, ax = plt.subplots(figsize=(12, 4))
-twin = ax.twiny()
+def plot_lst_axis() -> None:
+    """Plot an example of lst axis."""
+    fig, ax = plt.subplots(figsize=(12, 4))
+    twin = ax.twiny()
 
-df = azely.compute("Sun", "Tokyo", "2020-01-01")
-df.el.plot(ax=ax, label=df.object.name)
-df.in_lst.el.plot(ax=twin, alpha=0)
+    df = azely.calc("Sun", "Tokyo", "2020-01-01")
+    df.el.plot(ax=ax, label=df.object.name)
+    df.in_lst().el.plot(ax=twin, alpha=0)
 
-ax.set_ylabel("Elevation (deg)")
-ax.set_ylim(0, 90)
-ax.grid(which="both")
-ax.legend()
+    ax.set_ylabel("Elevation (deg)")
+    ax.set_ylim(0, 90)
+    ax.grid(which="both")
+    ax.legend()
 
-formatter = mdates.DateFormatter("%H:%M")
-twin.xaxis.set_major_formatter(formatter)
-fig.autofmt_xdate(rotation=0)
+    formatter = mdates.DateFormatter("%H:%M")
+    twin.xaxis.set_major_formatter(formatter)
+    fig.autofmt_xdate(rotation=0)
 
-ax.margins(0)
-twin.margins(0)
+    ax.margins(0)
+    twin.margins(0)
 
-fig.tight_layout()
-fig.savefig("docs/_static/lst-axis.svg")
+    fig.tight_layout()
+    fig.savefig("docs/_static/lst-axis.svg")
+
+
+if __name__ == "__main__":
+    plot_one_liner()
+    plot_multiple_objects()
+    plot_lst_axis()
