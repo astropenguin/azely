@@ -8,6 +8,7 @@ from typing import ClassVar
 
 # dependent packages
 import pandas as pd
+from astropy.coordinates import SkyCoord
 from astropy.time import Time as ObsTime
 from typing_extensions import NotRequired, Self, TypedDict
 from .consts import AZELY_CACHE
@@ -47,23 +48,31 @@ SOLAR_TO_SIDEREAL = 1.002_737_909
 
 
 class AzEl(pd.DataFrame):
-    """Azely's custom DataFrame."""
+    """Calculated azimuth and elevation of the object in degrees."""
 
-    alt: pd.Series
     az: pd.Series
-    el: pd.Series
-    index: pd.DatetimeIndex
-    location: Location
-    object: Object
-    time: Time
-    _metadata: ClassVar = ["location", "object", "time"]
+    """Azimuth of the object in degrees."""
 
-    @property
-    def _constructor(self) -> type[Self]:
-        return type(self)
+    el: pd.Series
+    """Elevation of the object in degrees."""
+
+    index: pd.DatetimeIndex
+    """Timezone-aware time index (timezone-naive for local sidereal time)."""
+
+    location: Location
+    """Location information used for the azimuth/elevation calculation."""
+
+    object: Object
+    """Object information used for the azimuth/elevation calculation."""
+
+    time: Time
+    """Time information used for the azimuth/elevation calculation."""
+
+    _metadata: ClassVar = ["location", "object", "time"]
+    """Ensure the location/object/time information as normal properties."""
 
     def in_lst(self) -> Self:
-        """Convert its index to LST."""
+        """Convert its time index to the local sidereal time (LST)."""
         lst_0days = pd.to_timedelta(
             ObsTime(self.index.tz_convert(None), location=self.location.earthlocation)
             .sidereal_time("mean")
@@ -80,7 +89,7 @@ class AzEl(pd.DataFrame):
         return self.set_index((origin + lst_ndays).rename("LST"))
 
     def in_utc(self) -> Self:
-        """Convert its index to UTC."""
+        """Convert its time index to the coordinated universal time (UTC)."""
         return self.set_index(self.index.tz_convert("UTC").rename("UTC"))
 
     def separation(self, other: Self, /) -> pd.Series:
@@ -94,6 +103,11 @@ class AzEl(pd.DataFrame):
             index=joined.index.tz_convert(self.index.tz),
             name="separation",
         )
+
+    @property
+    def _constructor(self) -> type[Self]:
+        """Ensure an AzEl DataFrame as the result of DataFrame manipulation."""
+        return type(self)
 
 
 def calc(
@@ -109,7 +123,7 @@ def calc(
     # options for cache
     append: AppendDict | bool = True,
     overwrite: OverwriteDict | bool = False,
-    source: SourceDict | StrPath | None = AZELY_CACHE,
+    source: SourceDict | (StrPath | None) = AZELY_CACHE,
 ) -> AzEl:
     """Calculate azimuth/elevation of given object in given location at give time.
 
@@ -117,10 +131,10 @@ def calc(
         object: Object information, or query dictionary or string for it.
         location: Location information, or query dictionary or string for it.
         time: Time information, or query dictionary or string for it.
-        google_api: Optional Google API key.
-        ipinfo_api: Optional IPinfo API key.
-        sep: Separator string for splitting the query.
-        timeout: Timeout length in units of seconds.
+        google_api: Optional Google API key for the location information.
+        ipinfo_api: Optional IPinfo API key for the location information.
+        sep: Separator string for splitting the location/object/time queries.
+        timeout: Timeout length in seconds for the location/object information.
         append: Whether to append the location/object/time information
             to the source TOML file if it does not exist.
             An option dictionary for each information is also accepted.
@@ -131,7 +145,7 @@ def calc(
             An option dictionary for each information is also accepted.
 
     Returns:
-        DataFrame of the calculated azimuth/elevation.
+        Calculated azimuth and elevation of the object in degrees.
 
     """
     if not isinstance(append, dict):
