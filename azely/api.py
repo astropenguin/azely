@@ -83,6 +83,18 @@ class AzEl(pd.DataFrame):
         """Convert its index to UTC."""
         return self.set_index(self.index.tz_convert("UTC").rename("UTC"))
 
+    def separation(self, other: Self, /) -> pd.Series:
+        """Calculate the separation angle with other object in degrees."""
+        joined = self.join(other, how="outer", lsuffix="_l", rsuffix="_r")
+        left = SkyCoord(joined.az_l, joined.el_l, unit="deg", frame="altaz")
+        right = SkyCoord(joined.az_r, joined.el_r, unit="deg", frame="altaz")
+
+        return pd.Series(
+            left.separation(right).value,
+            index=joined.index.tz_convert(self.index.tz),
+            name="separation",
+        )
+
 
 def calc(
     object: Object | ObjectDict | str,
