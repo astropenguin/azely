@@ -104,7 +104,7 @@ ax.legend()
 
 ## Advanced Usage
 
-### Local Sidereal Time
+### Handling Local Sidereal Time
 
 Using the `in_lst()` method of the output DataFrame, you can convert its time index to the local sidereal time (LST).
 Here is a example script that shows JST on the bottom axis and LST on the top axis:
@@ -205,7 +205,7 @@ If you are migrating from Azely version 0.7.0, please check the following change
     - The `view` option has been removed. The timezone is inferred from the `location` or can be specified within the `time`.
     - The default value settings via `config.toml` has been removed.
 
-###  The `in_lst` property of the output DataFrame has become a method.
+### The `in_lst` property of the output DataFrame has become a method.
 
 - **0.7.0:** `df.in_lst` (and `df.in_utc`)
 - **1.0.0:** `df.in_lst()` (and `df.in_utc()`)
