@@ -164,9 +164,9 @@ def calc(
         source = {"location": source, "object": source, "time": source}
 
     if isinstance(location, dict):
-        location = Location(**location)
+        location_ = Location(**location)
     elif isinstance(location, str):
-        location = get_location(
+        location_ = get_location(
             location,
             google_api=google_api,
             ipinfo_api=ipinfo_api,
@@ -178,9 +178,9 @@ def calc(
         )
 
     if isinstance(object, dict):
-        object = Object(**object)
+        object_ = Object(**object)
     elif isinstance(object, str):
-        object = get_object(
+        object_ = get_object(
             object,
             sep=sep,
             timeout=timeout,
@@ -190,32 +190,32 @@ def calc(
         )
 
     if isinstance(time, dict):
-        time = Time(**time)
+        time_ = Time(**time)
     elif isinstance(time, str):
-        time = get_time(
+        time_ = get_time(
             time,
             sep=sep,
             append=append.get("time", True),
             overwrite=overwrite.get("time", False),
             source=source.get("time", AZELY_CACHE),
         )
+    time_ = replace(time_, timezone=str(location_.timezone))
 
-    time = replace(time, timezone=str(location.timezone))
-    altaz = object.skycoord(
+    skycoord = object_.skycoord(
         ObsTime(
-            time.index.tz_convert(None),
-            location=location.earthlocation,
+            time_.index.tz_convert(None),
+            location=location_.earthlocation,
         )
     ).altaz
 
     azel = AzEl(
-        index=time.index,
+        index=time_.index,
         data={
-            "az": altaz.az,  # type: ignore
-            "el": altaz.alt,  # type: ignore
+            "az": skycoord.az,  # type: ignore
+            "el": skycoord.alt,  # type: ignore
         },
     )
-    azel.location = location
-    azel.object = object
-    azel.time = time
+    azel.location = location_
+    azel.object = object_
+    azel.time = time_
     return azel

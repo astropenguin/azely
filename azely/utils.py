@@ -3,10 +3,11 @@ __all__ = ["AzelyError", "cache"]
 
 # standard library
 from contextlib import contextmanager
-from dataclasses import asdict, replace
+from dataclasses import asdict
 from functools import wraps
 from inspect import Signature
 from os import PathLike
+from re import search
 from typing import Any, Callable, Iterator, TypeVar, Union
 
 
@@ -37,10 +38,11 @@ def cache(func: TCallable, table: str) -> TCallable:
 
         append = bound.arguments.get("append", True)
         overwrite = bound.arguments.get("overwrite", False)
+        sep = bound.arguments.get("sep", r"\s*;\s*")
         source = bound.arguments.get("source", None)
         query = bound.arguments.get("query", None)
 
-        if source is None:
+        if source is None or query is None or search(sep, query):
             return func(*args, **kwargs)
 
         with sync_toml(source) as doc:

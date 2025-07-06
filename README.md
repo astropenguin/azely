@@ -47,13 +47,13 @@ df = azely.calc(object, location, time)
 
 Parameter | Format & Description | Examples
 --- | --- | ---
-`location`| **`''`** (default): Current location inferred from your IP address. | `''`
+`location`| **`''`**: Current location inferred from your IP address (default; not cached). | `''`
 `location`| **`'<name>'`**: Name of the location to be searched online. | `'ALMA AOS'`, `'Tokyo'`
-`location`| **`'<name>;<longitude>;<latitude>[;altitude]'`**: Full location information. | `'ASTE; -67.70d; -22.97d; 4860m'`
+`location`| **`'<name>;<longitude>;<latitude>[;altitude]'`**: Full location information (not cached). A dictionary is also accepted. | `'ASTE; -67.70d; -22.97d; 4860m'`, `{'name': 'ASTE', 'longitude': '-67.70d', 'latitude': '-22.97d', 'altitude': '4860m'}`
 `object` | **`'<name>'`**: Name of the object to be searched online. | `'Sun'`, `'3C 273'`
-`object` | **`'<name>;<longitude>;<latitude>[;<frame>]'`**: Full object information. Frame defaults to `'icrs'`. | `'M42; 5h35m; -5d23m'`
-`time` | **`''`** (default): 00:00 today to 00:00 tomorrow at a 10-minute step. Timezone follows given location. | `''`
-`time` | **`'[<start>][;<stop>][;<step>][;<timezone>]'`**: Full time information. Omitted parts fall back to defaults (`'00:00 today'`, `'00:00 tomorrow'`, `'10min'`, `''`). Timezone follows given location unless not specified. | `'2025-01-01'`, `'09:00 JST today; in 2 days; 1h'`.
+`object` | **`'<name>;<longitude>;<latitude>[;<frame>]'`**: Full object information (not cached). A dictionary is also accepted. Frame defaults to `'icrs'`. | `'M42; 5h35m; -5d23m'`, `{'name': 'M42', 'longitude': '5h35m', 'latitude': '-5d23m'}`
+`time` | **`''`**: 00:00 today to 00:00 tomorrow at a 10-minute step (default; not cached). Timezone follows given location. | `''`
+`time` | **`'[<start>][;<stop>][;<step>][;<timezone>]'`**: Full time information (not cached). A dictionary is also accepted. Omitted parts fall back to defaults (`'00:00 today'`, `'00:00 tomorrow'`, `'10min'`, `''`). Timezone follows given location unless not specified. | `'2025-01-01'`, `'09:00 JST today; in 2 days; 1h'`, `{'start': '09:00 JST today', 'stop': 'in 2 days', 'step': '1h'}`
 
 ### DataFrame Example
 
