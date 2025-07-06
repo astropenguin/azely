@@ -12,7 +12,7 @@ Azimuth/elevation calculator for astronomical objects
 
 Azely (pronounced "as-elie") is a Python package for calculation and plotting of horizontal coordinates (azimuth and elevation) of astronomical objects at given location and time.
 While the core calculation and plotting are handled by [Astropy](https://astropy.org) and [Matplotlib](https://matplotlib.org), Azely provides a simple API for easier and more intuitive use.
-For example, calculating and plotting the elevation of the Sun in Tokyo for today can be done in a single line:
+For example, calculating and plotting the elevation of the Sun in Tokyo today can be done in a single line:
 
 ```python
 import azely
@@ -24,8 +24,8 @@ azely.calc('Sun', 'Tokyo').el.plot(ylabel='Elevation (deg)', ylim=(0, 90))
 
 ## Features
 
-- Simple API: Just pass query strings for the object, location, and time information to the `azely.calc()` function. The output is a [pandas](https://pandas.pydata.org) DataFrame of the calculated azimuth and elevation, which makes it easy to convert to other formats like CSV or plot with Matplotlib.
-- Information Retrieval and Cache: Azely automatically fetches object coordinates and location details from online services. The fetched information is cached in a local TOML file for offline use.
+- **Simple API:** Just pass query strings for the object, location, and time information to the `azely.calc()` function. The output is a [pandas](https://pandas.pydata.org) DataFrame of the calculated azimuth and elevation, which makes it easy to convert to other formats like CSV or plot with Matplotlib.
+- **Information Retrieval and Cache:** Azely automatically fetches object coordinates and location details from online services. The fetched information is cached in a local TOML file for offline use.
 
 ## Installation
 
@@ -196,23 +196,23 @@ America/Santiago
 
 ## Migration Guide from 0.7.0 to 1.0.0
 
-Azely version 1.0.0 includes several breaking changes.
-If you are migrating from Azely version 0.7.0, please check the following changes.
+Azely 1.0.0 includes several breaking changes.
+If you are migrating from Azely 0.7.0, please check the following changes.
 
-### The main function and its options have been renamed.
+### The main function and its options have been renamed
 
-- 0.7.0: `azely.compute(object, site, time, view)`
-- 1.0.0: `azely.calc(object, location, time)`
+- **0.7.0:** `azely.compute(object, site, time, view)`
+- **1.0.0:** `azely.calc(object, location, time)`
     - The `site` options has been renamed to `location`.
     - The `view` option has been removed. The timezone is inferred from the `location` or can be specified within the `time`.
     - The default value settings via `config.toml` has been removed.
 
-### The `in_lst` property of the output DataFrame has become a method.
+### The `in_lst` property of the output DataFrame has become a method
 
-- 0.7.0: `df.in_lst` (and `df.in_utc`)
-- 1.0.0: `df.in_lst()` (and `df.in_utc()`)
+- **0.7.0:** `df.in_lst` (and `df.in_utc`)
+- **1.0.0:** `df.in_lst()` (and `df.in_utc()`)
 
-### The information cache has been totally changed.
+### The information cache has been totally changed
 
 - The separate cache TOML files (`objects.toml`, `locations.toml`) are now merged into a single `cache.toml`.
 - The new `source` option specifies the source TOML file instead of prepending to `'<toml>:'` to the query string.
