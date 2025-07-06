@@ -1,10 +1,7 @@
-#!/usr/bin/env python
-
-
 # dependencies
 import azely
-import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
+from matplotlib.dates import DateFormatter
 
 
 def plot_one_liner() -> None:
@@ -21,14 +18,11 @@ def plot_multiple_objects() -> None:
     """Plot an example of multiple objects."""
     fig, ax = plt.subplots(figsize=(12, 4))
 
-    location = "ALMA AOS"
-    time = "2017 Apr 11th in UTC"
-
     for obj in ("Sun", "Sgr A*", "M87", "M104", "Cen A"):
-        df = azely.calc(obj, location, time)
-        df.el.plot(ax=ax, label=obj)
+        df = azely.calc(obj, "ALMA AOS", "2017 Apr 11th in UTC")
+        df.el.plot(ax=ax, label=df.object.name)
 
-    ax.set_title(f"Location: {location}, Time: {time}")
+    ax.set_title(f"Location: {df.location.name}")
     ax.set_ylabel("Elevation (deg)")
     ax.set_ylim(0, 90)
     ax.grid(which="both")
@@ -40,26 +34,25 @@ def plot_multiple_objects() -> None:
 
 def plot_lst_axis() -> None:
     """Plot an example of lst axis."""
-    fig, ax = plt.subplots(figsize=(12, 4))
-    twin = ax.twiny()
+    fig, ax_jst = plt.subplots(figsize=(12, 4))
+    ax_lst = ax_jst.twiny()
 
     df = azely.calc("Sun", "Tokyo", "2020-01-01")
-    df.el.plot(ax=ax, label=df.object.name)
-    df.in_lst().el.plot(ax=twin, alpha=0)
+    df.el.plot(ax=ax_jst, label=df.object.name)
+    ax_jst.set_title(f"Location: {df.location.name}")
+    ax_jst.set_ylabel("Elevation (deg)")
+    ax_jst.set_ylim(0, 90)
+    ax_jst.grid(which="both")
+    ax_jst.legend()
 
-    ax.set_ylabel("Elevation (deg)")
-    ax.set_ylim(0, 90)
-    ax.grid(which="both")
-    ax.legend()
-
-    formatter = mdates.DateFormatter("%H:%M")
-    twin.xaxis.set_major_formatter(formatter)
-    fig.autofmt_xdate(rotation=0)
-
-    ax.margins(0)
-    twin.margins(0)
+    # plot invisible elevation for the LST axis
+    df.in_lst().el.plot(ax=ax_lst, alpha=0)
+    ax_lst.xaxis.set_major_formatter(DateFormatter("%H:%M"))
+    ax_jst.margins(0)
+    ax_lst.margins(0)
 
     fig.tight_layout()
+    fig.autofmt_xdate(rotation=0)
     fig.savefig("docs/_static/lst-axis.svg")
 
 

@@ -119,6 +119,7 @@ ax_lst = ax_jst.twiny()
 
 df = azely.calc('Sun', 'Tokyo', '2020-01-01')
 df.el.plot(ax=ax_jst, label=df.object.name)
+ax_jst.set_title(f'Location: {df.location.name}')
 ax_jst.set_ylabel('Elevation (deg)')
 ax_jst.set_ylim(0, 90)
 ax_jst.grid(which='both')
