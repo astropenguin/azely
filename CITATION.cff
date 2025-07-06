@@ -17,7 +17,7 @@ identifiers:
     value: 10.5281/zenodo.3680060
 repository-code: 'https://github.com/astropenguin/azely'
 url: 'https://astropenguin.github.io/azely/1.0.0'
-abstract: Azimuth/elevation calculator for astronomy
+abstract: Azimuth/elevation calculator for astronomical objects
 keywords:
   - python
   - astronomy

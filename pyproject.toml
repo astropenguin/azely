@@ -1,7 +1,7 @@
 [project]
 name = "azely"
 version = "1.0.0"
-description = "Azimuth/elevation calculator for astronomy"
+description = "Azimuth/elevation calculator for astronomical objects"
 readme = "README.md"
 keywords = [
     "astronomy",
