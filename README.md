@@ -17,7 +17,7 @@ For example, calculating and plotting the elevation of the Sun in Tokyo for toda
 ```python
 import azely
 
-azely.calc('Sun', 'Tokyo').el.plot(ylim=(0, 90))
+azely.calc('Sun', 'Tokyo').el.plot(ylabel='Elevation (deg)', ylim=(0, 90))
 ```
 
 ![one-liner.svg](https://raw.githubusercontent.com/astropenguin/azely/1.0.0/docs/_static/one-liner.svg)
@@ -90,7 +90,7 @@ import matplotlib.pyplot as plt
 fig, ax = plt.subplots(figsize=(12, 4))
 
 for obj in ('Sun', 'Sgr A*', 'M87', 'M104', 'Cen A'):
-    df = azely.calc(obj, 'ALMA AOS', '2017 Apr 11th UTC')
+    df = azely.calc(obj, 'ALMA AOS', '2017 April 11 UTC')
     df.el.plot(ax=ax, label=df.object.name)
 
 ax.set_title(f'Location: {df.location.name}')
@@ -117,8 +117,10 @@ from matplotlib.dates import DateFormatter
 fig, ax_jst = plt.subplots(figsize=(12, 4))
 ax_lst = ax_jst.twiny()
 
-df = azely.calc('Sun', 'Tokyo', '2020-01-01')
-df.el.plot(ax=ax_jst, label=df.object.name)
+for obj in ('M78', 'M87'):
+    df = azely.calc(obj, 'Tokyo', '2025-07-07')
+    df.el.plot(ax=ax_jst, label=df.object.name)
+
 ax_jst.set_title(f'Location: {df.location.name}')
 ax_jst.set_ylabel('Elevation (deg)')
 ax_jst.set_ylim(0, 90)
