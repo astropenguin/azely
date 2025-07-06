@@ -101,7 +101,7 @@ def get_location(
         google_api: Optional Google API key.
         ipinfo_api: Optional IPinfo API key.
         sep: Separator string for splitting the query.
-        timeout: Timeout length in units of seconds.
+        timeout: Timeout length in seconds.
         append: Whether to append the location information
             to the source TOML file if it does not exist.
         overwrite: Whether to overwrite the location information
@@ -116,10 +116,11 @@ def get_location(
         handler = getHandler(ipinfo_api)
         response = handler.getDetails(timeout=timeout)
 
+        # requiring double-str may be an astropy's issue
         return Location(
             name=response.city,
-            longitude=response.longitude,
-            latitude=response.latitude,
+            longitude=str(str(Longitude(response.longitude, "deg"))),
+            latitude=str(str(Latitude(response.latitude, "deg"))),
             altitude=DEFAULT_ALTITUDE,
         )
 

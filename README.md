@@ -4,229 +4,214 @@
 [![Python](https://img.shields.io/pypi/pyversions/azely?label=Python&color=cornflowerblue&style=flat-square)](https://pypi.org/project/azely/)
 [![Downloads](https://img.shields.io/pypi/dm/azely?label=Downloads&color=cornflowerblue&style=flat-square)](https://pepy.tech/project/azely)
 [![DOI](https://img.shields.io/badge/DOI-10.5281/zenodo.3680060-cornflowerblue?style=flat-square)](https://doi.org/10.5281/zenodo.3680060)
-[![Tests](https://img.shields.io/github/workflow/status/astropenguin/azely/Tests?label=Tests&style=flat-square)](https://github.com/astropenguin/azely/actions)
+[![Tests](https://img.shields.io/github/actions/workflow/status/astropenguin/azely/tests.yaml?label=Tests&style=flat-square)](https://github.com/astropenguin/azely/actions)
 
-Azimuth/elevation visualization for astronomy
+Azimuth/elevation calculator for astronomical objects
 
-## TL;DR
+## Overview
 
-Azely (pronounced as "as-elie") is a Python package for computation and plotting of horizontal coordinates (azimuth and elevation; az/el, hereafter) of astronomical objects at given location and time.
-While computation and plotting are realized by [Astropy] and [Matplotlib], what azely provides is high-level API to use them easily.
-In fact azely offers one-liner to compute and plot, for example, one-day elevation of the Sun in Tokyo:
+**Azely** (pronounced "as-elie") is a Python package for calculation and plotting of horizontal coordinates (azimuth and elevation) of astronomical objects at given location and time.
+While the core calculation and plotting are handled by [Astropy](https://astropy.org) and [Matplotlib](https://matplotlib.org), Azely provides a simple API for easier and more intuitive use.
+For example, calculating and plotting the elevation of the Sun in Tokyo for today can be done in a single line:
 
 ```python
->>> azely.compute('Sun', 'Tokyo').el.plot(ylim=(0, 90))
+import azely
+
+azely.calc('Sun', 'Tokyo').el.plot(ylim=(0, 90))
 ```
 
-![one-liner.svg](https://raw.githubusercontent.com/astropenguin/azely/v0.7.0/docs/_static/one-liner.svg)
+![one-liner.svg](https://raw.githubusercontent.com/astropenguin/azely/1.0.0/docs/_static/one-liner.svg)
 
 ## Features
 
-- **High-level API:** azely provides a simple yet powerful `compute()` function. Users can complete most of operation with it (e.g., information acquisition and computation).
-- **Handy output:** azely's output (from `compute()`) is [pandas] DataFrame, a de facto standard data structure of Python. Users can convert it to other formats like CSV and plot it by [Matplotlib] using builtin methods.
-- **Web information acquisition:** azely can automatically acquire object and location information (i.e., longitude and latitude) from online services (e.g., catalogues or maps). Obtained information is cached in a local [TOML] file for an offline use.
-- **User-defined information:** azely also offers to use user-defined object and location information written in a [TOML] file.
-
-## Requirements
-
-- **Python:** 3.7, 3.8, 3.9, and 3.10 (tested by author)
-- **Dependencies:** See [pyproject.toml](https://github.com/astropenguin/azely/blob/v0.7.0/pyproject.toml)
+- **Simple API:** Just pass query strings for the object, location, and time information to the `azely.calc()` function. The output is a [pandas](https://pandas.pydata.org) DataFrame of the calculated azimuth and elevation, which makes it easy to convert to other formats like CSV or plot with Matplotlib.
+- **Information Retrieval and Cache:** Azely automatically fetches object coordinates and location details from online services. The fetched information is cached in a local TOML file for offline use.
 
 ## Installation
 
 ```shell
-$ pip install azely
+pip install azely
 ```
 
-## Basic usage
+## Basic Usage
 
-This section describes basic az/el computation using `compute()` function.
-
-### Compute function
-
-Azely's `compute()` function receives the following parameters and returns [pandas] DataFrame (`df`):
+The easiest way to use Azely is to pass query strings for the object, location, and time information to the `azely.calc()` function to get the azimuth/elevation DataFrame:
 
 ```python
->>> import azely
->>> df = azely.compute(object, site, time, view, **options)
+import azely
+
+df = azely.calc(object, location, time)
 ```
 
-This means that `azely` will `compute` az/el of `object` observed from `site` at (on) `time` in `view`.
-For example, the following code will compute az/el of Sun observed from ALMA AOS on Jan. 1st 2020 in Tokyo.
+### Query Specification
+
+Parameter | Format & Description | Examples
+--- | --- | ---
+`location`| **`''`**: Current location inferred from your IP address (default; not cached). | `''`
+`location`| **`'<name>'`**: Name of the location to be searched online. | `'ALMA AOS'`, `'Tokyo'`
+`location`| **`'<name>;<longitude>;<latitude>[;altitude]'`**: Full location information (not cached). A dictionary is also accepted. | `'ASTE; -67.70d; -22.97d; 4860m'`, `{'name': 'ASTE', 'longitude': '-67.70d', 'latitude': '-22.97d', 'altitude': '4860m'}`
+`object` | **`'<name>'`**: Name of the object to be searched online. | `'Sun'`, `'3C 273'`
+`object` | **`'<name>;<longitude>;<latitude>[;<frame>]'`**: Full object information (not cached). A dictionary is also accepted. Frame defaults to `'icrs'`. | `'M42; 5h35m; -5d23m'`, `{'name': 'M42', 'longitude': '5h35m', 'latitude': '-5d23m'}`
+`time` | **`''`**: 00:00 today to 00:00 tomorrow at a 10-minute step (default; not cached). Timezone follows given location. | `''`
+`time` | **`'[<start>][;<stop>][;<step>][;<timezone>]'`**: Full time information (not cached). A dictionary is also accepted. Omitted parts fall back to defaults (`'00:00 today'`, `'00:00 tomorrow'`, `'10min'`, `''`). Timezone follows given location unless not specified. | `'2025-01-01'`, `'09:00 JST today; in 2 days; 1h'`, `{'start': '09:00 JST today', 'stop': 'in 2 days', 'step': '1h'}`
+
+### DataFrame Example
 
 ```python
->>> df = azely.compute('Sun', 'ALMA AOS', '2020-01-01', 'Tokyo')
+import azely
+
+df = azely.calc('Sun', 'Tokyo', '2025-07-07 00:00 JST; in 12 hours; 1h')
+print(df)
 ```
 
-Acceptable formats of each parameter and examples are as follows.
-
-| Parameter | Acceptable format | Description | Examples |
-| --- | --- | --- | --- |
-| `object` | `<obj. name>` | name of object to be searched | `'Sun'`, `'NGC1068'` |
-| | `<toml>:<obj. name>` | user-defined object to be loaded (see below) | `'user.toml:M42'`, `'user:M42'` (also valid) |
-| `site` | `'here'` (default) | current location (guess by IP address) | |
-| | `<loc. name>` | name of location to be searched | `'ALMA AOS'`, `'Tokyo'` |
-| | `<toml>:<loc. name>` | user-defined location to be loaded (see below) | `'user.toml:ASTE'`, `'user:ASTE'` (also valid) |
-| `time` | `'today'` (default) | get one-day time range of today | |
-| | `'now'` | get current time | |
-| | `<time>` | start time of one-day time range | `'2020-01-01'`, `'1/1 12:00'`, `'Jan. 1st'` |
-| | `<time> to <time>` | start and end of time range | `'1/1 to 1/3'`, `'Jan. 1st to Jan. 3rd'` |
-| `view` | `''` (default) | use timezone of `site` | |
-| | `<tz name>` | name of timezone database | `'Asia/Tokyo'`, `'UTC'` |
-| | `<loc. name>` | name of location from which timezone is identified | same as `site`'s examples |
-| | `<toml>:<loc. name>` | user-defined location from which timezone is identified | same as `site`'s examples |
-
-### Output DataFrame
-
-The output DataFrame contains az/el expressed in units of degrees and local sidereal time (LST) at `site` indexed by time in `view`:
-
-```python
->>> print(df)
 ```
-```plaintext
-                                  az         el             lst
-Asia/Tokyo
-2020-01-01 00:00:00+09:00  94.820323  68.416756 17:07:59.405556
-2020-01-01 00:10:00+09:00  94.333979  70.709575 17:18:01.048298
-2020-01-01 00:20:00+09:00  93.856123  73.003864 17:28:02.691044
-2020-01-01 00:30:00+09:00  93.388695  75.299436 17:38:04.333786
-2020-01-01 00:40:00+09:00  92.935403  77.596109 17:48:05.976529
-...                              ...        ...             ...
-2020-01-01 23:20:00+09:00  96.711830  59.146249 16:31:49.389513
-2020-01-01 23:30:00+09:00  96.185941  61.431823 16:41:51.032256
-2020-01-01 23:40:00+09:00  95.664855  63.719668 16:51:52.674998
-2020-01-01 23:50:00+09:00  95.147951  66.009577 17:01:54.317740
-2020-01-02 00:00:00+09:00  94.634561  68.301349 17:11:55.960483
-
-[145 rows x 3 columns]
+                                   az         el
+JST
+2025-07-07 00:00:00+09:00    3.846189 -31.611817
+2025-07-07 01:00:00+09:00   19.640291 -29.125374
+2025-07-07 02:00:00+09:00   33.835158 -23.630885
+2025-07-07 03:00:00+09:00   45.977158 -15.805563
+2025-07-07 04:00:00+09:00   56.259606  -6.319155
+2025-07-07 05:00:00+09:00   65.148244   4.302369
+2025-07-07 06:00:00+09:00   73.166182  15.680605
+2025-07-07 07:00:00+09:00   80.862836  27.541537
+2025-07-07 08:00:00+09:00   88.925229  39.663496
+2025-07-07 09:00:00+09:00   98.525644  51.808030
+2025-07-07 10:00:00+09:00  112.475716  63.549892
+2025-07-07 11:00:00+09:00  139.635373  73.527391
 ```
 
-### Example
-
-Here is a sample script which will plot one-day elevation of the Sun and candidates of black hole shadow observations at ALMA AOS on Apr. 11th 2017 in UTC.
+### Plotting Example
 
 ```python
 import azely
 import matplotlib.pyplot as plt
-plt.style.use('seaborn-whitegrid')
 
 fig, ax = plt.subplots(figsize=(12, 4))
-
-site = 'ALMA AOS'
-time = 'Apr. 11th 2017'
-view = 'UTC'
 
 for obj in ('Sun', 'Sgr A*', 'M87', 'M104', 'Cen A'):
-    df = azely.compute(obj, site, time, view)
-    df.el.plot(ax=ax, label=obj)
+    df = azely.calc(obj, 'ALMA AOS', '2017 Apr 11th UTC')
+    df.el.plot(ax=ax, label=df.object.name)
 
-ax.set_title(f'site: {site}, view: {view}, time: {time}')
+ax.set_title(f'Location: {df.location.name}')
 ax.set_ylabel('Elevation (deg)')
 ax.set_ylim(0, 90)
-ax.grid(which="both")
+ax.grid(which='both')
 ax.legend()
 ```
 
-![multiple-objects.svg](https://raw.githubusercontent.com/astropenguin/azely/v0.7.0/docs/_static/multiple-objects.svg)
+![multiple-objects.svg](https://raw.githubusercontent.com/astropenguin/azely/1.0.0/docs/_static/multiple-objects.svg)
 
-## Advanced usage
+## Advanced Usage
 
-This section describes advanced usage of azely by special DataFrame accessor and local [TOML] files.
-Note that azely will create a config directory, `$XDG_CONFIG_HOME/azely` (if the environment variable exists) or `~/.config/azely`, after importing `azely` for the first time.
-[TOML] files for configuration (`config.toml`) and cached information (`objects.toml`, `locations.toml`) will be automatically created in it.
+### Handling Local Sidereal Time
 
-### Plotting in local sidereal time
-
-The `compute()` function does not accept local sidereal time (LST) as `view` (i.e., `view='LST'`) because LST has no information on year and date.
-Instead an output DataFrame has `in_lst` property which provides az/el with a LST index converted from the original time index.
-For example, the following code will plot elevation of an object in LST:
+Using the `in_lst()` method of the output DataFrame, you can convert its time index to the local sidereal time (LST).
+Here is a example script that shows JST on the bottom axis and LST on the top axis:
 
 ```python
->>> df.in_lst.el.plot()
+import azely
+import matplotlib.pyplot as plt
+from matplotlib.dates import DateFormatter
+
+fig, ax_jst = plt.subplots(figsize=(12, 4))
+ax_lst = ax_jst.twiny()
+
+df = azely.calc('Sun', 'Tokyo', '2020-01-01')
+df.el.plot(ax=ax_jst, label=df.object.name)
+ax_jst.set_title(f'Location: {df.location.name}')
+ax_jst.set_ylabel('Elevation (deg)')
+ax_jst.set_ylim(0, 90)
+ax_jst.grid(which='both')
+ax_jst.legend()
+
+# plot invisible elevation for the LST axis
+df.in_lst().el.plot(ax=ax_lst, alpha=0)
+ax_lst.xaxis.set_major_formatter(DateFormatter('%H:%M'))
+ax_jst.margins(0)
+ax_lst.margins(0)
 ```
 
-In order to use LST values as an index of DataFrame, LST has pseudo dates which start from `1970-01-01`.
-Please ignore them or hide them by using [Matplotlib] DateFormatter when you plot the result.
-Here is a sample script which has JST time axis at the bottom and LST axis at the top of a figure, respectively.
+![lst-axis.svg](https://raw.githubusercontent.com/astropenguin/azely/1.0.0/docs/_static/lst-axis.svg)
 
-```python
-import matplotlib.dates as mdates
+### Cache and Custom Information
 
-fig, ax = plt.subplots(figsize=(12, 4))
-twin = ax.twiny()
+The fetched location/object/time information is automatically saved to `$XDG_CONFIG_HOME/azely/cache.toml` (or `~/.config/azely/cache.toml`).
+You can control this behavior with the `append` and `overwrite` options of `azely.calc()`:
 
-df = azely.compute('Sun', 'Tokyo', '2020-01-01')
-df.el.plot(ax=ax, label=df.object.name)
-df.in_lst.el.plot(ax=twin, alpha=0)
+- `append=False` (read-only): Returns the cached information if it exists. If not, fetches new information but **never** adds it to the cache.
+- `append=True` (append-only; default): Returns the cached information if it exists. If not, fetches new information and **always** appends it to the cache.
+- `overwrite=True` (force-update): Regardless of the existence of the cached information and the value of the `append` option, **always** fetches new information and overwrites the cached information with it.
 
-ax.set_ylabel("Elevation (deg)")
-ax.set_ylim(0, 90)
-ax.grid(which="both")
-ax.legend()
+You can change the source TOML file with the `source` option.
+This can be used to create a configuration file with user-defined locations, objects, and times:
 
-formatter = mdates.DateFormatter('%H:%M')
-twin.xaxis.set_major_formatter(formatter)
-fig.autofmt_xdate(rotation=0)
-
-ax.margins(0)
-twin.margins(0)
-```
-
-![lst-axis.svg](https://raw.githubusercontent.com/astropenguin/azely/v0.7.0/docs/_static/lst-axis.svg)
-
-### User-defined information
-
-Azely offers to use user-defined information from a [TOML] file.
-Here is a sample TOML file (e.g., `user.toml`) which has custom object and location informaiton.
-
-```
+```toml
 # user.toml
 
-[ASTE]
-name = "ASTE Telescope"
-longitude = "-67.70317915"
-latitude = "-22.97163575"
-altitude = "0"
+[location.ASTE]
+name = "Atacama Submillimeter Telescope Experiment"
+longitude = "-67d42m11s"
+latitude = "-22d58m18s"
+altitude = "4860m"
 
-[GC]
-name = "Galactic center"
+[object.GC]
+name = "Galactic Center"
+longitude = "0d0m0s"
+latitude = "0d0m0s"
 frame = "galactic"
-longitude = "0deg"
-latitude = "0deg"
-```
 
-If it is located in a current directory or in the azely's config directory, users can use the information like:
+[time.Weekly]
+start = "00:00 today"
+stop = "in a week"
+step = "1h"
+```
 
 ```python
->>> df = azely.compute('user:GC', 'user:ASTE', '2020-01-01')
+import azely
+
+df = azely.calc('GC', 'ASTE', 'Weekly', source='user.toml')
+print(df)
 ```
 
-### Cached information
+```
+                                   az         el
+America/Santiago
+2025-07-06 00:00:00-04:00  233.966638  79.305274
+2025-07-06 01:00:00-04:00  249.765199  66.864731
+2025-07-06 02:00:00-04:00  251.885356  53.751800
+2025-07-06 03:00:00-04:00  250.791907  40.619356
+2025-07-06 04:00:00-04:00  248.196309  27.641160
+...                               ...        ...
+2025-07-12 19:00:00-04:00  109.691832  37.638970
+2025-07-12 20:00:00-04:00  108.182993  50.748158
+2025-07-12 21:00:00-04:00  109.245142  63.889110
+2025-07-12 22:00:00-04:00  119.352834  76.638576
+2025-07-12 23:00:00-04:00  194.243652  83.824660
 
-Object and location information obtained from online services is cached to [TOML] files (`objects.toml`, `locations.toml`) in the azely's config directory with the same format as user-defined files.
-If a query argument is given with `'!'` at the end of it, then the cached values are forcibly updated by a new acquisition.
-This is useful, for example, when users want to update a current location:
-
-```python
->>> df = azely.compute('Sun', 'here!', '2020-01-01')
+[168 rows x 2 columns]
 ```
 
-### Customizing default values
+## Migration Guide from 0.7.0 to 1.0.0
 
-Users can modify default values of the `compute()` function by editing the azely's config [TOML] file (`config.toml`) in the azely's config directory like:
+Azely version 1.0.0 includes several breaking changes.
+If you are migrating from Azely version 0.7.0, please check the following changes.
 
-```
-# config.toml
+### The main function and its options have been renamed.
 
-[compute]
-site = "Tokyo"
-time = "now"
-```
+- **0.7.0:** `azely.compute(object, site, time, view)`
+- **1.0.0:** `azely.calc(object, location, time)`
+    - The `site` options has been renamed to `location`.
+    - The `view` option has been removed. The timezone is inferred from the `location` or can be specified within the `time`.
+    - The default value settings via `config.toml` has been removed.
 
-Then `compute('Sun')` becomes equivalent to `compute('Sun', 'Tokyo', 'now')`.
+### The `in_lst` property of the output DataFrame has become a method.
 
-<!-- references -->
-[Astropy]: https://astropy.org
-[Matplotlib]: https://matplotlib.org
-[pandas]: https://pandas.pydata.org
-[TOML]: https://toml.io
+- **0.7.0:** `df.in_lst` (and `df.in_utc`)
+- **1.0.0:** `df.in_lst()` (and `df.in_utc()`)
+
+### The information cache has been totally changed.
+
+- The separate cache TOML files (`objects.toml`, `locations.toml`) are now merged into a single `cache.toml`.
+- The new `overwrite` option force-updates cached information instead of appending `'!'` to the query string.
+- The new `append` and `source` options provide finer control over the cache behavior.

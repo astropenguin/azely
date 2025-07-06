@@ -7,19 +7,21 @@ on:
 
 jobs:
   job:
-    name: GitHub Pages
+    name: Docs
     runs-on: ubuntu-latest
     container: ghcr.io/astral-sh/uv:python3.12-bookworm
     env:
       UV_PROJECT_ENVIRONMENT: /usr/local
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: true
+      - run: echo "tag=${GITHUB_REF##*/}" >> $GITHUB_OUTPUT
+        id: tag
       - run: uv sync --frozen
       - run: docs/build
       - uses: peaceiris/actions-gh-pages@v4
         with:
-          force_orphan: true
+          destination_dir: ${{ steps.tag.outputs.tag }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./docs/_build

@@ -1,7 +1,7 @@
 [project]
 name = "azely"
-version = "0.7.0"
-description = "Azimuth/elevation visualization for astronomy"
+version = "1.0.0"
+description = "Azimuth/elevation calculator for astronomical objects"
 readme = "README.md"
 keywords = [
     "astronomy",
@@ -43,7 +43,7 @@ email = "taniguchi.akio@gmail.com"
 file = "LICENSE"
 
 [project.urls]
-homepage = "https://astropenguin.github.io/azely"
+homepage = "https://astropenguin.github.io/azely/1.0.0"
 repository = "https://github.com/astropenguin/azely"
 
 [build-system]

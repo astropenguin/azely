@@ -4,7 +4,8 @@
 cff-version: 1.2.0
 title: azely
 message: >-
-  If you use this software, please cite it using the metadata from this file.
+  If you use this software, please cite it using the
+  metadata from this file.
 type: software
 authors:
   - given-names: Akio
@@ -16,8 +17,8 @@ identifiers:
   - type: doi
     value: 10.5281/zenodo.3680060
 repository-code: 'https://github.com/astropenguin/azely'
-url: 'https://astropenguin.github.io/azely'
-abstract: Azimuth/elevation visualization for astronomy
+url: 'https://astropenguin.github.io/azely/1.0.0'
+abstract: Azimuth/elevation calculator for astronomical objects
 keywords:
   - python
   - astronomy
@@ -27,5 +28,5 @@ keywords:
   - sidereal-time
   - visibility
 license: MIT
-version: 0.7.0
-date-released: '2022-11-03'
+version: 1.0.0
+date-released: '2025-07-07'

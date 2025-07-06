@@ -2,3 +2,4 @@
 
 sphinx-apidoc -efT -o docs/_apidoc azely
 sphinx-build -a docs docs/_build
+python docs/plot.py
