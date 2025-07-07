@@ -164,9 +164,9 @@ def calc(
         source = {"location": source, "object": source, "time": source}
 
     if isinstance(location, dict):
-        location_ = Location(**location)
+        location = Location(**location)
     elif isinstance(location, str):
-        location_ = get_location(
+        location = get_location(
             location,
             google_api=google_api,
             ipinfo_api=ipinfo_api,
@@ -178,9 +178,9 @@ def calc(
         )
 
     if isinstance(object, dict):
-        object_ = Object(**object)
+        object = Object(**object)
     elif isinstance(object, str):
-        object_ = get_object(
+        object = get_object(
             object,
             sep=sep,
             timeout=timeout,
@@ -190,32 +190,32 @@ def calc(
         )
 
     if isinstance(time, dict):
-        time_ = Time(**time)
+        time = Time(**time)
     elif isinstance(time, str):
-        time_ = get_time(
+        time = get_time(
             time,
             sep=sep,
             append=append.get("time", True),
             overwrite=overwrite.get("time", False),
             source=source.get("time", AZELY_CACHE),
         )
-    time_ = replace(time_, timezone=str(location_.timezone))
+    time = replace(time, timezone=str(location.timezone))
 
-    skycoord = object_.skycoord(
+    skycoord = object.skycoord(
         ObsTime(
-            time_.index.tz_convert(None),
-            location=location_.earthlocation,
+            time.index.tz_convert(None),
+            location=location.earthlocation,
         )
     ).altaz
 
     azel = AzEl(
-        index=time_.index,
+        index=time.index,
         data={
             "az": skycoord.az,  # type: ignore
             "el": skycoord.alt,  # type: ignore
         },
     )
-    azel.location = location_
-    azel.object = object_
-    azel.time = time_
+    azel.location = location
+    azel.object = object
+    azel.time = time
     return azel
