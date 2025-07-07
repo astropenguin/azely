@@ -107,7 +107,7 @@ ax.legend()
 ### Handling Local Sidereal Time
 
 Using the `in_lst()` method of the output DataFrame, you can convert its time index to the local sidereal time (LST).
-Here is a example script that shows JST on the bottom axis and LST on the top axis:
+Here is an example that shows JST on the bottom axis and LST on the top axis:
 
 ```python
 import azely
@@ -126,11 +126,11 @@ ax_jst.set_ylabel('Elevation (deg)')
 ax_jst.set_ylim(0, 90)
 ax_jst.grid(which='both')
 ax_jst.legend()
+ax_jst.margins(0)
 
 # plot invisible elevation for the LST axis
 df.in_lst().el.plot(ax=ax_lst, alpha=0)
 ax_lst.xaxis.set_major_formatter(DateFormatter('%H:%M'))
-ax_jst.margins(0)
 ax_lst.margins(0)
 ```
 
