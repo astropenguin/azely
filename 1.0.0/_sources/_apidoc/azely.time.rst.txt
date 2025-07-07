@@ -1,0 +1,7 @@
+azely.time module
+=================
+
+.. automodule:: azely.time
+   :members:
+   :show-inheritance:
+   :undoc-members:

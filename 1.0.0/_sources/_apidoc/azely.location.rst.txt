@@ -1,0 +1,7 @@
+azely.location module
+=====================
+
+.. automodule:: azely.location
+   :members:
+   :show-inheritance:
+   :undoc-members:

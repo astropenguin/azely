@@ -1,0 +1,7 @@
+azely.utils module
+==================
+
+.. automodule:: azely.utils
+   :members:
+   :show-inheritance:
+   :undoc-members:

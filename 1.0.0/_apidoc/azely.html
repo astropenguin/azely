@@ -1,0 +1,958 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>azely package &#8212; Azely  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_apidoc/azely';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="azely.api module" href="azely.api.html" />
+    <link rel="prev" title="azely" href="../index.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+  
+    <p class="title logo__title">Azely</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../index.html">
+    Home
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    Package guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/deshima-dev/azely" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../index.html">
+    Home
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="#">
+    Package guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/deshima-dev/azely" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="azely.api.html">azely.api module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="azely.consts.html">azely.consts module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="azely.location.html">azely.location module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="azely.object.html">azely.object module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="azely.time.html">azely.time module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="azely.utils.html">azely.utils module</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">azely package</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="azely-package">
+<h1>azely package<a class="headerlink" href="#azely-package" title="Link to this heading">#</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">#</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="azely.api.html">azely.api module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="azely.api.html#azely.api.AzEl"><code class="docutils literal notranslate"><span class="pre">AzEl</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="azely.api.html#azely.api.AzEl.az"><code class="docutils literal notranslate"><span class="pre">AzEl.az</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="azely.api.html#azely.api.AzEl.el"><code class="docutils literal notranslate"><span class="pre">AzEl.el</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="azely.api.html#azely.api.AzEl.in_lst"><code class="docutils literal notranslate"><span class="pre">AzEl.in_lst()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="azely.api.html#azely.api.AzEl.in_utc"><code class="docutils literal notranslate"><span class="pre">AzEl.in_utc()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="azely.api.html#azely.api.AzEl.location"><code class="docutils literal notranslate"><span class="pre">AzEl.location</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="azely.api.html#azely.api.AzEl.object"><code class="docutils literal notranslate"><span class="pre">AzEl.object</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="azely.api.html#azely.api.AzEl.separation"><code class="docutils literal notranslate"><span class="pre">AzEl.separation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="azely.api.html#azely.api.AzEl.time"><code class="docutils literal notranslate"><span class="pre">AzEl.time</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="azely.api.html#azely.api.calc"><code class="docutils literal notranslate"><span class="pre">calc()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="azely.consts.html">azely.consts module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="azely.consts.html#azely.consts.AZELY_CACHE"><code class="docutils literal notranslate"><span class="pre">AZELY_CACHE</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="azely.consts.html#azely.consts.AZELY_DIR"><code class="docutils literal notranslate"><span class="pre">AZELY_DIR</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="azely.location.html">azely.location module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="azely.location.html#azely.location.Location"><code class="docutils literal notranslate"><span class="pre">Location</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="azely.location.html#azely.location.Location.altitude"><code class="docutils literal notranslate"><span class="pre">Location.altitude</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="azely.location.html#azely.location.Location.earthlocation"><code class="docutils literal notranslate"><span class="pre">Location.earthlocation</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="azely.location.html#azely.location.Location.latitude"><code class="docutils literal notranslate"><span class="pre">Location.latitude</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="azely.location.html#azely.location.Location.longitude"><code class="docutils literal notranslate"><span class="pre">Location.longitude</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="azely.location.html#azely.location.Location.name"><code class="docutils literal notranslate"><span class="pre">Location.name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="azely.location.html#azely.location.Location.timezone"><code class="docutils literal notranslate"><span class="pre">Location.timezone</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="azely.location.html#azely.location.LocationDict"><code class="docutils literal notranslate"><span class="pre">LocationDict</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="azely.location.html#azely.location.LocationDict.altitude"><code class="docutils literal notranslate"><span class="pre">LocationDict.altitude</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="azely.location.html#azely.location.LocationDict.latitude"><code class="docutils literal notranslate"><span class="pre">LocationDict.latitude</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="azely.location.html#azely.location.LocationDict.longitude"><code class="docutils literal notranslate"><span class="pre">LocationDict.longitude</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="azely.location.html#azely.location.LocationDict.name"><code class="docutils literal notranslate"><span class="pre">LocationDict.name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="azely.location.html#azely.location.get_location"><code class="docutils literal notranslate"><span class="pre">get_location()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="azely.object.html">azely.object module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="azely.object.html#azely.object.Object"><code class="docutils literal notranslate"><span class="pre">Object</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="azely.object.html#azely.object.Object.frame"><code class="docutils literal notranslate"><span class="pre">Object.frame</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="azely.object.html#azely.object.Object.latitude"><code class="docutils literal notranslate"><span class="pre">Object.latitude</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="azely.object.html#azely.object.Object.longitude"><code class="docutils literal notranslate"><span class="pre">Object.longitude</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="azely.object.html#azely.object.Object.name"><code class="docutils literal notranslate"><span class="pre">Object.name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="azely.object.html#azely.object.Object.skycoord"><code class="docutils literal notranslate"><span class="pre">Object.skycoord()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="azely.object.html#azely.object.ObjectDict"><code class="docutils literal notranslate"><span class="pre">ObjectDict</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="azely.object.html#azely.object.ObjectDict.frame"><code class="docutils literal notranslate"><span class="pre">ObjectDict.frame</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="azely.object.html#azely.object.ObjectDict.latitude"><code class="docutils literal notranslate"><span class="pre">ObjectDict.latitude</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="azely.object.html#azely.object.ObjectDict.longitude"><code class="docutils literal notranslate"><span class="pre">ObjectDict.longitude</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="azely.object.html#azely.object.ObjectDict.name"><code class="docutils literal notranslate"><span class="pre">ObjectDict.name</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="azely.object.html#azely.object.get_object"><code class="docutils literal notranslate"><span class="pre">get_object()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="azely.time.html">azely.time module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="azely.time.html#azely.time.Time"><code class="docutils literal notranslate"><span class="pre">Time</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="azely.time.html#azely.time.Time.index"><code class="docutils literal notranslate"><span class="pre">Time.index</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="azely.time.html#azely.time.Time.start"><code class="docutils literal notranslate"><span class="pre">Time.start</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="azely.time.html#azely.time.Time.step"><code class="docutils literal notranslate"><span class="pre">Time.step</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="azely.time.html#azely.time.Time.stop"><code class="docutils literal notranslate"><span class="pre">Time.stop</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="azely.time.html#azely.time.Time.timezone"><code class="docutils literal notranslate"><span class="pre">Time.timezone</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="azely.time.html#azely.time.TimeDict"><code class="docutils literal notranslate"><span class="pre">TimeDict</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="azely.time.html#azely.time.TimeDict.start"><code class="docutils literal notranslate"><span class="pre">TimeDict.start</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="azely.time.html#azely.time.TimeDict.step"><code class="docutils literal notranslate"><span class="pre">TimeDict.step</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="azely.time.html#azely.time.TimeDict.stop"><code class="docutils literal notranslate"><span class="pre">TimeDict.stop</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="azely.time.html#azely.time.TimeDict.timezone"><code class="docutils literal notranslate"><span class="pre">TimeDict.timezone</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="azely.time.html#azely.time.get_time"><code class="docutils literal notranslate"><span class="pre">get_time()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="azely.utils.html">azely.utils module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="azely.utils.html#azely.utils.AzelyError"><code class="docutils literal notranslate"><span class="pre">AzelyError</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="azely.utils.html#azely.utils.cache"><code class="docutils literal notranslate"><span class="pre">cache()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="module-azely">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-azely" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="azely.AzEl">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">AzEl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Axes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Axes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dtype</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">copy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/azely/api.html#AzEl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azely.AzEl" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
+<p>Calculated azimuth and elevation of the object in degrees.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong> (<em>Axes</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>columns</strong> (<em>Axes</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>dtype</strong> (<em>Dtype</em><em> | </em><em>None</em>)</p></li>
+<li><p><strong>copy</strong> (<em>bool</em><em> | </em><em>None</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="azely.AzEl.az">
+<span class="sig-name descname"><span class="pre">az</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Series</span></em><a class="headerlink" href="#azely.AzEl.az" title="Link to this definition">#</a></dt>
+<dd><p>Azimuth of the object in degrees.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="azely.AzEl.el">
+<span class="sig-name descname"><span class="pre">el</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Series</span></em><a class="headerlink" href="#azely.AzEl.el" title="Link to this definition">#</a></dt>
+<dd><p>Elevation of the object in degrees.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="azely.AzEl.in_lst">
+<span class="sig-name descname"><span class="pre">in_lst</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/azely/api.html#AzEl.in_lst"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azely.AzEl.in_lst" title="Link to this definition">#</a></dt>
+<dd><p>Convert its time index to the local sidereal time (LST).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Self</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="azely.AzEl.in_utc">
+<span class="sig-name descname"><span class="pre">in_utc</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Self</span></span></span><a class="reference internal" href="../_modules/azely/api.html#AzEl.in_utc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azely.AzEl.in_utc" title="Link to this definition">#</a></dt>
+<dd><p>Convert its time index to the coordinated universal time (UTC).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Self</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="azely.AzEl.location">
+<span class="sig-name descname"><span class="pre">location</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="azely.location.html#azely.location.Location" title="azely.location.Location"><span class="pre">Location</span></a></em><a class="headerlink" href="#azely.AzEl.location" title="Link to this definition">#</a></dt>
+<dd><p>Location information used for the azimuth/elevation calculation.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="azely.AzEl.object">
+<span class="sig-name descname"><span class="pre">object</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="azely.object.html#azely.object.Object" title="azely.object.Object"><span class="pre">Object</span></a></em><a class="headerlink" href="#azely.AzEl.object" title="Link to this definition">#</a></dt>
+<dd><p>Object information used for the azimuth/elevation calculation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="azely.AzEl.separation">
+<span class="sig-name descname"><span class="pre">separation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Self</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Series</span></span></span><a class="reference internal" href="../_modules/azely/api.html#AzEl.separation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azely.AzEl.separation" title="Link to this definition">#</a></dt>
+<dd><p>Calculate the separation angle with other object in degrees.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> (<em>Self</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>Series</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="azely.AzEl.time">
+<span class="sig-name descname"><span class="pre">time</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="azely.time.html#azely.time.Time" title="azely.time.Time"><span class="pre">Time</span></a></em><a class="headerlink" href="#azely.AzEl.time" title="Link to this definition">#</a></dt>
+<dd><p>Time information used for the azimuth/elevation calculation.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="azely.Location">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Location</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">longitude</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latitude</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">altitude</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'0</span> <span class="pre">m'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/azely/location.html#Location"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azely.Location" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="azely.object.html#module-azely.object" title="azely.object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Location information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Name of the location.</p></li>
+<li><p><strong>longitude</strong> (<em>str</em>) – Longitude of the location (with units).</p></li>
+<li><p><strong>latitude</strong> (<em>str</em>) – Latitude of the location (with units).</p></li>
+<li><p><strong>altitude</strong> (<em>str</em>) – Altitude of the location (with units).</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="azely.Location.altitude">
+<span class="sig-name descname"><span class="pre">altitude</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'0</span> <span class="pre">m'</span></em><a class="headerlink" href="#azely.Location.altitude" title="Link to this definition">#</a></dt>
+<dd><p>Altitude of the location (with units).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="azely.Location.earthlocation">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">earthlocation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">EarthLocation</span></em><a class="headerlink" href="#azely.Location.earthlocation" title="Link to this definition">#</a></dt>
+<dd><p>Convert it to an astropy EarthLocation.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="azely.Location.latitude">
+<span class="sig-name descname"><span class="pre">latitude</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#azely.Location.latitude" title="Link to this definition">#</a></dt>
+<dd><p>Latitude of the location (with units).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="azely.Location.longitude">
+<span class="sig-name descname"><span class="pre">longitude</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#azely.Location.longitude" title="Link to this definition">#</a></dt>
+<dd><p>Longitude of the location (with units).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="azely.Location.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#azely.Location.name" title="Link to this definition">#</a></dt>
+<dd><p>Name of the location.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="azely.Location.timezone">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">timezone</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ZoneInfo</span></em><a class="headerlink" href="#azely.Location.timezone" title="Link to this definition">#</a></dt>
+<dd><p>Convert it to an IANA ZoneInfo.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="azely.Object">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">longitude</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">latitude</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'icrs'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/azely/object.html#Object"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azely.Object" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="azely.object.html#module-azely.object" title="azely.object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Object information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – Name of the object.</p></li>
+<li><p><strong>longitude</strong> (<em>str</em>) – Longitude of the object (with units).</p></li>
+<li><p><strong>latitude</strong> (<em>str</em>) – Latitude of the object (with units).</p></li>
+<li><p><strong>frame</strong> (<em>str</em>) – Coordinate frame name of the object.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="azely.Object.frame">
+<span class="sig-name descname"><span class="pre">frame</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'icrs'</span></em><a class="headerlink" href="#azely.Object.frame" title="Link to this definition">#</a></dt>
+<dd><p>Coordinate frame name of the object.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="azely.Object.latitude">
+<span class="sig-name descname"><span class="pre">latitude</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#azely.Object.latitude" title="Link to this definition">#</a></dt>
+<dd><p>Latitude of the object (with units).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="azely.Object.longitude">
+<span class="sig-name descname"><span class="pre">longitude</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#azely.Object.longitude" title="Link to this definition">#</a></dt>
+<dd><p>Longitude of the object (with units).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="azely.Object.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#azely.Object.name" title="Link to this definition">#</a></dt>
+<dd><p>Name of the object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="azely.Object.skycoord">
+<span class="sig-name descname"><span class="pre">skycoord</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">obstime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Time</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">SkyCoord</span></span></span><a class="reference internal" href="../_modules/azely/object.html#Object.skycoord"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azely.Object.skycoord" title="Link to this definition">#</a></dt>
+<dd><p>Convert it to an astropy SkyCoord.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>obstime</strong> (<em>Time</em>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>SkyCoord</em></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="azely.Time">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">Time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'00:00</span> <span class="pre">today'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stop</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'00:00</span> <span class="pre">tomorrow'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'10min'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timezone</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/azely/time.html#Time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azely.Time" title="Link to this definition">#</a></dt>
+<dd><p>Bases: <a class="reference internal" href="azely.object.html#module-azely.object" title="azely.object"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Time information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>str</em>) – Left bound of the time (inclusive).</p></li>
+<li><p><strong>stop</strong> (<em>str</em>) – Right bound of the time (inclusive).</p></li>
+<li><p><strong>step</strong> (<em>str</em>) – Step of the time (pandas offset alias).</p></li>
+<li><p><strong>timezone</strong> (<em>str</em>) – Timezone of the time (IANA timezone name).</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="azely.Time.index">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">index</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DatetimeIndex</span></em><a class="headerlink" href="#azely.Time.index" title="Link to this definition">#</a></dt>
+<dd><p>Convert it to a pandas DatetimeIndex.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="azely.Time.start">
+<span class="sig-name descname"><span class="pre">start</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'00:00</span> <span class="pre">today'</span></em><a class="headerlink" href="#azely.Time.start" title="Link to this definition">#</a></dt>
+<dd><p>Left bound of the time (inclusive).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="azely.Time.step">
+<span class="sig-name descname"><span class="pre">step</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'10min'</span></em><a class="headerlink" href="#azely.Time.step" title="Link to this definition">#</a></dt>
+<dd><p>Step of the time (pandas offset alias).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="azely.Time.stop">
+<span class="sig-name descname"><span class="pre">stop</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'00:00</span> <span class="pre">tomorrow'</span></em><a class="headerlink" href="#azely.Time.stop" title="Link to this definition">#</a></dt>
+<dd><p>Right bound of the time (exclusive).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="azely.Time.timezone">
+<span class="sig-name descname"><span class="pre">timezone</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#azely.Time.timezone" title="Link to this definition">#</a></dt>
+<dd><p>Timezone of the time (IANA timezone name).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="azely.calc">
+<span class="sig-name descname"><span class="pre">calc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">object</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="azely.object.html#azely.object.Object" title="azely.object.Object"><span class="pre">Object</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="azely.object.html#azely.object.ObjectDict" title="azely.object.ObjectDict"><span class="pre">ObjectDict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">location</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="azely.location.html#azely.location.Location" title="azely.location.Location"><span class="pre">Location</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="azely.location.html#azely.location.LocationDict" title="azely.location.LocationDict"><span class="pre">LocationDict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="azely.time.html#azely.time.Time" title="azely.time.Time"><span class="pre">Time</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference internal" href="azely.time.html#azely.time.TimeDict" title="azely.time.TimeDict"><span class="pre">TimeDict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">google_api</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ipinfo_api</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'\\s*;\\s*'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">AppendDict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">OverwriteDict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">SourceDict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">PathLike</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">PosixPath('/github/home/.config/azely/cache.toml')</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="azely.api.html#azely.api.AzEl" title="azely.api.AzEl"><span class="pre">AzEl</span></a></span></span><a class="reference internal" href="../_modules/azely/api.html#calc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azely.calc" title="Link to this definition">#</a></dt>
+<dd><p>Calculate azimuth/elevation of given object in given location at give time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>object</strong> (<a class="reference internal" href="azely.object.html#azely.object.Object" title="azely.object.Object"><em>Object</em></a><em> | </em><a class="reference internal" href="azely.object.html#azely.object.ObjectDict" title="azely.object.ObjectDict"><em>ObjectDict</em></a><em> | </em><em>str</em>) – Object information, or query dictionary or string for it.</p></li>
+<li><p><strong>location</strong> (<a class="reference internal" href="azely.location.html#azely.location.Location" title="azely.location.Location"><em>Location</em></a><em> | </em><a class="reference internal" href="azely.location.html#azely.location.LocationDict" title="azely.location.LocationDict"><em>LocationDict</em></a><em> | </em><em>str</em>) – Location information, or query dictionary or string for it.</p></li>
+<li><p><strong>time</strong> (<a class="reference internal" href="azely.time.html#azely.time.Time" title="azely.time.Time"><em>Time</em></a><em> | </em><a class="reference internal" href="azely.time.html#azely.time.TimeDict" title="azely.time.TimeDict"><em>TimeDict</em></a><em> | </em><em>str</em>) – Time information, or query dictionary or string for it.</p></li>
+<li><p><strong>google_api</strong> (<em>str</em><em> | </em><em>None</em>) – Optional Google API key for the location information.</p></li>
+<li><p><strong>ipinfo_api</strong> (<em>str</em><em> | </em><em>None</em>) – Optional IPinfo API key for the location information.</p></li>
+<li><p><strong>sep</strong> (<em>str</em>) – Separator string for splitting the location/object/time queries.</p></li>
+<li><p><strong>timeout</strong> (<em>float</em>) – Timeout length in seconds for the location/object information.</p></li>
+<li><p><strong>append</strong> (<em>AppendDict</em><em> | </em><em>bool</em>) – Whether to append the location/object/time information
+to the source TOML file if it does not exist.
+An option dictionary for each information is also accepted.</p></li>
+<li><p><strong>overwrite</strong> (<em>OverwriteDict</em><em> | </em><em>bool</em>) – Whether to overwrite the location/object/time information
+to the source TOML file even if it already exists.
+An option dictionary for each information is also accepted.</p></li>
+<li><p><strong>source</strong> (<em>SourceDict</em><em> | </em><em>PathLike</em><em>[</em><em>str</em><em>] </em><em>| </em><em>str</em><em> | </em><em>None</em>) – Path of a source TOML file for the location/object/time information.
+An option dictionary for each information is also accepted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Calculated azimuth and elevation of the object in degrees.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="azely.api.html#azely.api.AzEl" title="azely.api.AzEl"><em>AzEl</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="azely.get_location">
+<span class="sig-name descname"><span class="pre">get_location</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">google_api</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ipinfo_api</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'\\s*;\\s*'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PathLike</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="azely.location.html#azely.location.Location" title="azely.location.Location"><span class="pre">Location</span></a></span></span><a class="reference internal" href="../_modules/azely/location.html#get_location"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azely.get_location" title="Link to this definition">#</a></dt>
+<dd><p>Parse given query to create location information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query</strong> (<em>str</em>) – Query string for the location information.</p></li>
+<li><p><strong>google_api</strong> (<em>str</em><em> | </em><em>None</em>) – Optional Google API key.</p></li>
+<li><p><strong>ipinfo_api</strong> (<em>str</em><em> | </em><em>None</em>) – Optional IPinfo API key.</p></li>
+<li><p><strong>sep</strong> (<em>str</em>) – Separator string for splitting the query.</p></li>
+<li><p><strong>timeout</strong> (<em>float</em>) – Timeout length in seconds.</p></li>
+<li><p><strong>append</strong> (<em>bool</em>) – Whether to append the location information
+to the source TOML file if it does not exist.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em>) – Whether to overwrite the location information
+to the source TOML file even if it already exists.</p></li>
+<li><p><strong>source</strong> (<em>PathLike</em><em>[</em><em>str</em><em>] </em><em>| </em><em>str</em><em> | </em><em>None</em>) – Path of a source TOML file for the location information.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="azely.location.html#azely.location.Location" title="azely.location.Location"><em>Location</em></a></p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns</dt><dd><p>Location information created from the parsed query.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="azely.get_object">
+<span class="sig-name descname"><span class="pre">get_object</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'\\s*;\\s*'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PathLike</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="azely.object.html#azely.object.Object" title="azely.object.Object"><span class="pre">Object</span></a></span></span><a class="reference internal" href="../_modules/azely/object.html#get_object"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azely.get_object" title="Link to this definition">#</a></dt>
+<dd><p>Parse given query to create object information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query</strong> (<em>str</em>) – Query string for the object information.</p></li>
+<li><p><strong>sep</strong> (<em>str</em>) – Separator string for splitting the query.</p></li>
+<li><p><strong>timeout</strong> (<em>float</em>) – Timeout length in seconds.</p></li>
+<li><p><strong>append</strong> (<em>bool</em>) – Whether to append the object information
+to the source TOML file if it does not exist.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em>) – Whether to overwrite the object information
+to the source TOML file even if it already exists.</p></li>
+<li><p><strong>source</strong> (<em>PathLike</em><em>[</em><em>str</em><em>] </em><em>| </em><em>str</em><em> | </em><em>None</em>) – Path of a source TOML file for the object information.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="azely.object.html#azely.object.Object" title="azely.object.Object"><em>Object</em></a></p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns</dt><dd><p>Object information created from the parsed query.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="azely.get_time">
+<span class="sig-name descname"><span class="pre">get_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="positional-only-separator o"><abbr title="Positional-only parameter separator (PEP 570)"><span class="pre">/</span></abbr></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">sep</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'\\s*;\\s*'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">append</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">PathLike</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="azely.time.html#azely.time.Time" title="azely.time.Time"><span class="pre">Time</span></a></span></span><a class="reference internal" href="../_modules/azely/time.html#get_time"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#azely.get_time" title="Link to this definition">#</a></dt>
+<dd><p>Parse given query to create time information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query</strong> (<em>str</em>) – Query string for the time information.</p></li>
+<li><p><strong>sep</strong> (<em>str</em>) – Separator string for splitting the query.</p></li>
+<li><p><strong>append</strong> (<em>bool</em>) – Whether to append the time information
+to the source TOML file if it does not exist.</p></li>
+<li><p><strong>overwrite</strong> (<em>bool</em>) – Whether to overwrite the time information
+to the source TOML file even if it already exists.</p></li>
+<li><p><strong>source</strong> (<em>PathLike</em><em>[</em><em>str</em><em>] </em><em>| </em><em>str</em><em> | </em><em>None</em>) – Path of a source TOML file for the time information.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Time information created from the parsed query.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="azely.time.html#azely.time.Time" title="azely.time.Time"><em>Time</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">azely</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="azely.api.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">azely.api module</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#submodules">Submodules</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-azely">Module contents</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#azely.AzEl"><code class="docutils literal notranslate"><span class="pre">AzEl</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#azely.AzEl.az"><code class="docutils literal notranslate"><span class="pre">AzEl.az</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#azely.AzEl.el"><code class="docutils literal notranslate"><span class="pre">AzEl.el</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#azely.AzEl.in_lst"><code class="docutils literal notranslate"><span class="pre">AzEl.in_lst()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#azely.AzEl.in_utc"><code class="docutils literal notranslate"><span class="pre">AzEl.in_utc()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#azely.AzEl.location"><code class="docutils literal notranslate"><span class="pre">AzEl.location</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#azely.AzEl.object"><code class="docutils literal notranslate"><span class="pre">AzEl.object</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#azely.AzEl.separation"><code class="docutils literal notranslate"><span class="pre">AzEl.separation()</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#azely.AzEl.time"><code class="docutils literal notranslate"><span class="pre">AzEl.time</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#azely.Location"><code class="docutils literal notranslate"><span class="pre">Location</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#azely.Location.altitude"><code class="docutils literal notranslate"><span class="pre">Location.altitude</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#azely.Location.earthlocation"><code class="docutils literal notranslate"><span class="pre">Location.earthlocation</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#azely.Location.latitude"><code class="docutils literal notranslate"><span class="pre">Location.latitude</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#azely.Location.longitude"><code class="docutils literal notranslate"><span class="pre">Location.longitude</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#azely.Location.name"><code class="docutils literal notranslate"><span class="pre">Location.name</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#azely.Location.timezone"><code class="docutils literal notranslate"><span class="pre">Location.timezone</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#azely.Object"><code class="docutils literal notranslate"><span class="pre">Object</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#azely.Object.frame"><code class="docutils literal notranslate"><span class="pre">Object.frame</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#azely.Object.latitude"><code class="docutils literal notranslate"><span class="pre">Object.latitude</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#azely.Object.longitude"><code class="docutils literal notranslate"><span class="pre">Object.longitude</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#azely.Object.name"><code class="docutils literal notranslate"><span class="pre">Object.name</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#azely.Object.skycoord"><code class="docutils literal notranslate"><span class="pre">Object.skycoord()</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#azely.Time"><code class="docutils literal notranslate"><span class="pre">Time</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#azely.Time.index"><code class="docutils literal notranslate"><span class="pre">Time.index</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#azely.Time.start"><code class="docutils literal notranslate"><span class="pre">Time.start</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#azely.Time.step"><code class="docutils literal notranslate"><span class="pre">Time.step</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#azely.Time.stop"><code class="docutils literal notranslate"><span class="pre">Time.stop</span></code></a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#azely.Time.timezone"><code class="docutils literal notranslate"><span class="pre">Time.timezone</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#azely.calc"><code class="docutils literal notranslate"><span class="pre">calc()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#azely.get_location"><code class="docutils literal notranslate"><span class="pre">get_location()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#azely.get_object"><code class="docutils literal notranslate"><span class="pre">get_object()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#azely.get_time"><code class="docutils literal notranslate"><span class="pre">get_time()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_apidoc/azely.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2017-2025 Akio Taniguchi.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.2.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
