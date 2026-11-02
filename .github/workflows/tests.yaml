@@ -24,6 +24,8 @@ jobs:
           - python3.11-bookworm
           - python3.12-bookworm
           - python3.13-bookworm
+          - python3.14-bookworm
+          - python3.15-bookworm
     steps:
       - uses: actions/checkout@v4
       - run: uv sync --frozen
