@@ -2,14 +2,12 @@
 from dataclasses import asdict
 from tempfile import NamedTemporaryFile
 
-
 # dependencies
 import azely
 from astropy.coordinates import Angle
 from astropy.time import Time
 from pytest import mark
 from tomlkit import dump
-
 
 # test data
 objects = [

@@ -1,6 +1,5 @@
 __all__ = ["AzelyError", "cache"]
 
-
 # standard library
 from contextlib import contextmanager
 from dataclasses import asdict
@@ -10,12 +9,10 @@ from os import PathLike
 from re import search
 from typing import Any, Callable, Iterator, TypeVar, Union
 
-
 # dependencies
 from tomlkit import TOMLDocument, dump, load, nl
 
-
-# type hints
+# type aliases
 StrPath = Union[PathLike[str], str]
 TCallable = TypeVar("TCallable", bound=Callable[..., Any])
 

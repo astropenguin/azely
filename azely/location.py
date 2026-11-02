@@ -1,13 +1,11 @@
 __all__ = ["Location", "LocationDict", "get_location"]
 
-
 # standard library
 from dataclasses import dataclass
 from functools import cached_property, partial
 from re import split
 from typing import ClassVar
 from zoneinfo import ZoneInfo
-
 
 # dependencies
 from astropy.coordinates import EarthLocation, Latitude, Longitude
@@ -18,8 +16,10 @@ from timezonefinder import TimezoneFinder
 from typing_extensions import NotRequired, Required, TypedDict
 from .utils import AzelyError, StrPath, cache
 
+# constants
+DEFAULT_ALTITUDE = "0 m"
 
-# type hints
+
 class LocationDict(TypedDict):
     """Dictionary of the location information attributes."""
 
@@ -27,10 +27,6 @@ class LocationDict(TypedDict):
     longitude: Required[str]
     latitude: Required[str]
     altitude: NotRequired[str]
-
-
-# constants
-DEFAULT_ALTITUDE = "0 m"
 
 
 @dataclass(frozen=True)

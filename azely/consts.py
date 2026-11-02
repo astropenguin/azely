@@ -1,10 +1,8 @@
 __all__ = ["AZELY_CACHE", "AZELY_DIR"]
 
-
 # standard library
 from os import getenv
 from pathlib import Path
-
 
 # constants
 AZELY_CACHE: Path
