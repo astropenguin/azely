@@ -11,19 +11,18 @@ keywords = [
     "sidereal-time",
     "visibility",
 ]
-requires-python = ">=3.10,<3.14"
+requires-python = ">=3.10,<4.0"
 dependencies = [
-    "astropy>=6,<8",
-    "dateparser>=1,<2",
-    "ipinfo>=4,<6",
-    "matplotlib>=3,<4",
-    "numpy>=2,<3",
-    "pandas>=2,<3",
-    "pandas-stubs>=2,<3",
-    "python-dateutil>=2,<3",
-    "timezonefinder>=6,<7",
+    "astropy>=6",
+    "dateparser>=1",
+    "ipinfo>=4",
+    "matplotlib>=3",
+    "numpy>=2",
+    "pandas>=2",
+    "python-dateutil>=2",
+    "timezonefinder>=6",
     "tomlkit>=0.10,<1.0",
-    "typing-extensions>=4,<5",
+    "typing-extensions>=4",
 
 ]
 classifiers = [
@@ -33,6 +32,8 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
 ]
 
 [[project.authors]]
@@ -52,13 +53,14 @@ build-backend = "hatchling.build"
 
 [dependency-groups]
 dev = [
-    "black>=25,<26",
-    "ipython>=8,<10",
-    "myst-parser>=3,<5",
-    "pydata-sphinx-theme>=0.15,<1.0",
-    "pyright>=1,<2",
-    "pytest>=8,<9",
-    "sphinx>=7,<9",
+    "black>=26",
+    "ipython>=8",
+    "myst-parser>=4",
+    "pandas-stubs>=2",
+    "pydata-sphinx-theme>=0.19",
+    "pyright>=1",
+    "pytest>=9",
+    "sphinx>=8",
 ]
 
 [tool.pyright]
