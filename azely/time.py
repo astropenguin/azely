@@ -1,13 +1,11 @@
 __all__ = ["Time", "TimeDict", "get_time"]
 
-
 # standard library
 from dataclasses import dataclass
 from datetime import timezone as tz
 from functools import cached_property, partial
 from re import split
 from zoneinfo import ZoneInfo
-
 
 # dependencies
 import pandas as pd
@@ -16,8 +14,14 @@ from dateparser.timezone_parser import StaticTzInfo
 from typing_extensions import NotRequired, TypedDict
 from .utils import AzelyError, StrPath, cache
 
+# constants
+DEFAULT_START = "00:00 today"
+DEFAULT_STOP = "00:00 tomorrow"
+DEFAULT_STEP = "10min"
+DEFAULT_TIMEZONE = ""
+N_TIME_ARGS = 4
 
-# type hints
+
 class TimeDict(TypedDict):
     """Dictionary of the time information attributes."""
 
@@ -25,14 +29,6 @@ class TimeDict(TypedDict):
     stop: NotRequired[str]
     step: NotRequired[str]
     timezone: NotRequired[str]
-
-
-# constants
-DEFAULT_START = "00:00 today"
-DEFAULT_STOP = "00:00 tomorrow"
-DEFAULT_STEP = "10min"
-DEFAULT_TIMEZONE = ""
-N_TIME_ARGS = 4
 
 
 @dataclass(frozen=True)

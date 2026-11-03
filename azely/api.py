@@ -1,10 +1,8 @@
 __all__ = ["AzEl", "calc"]
 
-
 # standard library
 from dataclasses import replace
 from typing import ClassVar
-
 
 # dependent packages
 import pandas as pd
@@ -17,8 +15,10 @@ from .object import Object, ObjectDict, get_object
 from .time import Time, TimeDict, get_time
 from .utils import StrPath
 
+# constants
+SOLAR_TO_SIDEREAL = 1.002_737_909
 
-# type hints
+
 class AppendDict(TypedDict):
     """Dictionary of the append options for each information."""
 
@@ -41,10 +41,6 @@ class SourceDict(TypedDict):
     location: NotRequired[StrPath | None]
     object: NotRequired[StrPath | None]
     time: NotRequired[StrPath | None]
-
-
-# constants
-SOLAR_TO_SIDEREAL = 1.002_737_909
 
 
 class AzEl(pd.DataFrame):

@@ -1,11 +1,9 @@
 __all__ = ["Object", "ObjectDict", "get_object"]
 
-
 # standard library
 from dataclasses import dataclass
 from functools import partial
 from re import split
-
 
 # dependencies
 from astropy.coordinates import SkyCoord, get_body, solar_system_ephemeris
@@ -14,8 +12,12 @@ from astropy.utils.data import conf
 from typing_extensions import NotRequired, Required, TypedDict
 from .utils import AzelyError, StrPath, cache
 
+# constants
+DEFAULT_FRAME = "icrs"
+SOLAR_FRAME = "solar"
+SOLAR_OBJECTS = tuple(solar_system_ephemeris.bodies)  # type: ignore
 
-# type hints
+
 class ObjectDict(TypedDict):
     """Dictionary of the object information attributes."""
 
@@ -23,12 +25,6 @@ class ObjectDict(TypedDict):
     longitude: Required[str]
     latitude: Required[str]
     frame: NotRequired[str]
-
-
-# constants
-DEFAULT_FRAME = "icrs"
-SOLAR_FRAME = "solar"
-SOLAR_OBJECTS = tuple(solar_system_ephemeris.bodies)  # type: ignore
 
 
 @dataclass(frozen=True)
@@ -61,6 +57,7 @@ class Object:
             skycoord = get_body(
                 body=self.name,
                 time=obstime,
+                location=obstime.location,
             )
         else:
             skycoord = SkyCoord(
@@ -68,9 +65,9 @@ class Object:
                 self.latitude,
                 frame=self.frame,
                 obstime=obstime,
+                location=obstime.location,
             )
 
-        skycoord.location = obstime.location
         skycoord.info.name = self.name  # type: ignore
         return skycoord
 
