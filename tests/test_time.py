@@ -21,7 +21,6 @@ def test_time_to_index() -> None:
     expected = pd.date_range(
         "2020-01-01",
         "2020-01-07",
-        None,
         freq="10min",
         tz="Asia/Tokyo",
         inclusive="left",
